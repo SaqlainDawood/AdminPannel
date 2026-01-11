@@ -11,6 +11,7 @@ const ViewFaculty = () => {
   const [faculty, setFaculty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
   useEffect(() => {
     if (!id || id === ":id") {
       toast.error("Invalid Faculty ID! Redirecting to Faculty List...");
@@ -68,7 +69,12 @@ const ViewFaculty = () => {
         <MDBContainer className='py-4'>
           <MDBCard className='shadow-4'>
             <MDBCardBody className=''>
-              <h3 className='text-center mb-4 text-primary fw-bold'>View Faculty Information</h3>
+              <div className='d-flex justify-content-between align-item-center mb-4'>
+                <h3 className='text-primary fw-bold'>View Faculty Information</h3>
+              <button  className="btn btn-outline-primary"
+              onClick={()=>navigate('/admin/dashboard/faculty/list')}
+              >Back to List</button>
+              </div>
               <MDBTable bordered hover responsive className="align-middle custom-table" >
                 <MDBTableHead>
                   <tr className='text-center table-primary'>
@@ -140,7 +146,9 @@ const ViewFaculty = () => {
                   </tr>
                   <tr>
                     <th scope='col'>Joining Date</th>
-                    <td colSpan={3} className='text-info fw-bold'>{faculty?.joiningDate}</td>
+                    <td colSpan={1} className='text-info fw-bold'>{faculty?.joiningDate}</td>
+                    <th scope='col'>User Name</th>
+                    <td colSpan={1} className='text-info fw-bold'>{faculty?.userName}</td>
                   </tr>
                 </MDBTableBody>
               </MDBTable>

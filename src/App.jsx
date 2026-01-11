@@ -1,5 +1,6 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import HeroLanding from './Components/MainFrontPage/Main'
 import AdminLogin from './Pages/AdminForm/Login'
 import { ToastContainer } from 'react-toastify'
 import Dashboard from './Pages/AdminDashboard/Dashboard/AdminDashboard'
@@ -24,6 +25,10 @@ import Access from './Pages/AdminDashboard/Settings/Access'
 import SystemSett from './Pages/AdminDashboard/Settings/SystemSett'
 import UpdateFaculty from './Pages/AdminDashboard/FacultyManage/UpdateFaculty'
 import ViewFaculty from './Pages/AdminDashboard/FacultyManage/ViewFaculty'
+import StudentView from './Pages/AdminDashboard/StudentManage/StudentView'
+import StudentUpdate from './Pages/AdminDashboard/StudentManage/StudentUpdate'
+import CoordinatorLogin from './CoordinatorForm/Login'
+
 
 function App() {
 
@@ -31,18 +36,21 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path='/' element={<Register />} />
+          <Route path='/' element={<HeroLanding/>}/>
+          <Route path='/admin/register' element={<Register />} />
           <Route path='/admin/login' element={<AdminLogin />} />
+          <Route path='/coordinator/login' element={<CoordinatorLogin/>}/>
 
 
           <Route path='/admin/dashboard' element={<AdminSidebar />}>
             <Route index element={<Dashboard />} />
-
             <Route path='students'>
               <Route index element={<Navigate to='list' replace />} />
               <Route path='list' element={<StudentList />} />
               <Route path='approvals' element={<StudentApprovals />} />
               <Route path='assign' element={<StudentAssign />} />
+              <Route path = 'view/:id' element={<StudentView/>}/>
+              <Route path='update/:id' element={<StudentUpdate/>}/>
             </Route>
 
             <Route path='faculty'>

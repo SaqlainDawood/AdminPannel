@@ -34,22 +34,44 @@
 }
 
 /* Small Stat Cards */
+/* === Stats Section Layout === */
+.row.g-3.mb-4 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Column behavior for equal responsive layout */
+.col-6.col-md-3 {
+  flex: 1 1 220px; /* Each card minimum 220px width */
+  max-width: 100%;
+  display: flex;
+}
+
+/* === Stat Card Styling === */
 .stat-card-small {
   background: white;
   border-radius: 15px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 1rem;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  min-height: 120px;
 }
 
 .stat-card-small:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* === Stat Icon === */
 .stat-icon {
   width: 60px;
   height: 60px;
@@ -57,10 +79,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: white;
+  flex-shrink: 0;
 }
 
+/* === Gradient Icon Colors === */
 .stat-icon.bg-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -77,6 +101,7 @@
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
+/* === Stat Text === */
 .stat-info h3 {
   font-size: 2rem;
   font-weight: bold;
@@ -89,6 +114,10 @@
   font-size: 0.9rem;
   margin-bottom: 0;
 }
+
+
+
+
 
 /* Content Card */
 .content-card {
@@ -188,6 +217,100 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+/* ====== Filter Section (Base Styling) ====== */
+.filter-section {
+  width: 100%;
+  background-color: #f9fafb;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Label Styling */
+.filter-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Controls (Button + Input) */
+.filter-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Button Styling */
+.filter-btn {
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.filter-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.filter-btn.active {
+  background-color: #0056b3;
+}
+
+/* Search Bar Styling */
+.search-bar {
+  flex: 1;
+  min-width: 240px;
+  padding: 10px 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+}
+
+/* ====== Responsive Design ====== */
+@media (max-width: 992px) {
+  .filter-section {
+    padding: 18px;
+  }
+  .filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-bar,
+  .filter-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .filter-label {
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  .filter-controls {
+    gap: 10px;
+  }
+  .filter-section {
+    padding: 15px;
+  }
+}
+
 
 /* Students Table */
 .table-responsive {
@@ -214,6 +337,7 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
 }
 
 .students-table tbody tr {
@@ -265,6 +389,7 @@
   font-weight: 600;
   color: #333;
   font-size: 0.85rem;
+  white-space:nowrap;
   font-family: 'Courier New', monospace;
 }
 
@@ -275,6 +400,7 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 .cgpa-badge {
@@ -415,7 +541,12 @@ input[type="checkbox"] {
 }
 
 /* Responsive Design */
+
 @media (max-width: 992px) {
+  .col-6.col-md-3 {
+    flex: 1 1 calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
   .student-list-container {
     padding: 1rem;
   }
@@ -500,6 +631,31 @@ input[type="checkbox"] {
 
   .bulk-actions .btn {
     flex: 1;
+  }
+}
+@media (max-width: 576px) {
+  .col-6.col-md-3 {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .stat-card-small {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 1.2rem;
+  }
+
+  .stat-icon {
+    margin-bottom: 0.8rem;
+  }
+
+  .stat-info h3 {
+    font-size: 1.6rem;
+  }
+
+  .stat-info p {
+    font-size: 0.85rem;
   }
 }
 
@@ -724,7 +880,7 @@ input[type="checkbox"] {
 .student-email,
 .student-phone {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(0, 0, 0, 0.9);
   margin-bottom: 0.25rem;
 }
 
@@ -1842,5 +1998,30 @@ input[type="checkbox"] {
 
   .students-list-assign {
     max-height: none;
+  }
+}
+.loader-container,
+.notfound-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  text-align: center;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #e0e0e0;
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

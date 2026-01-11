@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Faculty.css';
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import axios from 'axios'
 const FacultyAdd = () => {
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     employeeID: '',
     firstName: '',
@@ -28,12 +28,17 @@ const FacultyAdd = () => {
     accountNumber: '',
     bankName: '',
     emergencyContact: '',
-    emergencyPerson: ''
+    emergencyPerson: '',
+    userName: '',
+    password: '',
   });
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [registeredFaculty, setRegisteredFaculty] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-const [loading, setLoading] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,7 +51,7 @@ const [loading, setLoading] = useState(false);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-       if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
         setError('Image size should be less than 5MB');
         return;
       }
@@ -55,7 +60,7 @@ const [loading, setLoading] = useState(false);
         return;
       }
       setProfileImage(file);
-        setError('');
+      setError('');
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -64,67 +69,90 @@ const [loading, setLoading] = useState(false);
     }
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-      setLoading(true);
+    setLoading(true);
     setError('');
-   try {
-    const submitData = new FormData();
-    Object.keys(formData).forEach(key=>{
-       if (formData[key]) {
+    try {
+      const submitData = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key]) {
           submitData.append(key, formData[key]);
-        } 
-    });
-     if (profileImage) {
+        }
+      });
+      if (profileImage) {
         submitData.append('profileImage', profileImage);
       }
       const res = await axios.post('http://localhost:8000/api/faculty/add',
         submitData,
         {
-                headers: {
+          headers: {
             'Content-Type': 'multipart/form-data',
           }
-      })
-      if (res.data.success) {
-        toast.success('Faculty member added successfully!');
-        setFormData({
-          employeeID:'',
-          firstName:'',
-          lastName:'',
-          email:'',
-          phone: '',
-    cnic: '',
-    dateOfBirth: '',
-    gender: '',
-    address: '',
-    city: '',
-    department: '',
-    designation: '',
-    qualification: '',
-    specialization: '',
-    experience: '',
-    joiningDate: '',
-    salary: '',
-    accountTitle: '',
-    accountNumber: '',
-    bankName: '',
-    emergencyContact: '',
-    emergencyPerson: ''
-          
         })
+         console.log("✅ Backend Response:", res.data); 
+    console.log("📧 Form Email:", formData.email);
+      if (res.data.success) {
+        setRegisteredFaculty({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          employeeID: formData.employeeID,
+          department: formData.department,
+          designation: formData.designation,
+          userName: formData.userName,         // Add this
+          password: formData.password,         // Add this
+          joiningDate: formData.joiningDate    // Add this
+        });
+              console.log("✅ registeredFaculty state:", {  // Add this
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        // ... other fields
+      });
+      
+        setShowSuccessModal(true);
+        // toast.success('Faculty member added successfully!');
+        setFormData({
+          employeeID: '',
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          cnic: '',
+          dateOfBirth: '',
+          gender: '',
+          address: '',
+          city: '',
+          department: '',
+          designation: '',
+          qualification: '',
+          specialization: '',
+          experience: '',
+          joiningDate: '',
+          salary: '',
+          accountTitle: '',
+          accountNumber: '',
+          bankName: '',
+          emergencyContact: '',
+          emergencyPerson: '',
+          userName: '',
+          password: ''
+        })
+        setProfileImage(null);
+        setImagePreview('');
+
 
         // navigate('/admin/dashboard/faculty/list');
       }
-   } catch (error) {
-     console.error('API Error:', error);
+    } catch (error) {
+      console.error('API Error:', error);
       if (error.response?.data?.message) {
-      setError(error.response.data.message);
-    } else if (error.code === 'ERR_NETWORK') {
-      setError('Cannot connect to server. Please check if backend is running.');
-    } else {
-      setError('Failed to add faculty member. Please try again.');
-    }
-  }finally {
+        setError(error.response.data.message);
+      } else if (error.code === 'ERR_NETWORK') {
+        setError('Cannot connect to server. Please check if backend is running.');
+      } else {
+        setError('Failed to add faculty member. Please try again.');
+      }
+    } finally {
       setLoading(false);
     }
     // navigate('/admin/dashboard/faculty/list');
@@ -133,7 +161,58 @@ const [loading, setLoading] = useState(false);
   const handleCancel = () => {
     navigate('/admin/dashboard/faculty/list');
   };
+ const handleSendCredentials = async () => {
+  if (!registeredFaculty) return;
+  setSendingEmail(true);
+  
+  try {
+    const emailData = {
+      to: registeredFaculty.email,
+      subject: `Welcome to University - Your Faculty Account Credentials`,
+      facultyName: registeredFaculty.name,
+      employeeID: registeredFaculty.employeeID,
+      department: registeredFaculty.department,
+      designation: registeredFaculty.designation,
+      userName: registeredFaculty.userName,
+      password: registeredFaculty.password,
+      joiningDate: registeredFaculty.joiningDate
+    };
 
+    const res = await axios.post("http://localhost:8000/api/faculty/send-credential",
+      emailData,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
+    if (res.data.success) {
+      toast.success(`Login credentials sent successfully to ${registeredFaculty.email}`);
+      setShowSuccessModal(false);
+      navigate('/admin/dashboard/faculty/list');
+    } else {
+      toast.error(res.data.message || 'Failed to send email. Please try again.');
+    }
+  } catch (error) {
+    console.error('Email sending error:', error);
+    
+    // Better error handling
+    if (error.code === 'ERR_NETWORK') {
+      toast.error('Cannot connect to email service. Please check if server is running.');
+    } else if (error.response?.data?.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error('Failed to send email. Please try again.');
+    }
+  } finally {
+    setSendingEmail(false);
+  }
+};
+  const handleAddAnother = () => {
+    setShowSuccessModal(false);
+    setRegisteredFaculty(null);
+  };
   const departments = [
     'Computer Science',
     'Electrical Engineering',
@@ -164,7 +243,7 @@ const [loading, setLoading] = useState(false);
             </p>
           </div>
         </div>
-       {error && (
+        {error && (
           <div className="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Error:</strong> {error}
             <button type="button" className="btn-close" onClick={() => setError('')}></button>
@@ -526,6 +605,44 @@ const [loading, setLoading] = useState(false);
                   </div>
                 </div>
               </div>
+              {/* Login Credentials */}
+              <div className="form-section-card">
+                <h3 className="section-title">
+                  <i className="fas fa-key me-2"></i>Login Credentials
+                </h3>
+                <div className="row g-3" >
+                  <div className="col-md-6">
+                    <label className="form-label">User Name</label>
+                    <input type='text'
+                      name='userName'
+                      className='form-control'
+                      value={formData.userName}
+                      placeholder='Saqlain@university.edu'
+                      onChange={handleChange}
+                      required />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Password</label>
+                    <div className="password-input-container">
+                      <input type={showPassword ? "text" : "password"}
+                        id='password'
+                        name='password'
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder='********'
+                        className='form-control password-input'
+                        required />
+                      <button
+                        type="button"
+                        className="password-toggle-btn"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Action Buttons */}
               <div className="form-actions">
@@ -533,12 +650,12 @@ const [loading, setLoading] = useState(false);
                   <i className="fas fa-times me-2"></i>Cancel
                 </button>
                 <button type="submit"
-                className="btn-submit"
-                disabled={loading}>
-                  {loading?(<>
-                  <i className="fas fa-spinner fa-spin me-2"></i>
-                      Adding...
-                  </>):(
+                  className="btn-submit"
+                  disabled={loading}>
+                  {loading ? (<>
+                    <i className="fas fa-spinner fa-spin me-2"></i>
+                    Adding...
+                  </>) : (
                     <>
                       <i className="fas fa-check me-2"></i>
                       Add Faculty Member
@@ -551,6 +668,102 @@ const [loading, setLoading] = useState(false);
           </div>
         </form>
       </div>
+      {/* Success Modal */}
+      {showSuccessModal && registeredFaculty && (
+        <div className="modal-overlay" onClick={() => setShowSuccessModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                <i className="fas fa-check-circle text-success me-2"></i>
+                Faculty Member Added Successfully!
+              </h3>
+              <button className="btn-close" onClick={() => setShowSuccessModal(false)}>
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="success-animation">
+                <i className="fas fa-user-check"></i>
+              </div>
+
+              <div className="faculty-details">
+                <div className="detail-item">
+                  <i className="fas fa-user-graduate"></i>
+                  <div>
+                    <strong>Faculty Name</strong>
+                    <span>{registeredFaculty.name}</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <i className="fas fa-envelope"></i>
+                  <div>
+                    <strong>Email Address</strong>
+                    <span>{registeredFaculty.email}</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <i className="fas fa-id-card"></i>
+                  <div>
+                    <strong>Employee ID</strong>
+                    <span>{registeredFaculty.employeeID}</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <i className="fas fa-building"></i>
+                  <div>
+                    <strong>Department</strong>
+                    <span>{registeredFaculty.department}</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <i className="fas fa-briefcase"></i>
+                  <div>
+                    <strong>Designation</strong>
+                    <span>{registeredFaculty.designation}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="alert alert-info">
+                <i className="fas fa-info-circle me-2"></i>
+                Faculty member has been registered successfully. Login credentials will be sent via email.
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={handleAddAnother}
+                disabled={sendingEmail}
+              >
+                <i className="fas fa-user-plus me-2"></i>
+                Add Another Faculty
+              </button>
+              <button
+                className="btn btn-success"
+                onClick={handleSendCredentials}
+                disabled={sendingEmail}
+              >
+                {
+                  sendingEmail ? (
+                    <>
+                      <i className="fas fa-spinner fa-spin me-2"></i>
+                      Sending Email.....
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-paper-plane me-2"></i>
+                      Send Login Credentials
+                    </>
+                  )
+                }
+
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

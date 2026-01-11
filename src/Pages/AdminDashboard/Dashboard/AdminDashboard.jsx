@@ -1,30 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios'
+import {toast} from 'react-toastify'
+import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    totalStudents: 0,
-    totalFaculty: 0,
-    pendingApprovals: 0,
-    todayAttendance: 0,
-  });
+  const [error , setError] = useState("")
+  const [stats, setStats] = useState({});
+  const navigae = useNavigate();
     useEffect(()=>{
       const fetchStats = async()=>{
         try {
-          const res = await axios.get("http:localhost:8000/api/admin/stats/total-students",{
-            withCredentials:true,
-          });
+         const token = localStorage.getItem("adminToken")
+        //  console.log("Token from localStorage:", token); // debug
+         if(!token){
+           setError("No token found. Please log in again.");
+          toast.error("No token found! Please Login Again");
+          return;
+         }
+         const res = await axios.get("http://localhost:8000/api/admin/stats/total-students",{
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+         })
           if(res.data.success){
-            setStats((prev)=>({
-              ...prev,
-              totalStudents:res.data.totalStudents,
-              totalFaculty:res.data.totalFaculty,
-              pendingApprovals:res.data.pendingApprovals,
-              todayAttendance:res.data.todayAttendance,
-            }))
+            setStats(res.data);
+          }
+          else{
+            setError(res.data.message|| "Failed to load status");
           }
         } catch (error) {
            console.error("Error fetching stats:", error);
+           if(error.res && error.response.status === 401 ){
+            localStorage.removeItem("adminToken");
+            setTimeout(() => {
+                toast.warning("Session Expired , Please Login Again");
+            navigae("/admin/login");
+            }, 2000);
+          
+           }
+            setError("Error fetching stats. Please try again.");
         }
       }
       fetchStats();
@@ -53,7 +67,9 @@ const Dashboard = () => {
   ];
 
   return (
+     
     <div className="dashboard-container" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', minHeight: '100vh', padding: '2rem' }}>
+     
       <div className="container-fluid">
         {/* Header Section */}
         <div className="row mb-4">
@@ -81,14 +97,14 @@ const Dashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="row g-4 mb-4">
+      <div className="row g-4 mb-4">
           <div className="col-12 col-sm-6 col-lg-3">
             <div className="card border-0 shadow-lg h-100" style={{ borderRadius: '20px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
               <div className="card-body p-4">
                 <div className="d-flex justify-content-between align-items-start">
                   <div>
                     <p className="text-white-50 mb-2 fw-semibold">Total Students</p>
-                    <h2 className="text-white fw-bold mb-0" style={{ fontSize: '2.5rem' }}>{stats.totalStudents.toLocaleString()}</h2>
+                    <h2 className="text-white fw-bold mb-0" style={{ fontSize: '2.5rem' }}>{stats.totalStudents}</h2>
                     <p className="text-white-50 mb-0 mt-2">
                       <i className="fas fa-arrow-up me-1"></i>12% from last month
                     </p>
@@ -100,7 +116,6 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-
           <div className="col-12 col-sm-6 col-lg-3">
             <div className="card border-0 shadow-lg h-100" style={{ borderRadius: '20px', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
               <div className="card-body p-4">
@@ -171,7 +186,7 @@ const Dashboard = () => {
                 </h4>
                 <div className="row g-3">
                   {quickActions.map(action => (
-                    <div key={action.title} className="col-6 col-md-3">
+                    <div key={action.title} className="col-4 col-md-3">
                       <Link to={action.link} className="text-decoration-none">
                         <div className={`card border-0 shadow-sm h-100 hover-card`} style={{ borderRadius: '15px', background: `linear-gradient(135deg, ${action.color === 'primary' ? '#667eea, #764ba2' : action.color === 'success' ? '#43e97b, #38f9d7' : action.color === 'info' ? '#4facfe, #00f2fe' : '#f093fb, #f5576c'})`, cursor: 'pointer', transition: 'transform 0.3s' }}>
                           <div className="card-body text-center p-4 position-relative">

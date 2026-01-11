@@ -100,11 +100,14 @@ const UpdateFaculty = () => {
   return (
     <MDBContainer className="py-4">
       <MDBCard className="shadow-4">
-        <MDBCardBody>
-          <h3 className="text-center mb-4 text-primary fw-bold">
+        <MDBCardBody className="">
+          <div className="d-flex justify-content-between align-item-center mb-4">
+              <h3 className="text-primary fw-bold">
             Update Faculty Information
           </h3>
-
+            <button className="btn btn-outline-primary"
+            onClick={()=>navigate('/admin/dashboard/faculty/list')}>back to list</button>
+          </div>
           <form onSubmit={handleSubmit}>
             <div className="table-responsive">
             <MDBTable bordered hover>

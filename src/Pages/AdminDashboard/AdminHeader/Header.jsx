@@ -7,10 +7,21 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import "./Header.css";
-import { Link } from "react-router-dom";
-
+import {useNavigate} from 'react-router-dom'
 const Header = () => {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = ()=>{
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminData");
+      localStorage.removeItem("userRole");
+      sessionStorage.clear();
+      setMenuOpen(false);
+
+      navigate('/admin/login');
+  }
+
 
   return (
     <header className="admin-header shadow-sm">
@@ -29,7 +40,7 @@ const Header = () => {
           <FaUserCircle className="user-avatar" />
           <span className="admin-name">Admin</span>
         </div>
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={handleLogout}>
           <FaSignOutAlt /> Logout
         </button>
 
@@ -52,11 +63,10 @@ const Header = () => {
           <button className="dropdown-item">
             <FaUserCircle /> Profile
           </button>
-          <Link to='/admin/login'>
-          <button className="dropdown-item logout">
+        
+          <button className="dropdown-item logout" onClick={handleLogout}>
             <FaSignOutAlt /> Logout
           </button>
-          </Link>
         </div>
       )}
     </header>

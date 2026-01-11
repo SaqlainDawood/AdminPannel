@@ -1,60 +1,67 @@
+// src/components/Coordinator/CoordinatorLogin.jsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import API from '../../api';
-import './AdminLogin.css'; // We'll create this CSS file
+import './CoordinatorLogin.css';
 
-export default function AdminLogin() {
-  const navigate = useNavigate();
-  const [login, setLogin] = useState({
+const CoordinatorLogin = () => {
+  const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    password: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleClick = (e) => {
-    const { name, value } = e.target;
-    setLogin({ ...login, [name]: value });
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!login.email || !login.password) {
-      toast.error("Please Enter the Email Login Fields!!!");
+    setLoading(true);
+
+    // Validation
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
-    
     try {
-      const res = await API.post('/login', {
-        email: login.email,
-        password: login.password,
+      // Simulate API call - replace with your actual API
+      const response = await fetch('http://localhost:8000/api/coordinator/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      
-      if (res.data.success) {
-        toast.success(res.data.message);
-        localStorage.setItem("adminToken", res.data.token);
-        localStorage.setItem("adminData", JSON.stringify(res.data.admin));
-        setTimeout(() => {
-          navigate('/admin/sidenav');
-        }, 2000);
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success('Login successful!');
+        localStorage.setItem('coordinatorToken', data.token);
+        localStorage.setItem('coordinatorData', JSON.stringify(data.coordinator));
+        navigate('/coordinator/dashboard');
       } else {
-        toast.error(res.data.message || "Login Failed");
+        toast.error(data.message || 'Login failed');
       }
     } catch (error) {
-      toast.error("Enter a valid Email and Password...");
-      console.log("Login Error failed", error);
+      console.error('Login error:', error);
+      toast.error('Network error. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="admin-login-container">
-      {/* Background Animation */}
+    <div className="coordinator-login-container">
+      {/* Background Design */}
       <div className="login-background">
         <div className="floating-elements">
           <div className="floating-element el-1"></div>
@@ -65,50 +72,34 @@ export default function AdminLogin() {
       </div>
 
       {/* Main Content */}
-      <div className="Admin-login-content">
+      <div className="MCoord-login-content">
         {/* Left Section - Illustration */}
-        <div className="Admin-login-left">
+        <div className="login-left">
           <div className="illustration-container">
             <div className="main-illustration">
               <div className="illustration-icon">
-                <i className="fas fa-crown"></i>
+                <i className="fas fa-users-cog"></i>
               </div>
-              <h2>Administrator Portal</h2>
-              <p>Full system control, user management, and institutional oversight with complete administrative privileges.</p>
+              <h2>Academic Coordinator Portal</h2>
+              <p>Manage your department, students, and academic activities with precision and efficiency.</p>
             </div>
             
             <div className="features-list">
               <div className="feature-item">
-                <i className="fas fa-users-cog"></i>
-                <span>System Administration</span>
+                <i className="fas fa-user-graduate"></i>
+                <span>Student Management</span>
               </div>
               <div className="feature-item">
-                <i className="fas fa-chart-bar"></i>
-                <span>Analytics & Reports</span>
+                <i className="fas fa-chalkboard-teacher"></i>
+                <span>Faculty Coordination</span>
               </div>
               <div className="feature-item">
-                <i className="fas fa-shield-alt"></i>
-                <span>Security Management</span>
+                <i className="fas fa-calendar-check"></i>
+                <span>Academic Planning</span>
               </div>
               <div className="feature-item">
-                <i className="fas fa-cog"></i>
-                <span>System Configuration</span>
-              </div>
-            </div>
-
-            {/* Admin Stats */}
-            <div className="admin-stats">
-              <div className="stat-item">
-                <h3>Full</h3>
-                <p>System Access</p>
-              </div>
-              <div className="stat-item">
-                <h3>100%</h3>
-                <p>Control</p>
-              </div>
-              <div className="stat-item">
-                <h3>24/7</h3>
-                <p>Monitoring</p>
+                <i className="fas fa-chart-line"></i>
+                <span>Performance Analytics</span>
               </div>
             </div>
           </div>
@@ -121,26 +112,26 @@ export default function AdminLogin() {
             <div className="form-header">
               <div className="logo">
                 <i className="fas fa-graduation-cap"></i>
-                <span>UMS Admin</span>
+                <span>UMS Coordinator</span>
               </div>
-              <h1>Administrator Access</h1>
-              <p>Secure system administration login</p>
+              <h1>Welcome Back</h1>
+              <p>Sign in to your coordinator account</p>
             </div>
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="login-form">
               {/* Email Field */}
               <div className="form-group">
-                <label htmlFor="email">Administrator Email</label>
+                <label htmlFor="email">Email Address</label>
                 <div className="input-container">
                   <i className="fas fa-envelope input-icon"></i>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    value={login.email}
-                    onChange={handleClick}
-                    placeholder="admin@university.edu"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your institutional email"
                     required
                     className="form-input"
                   />
@@ -149,16 +140,16 @@ export default function AdminLogin() {
 
               {/* Password Field */}
               <div className="form-group">
-                <label htmlFor="password">Administrator Password</label>
+                <label htmlFor="password">Password</label>
                 <div className="input-container">
                   <i className="fas fa-lock input-icon"></i>
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
-                    value={login.password}
-                    onChange={handleClick}
-                    placeholder="Enter your secure password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
                     required
                     className="form-input"
                   />
@@ -177,9 +168,9 @@ export default function AdminLogin() {
                 <label className="remember-me">
                   <input type="checkbox" />
                   <span className="checkmark"></span>
-                  Remember this device
+                  Remember me
                 </label>
-                <Link to="/admin/forgot-password" className="forgot-password">
+                <Link to="/coordinator/forgot-password" className="forgot-password">
                   Forgot Password?
                 </Link>
               </div>
@@ -187,45 +178,53 @@ export default function AdminLogin() {
               {/* Submit Button */}
               <button 
                 type="submit" 
-                className="login-button admin-login-btn"
+                className="login-button"
                 disabled={loading}
               >
                 {loading ? (
                   <>
                     <i className="fas fa-spinner fa-spin"></i>
-                    Authenticating...
+                    Signing In...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-sign-in-alt"></i>
-                    Access Admin Dashboard
+                    Sign In to Dashboard
                   </>
                 )}
               </button>
 
-              {/* Security Notice */}
-              <div className="security-notice">
-                <i className="fas fa-info-circle"></i>
-                <span>This portal contains sensitive system information. Ensure you are authorized.</span>
+              {/* Divider */}
+              <div className="divider">
+                <span>or</span>
               </div>
 
-              {/* Back to Home */}
-              <div className="back-home-section">
-                <Link to="/" className="back-home-link">
-                  <i className="fas fa-arrow-left"></i>
-                  Back to Home Page
-                </Link>
+              {/* Alternative Options */}
+              <div className="alternative-options">
+                <p>Don't have coordinator access?</p>
+                <div className="option-buttons">
+                  <button type="button" className="alt-button contact-admin">
+                    <i className="fas fa-headset"></i>
+                    Contact Administrator
+                  </button>
+                  <Link to="/" className="alt-button back-home">
+                    <i className="fas fa-home"></i>
+                    Back to Home
+                  </Link>
+                </div>
               </div>
             </form>
 
             {/* Security Footer */}
             <div className="security-footer">
               <i className="fas fa-shield-alt"></i>
-              <span>Protected by advanced encryption & multi-layer security</span>
+              <span>Secure login protected by encryption</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default CoordinatorLogin;

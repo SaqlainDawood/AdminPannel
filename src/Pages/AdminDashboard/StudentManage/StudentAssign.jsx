@@ -1,70 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Student.css';
-
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import {toast} from 'react-toastify'
 const StudentAssign = () => {
-  const [newStudents, setNewStudents] = useState([
-    {
-      id: 1,
-      name: 'Hassan Mahmood',
-      email: 'hassan.mahmood@gmail.com',
-      phone: '+92 300 1234567',
-      cnic: '12345-1234567-1',
-      department: 'Computer Science',
-      program: 'BS',
-      semester: '1st',
-      section: '',
-      rollNo: '',
-      admissionDate: '2024-09-20',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
-      status: 'unassigned'
-    },
-    {
-      id: 2,
-      name: 'Ayesha Riaz',
-      email: 'ayesha.riaz@gmail.com',
-      phone: '+92 301 2345678',
-      cnic: '12345-2345678-2',
-      department: 'Computer Science',
-      program: 'BS',
-      semester: '1st',
-      section: '',
-      rollNo: '',
-      admissionDate: '2024-09-20',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-      status: 'unassigned'
-    },
-    {
-      id: 3,
-      name: 'Ali Raza',
-      email: 'ali.raza@gmail.com',
-      phone: '+92 302 3456789',
-      cnic: '12345-3456789-3',
-      department: 'Electrical Engineering',
-      program: 'BS',
-      semester: '1st',
-      section: '',
-      rollNo: '',
-      admissionDate: '2024-09-20',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
-      status: 'unassigned'
-    },
-    {
-      id: 4,
-      name: 'Fatima Ahmed',
-      email: 'fatima.ahmed@gmail.com',
-      phone: '+92 303 4567890',
-      cnic: '12345-4567890-4',
-      department: 'Mechanical Engineering',
-      program: 'BS',
-      semester: '1st',
-      section: '',
-      rollNo: '',
-      admissionDate: '2024-09-20',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-      status: 'unassigned'
-    }
-  ]);
-
+  const navigate = useNavigate();
+  const [newStudents, setNewStudents] = useState([]);
   const [autoGenerateMode, setAutoGenerateMode] = useState(true);
   const [rollNoPrefix, setRollNoPrefix] = useState('');
   const [startingNumber, setStartingNumber] = useState(1);
@@ -73,25 +14,32 @@ const StudentAssign = () => {
   const sections = ['A', 'B', 'C', 'D'];
   const departments = [...new Set(newStudents.map(s => s.department))];
 
-  const handleSectionChange = (id, section) => {
+  const handleSectionChange = (_id, section) => {
     setNewStudents(prev =>
       prev.map(student =>
-        student.id === id ? { ...student, section } : student
+        student._id === _id ? { ...student, section } : student
       )
     );
   };
 
-  const handleRollNoChange = (id, rollNo) => {
+  const handleRollNoChange = (_id, rollNo) => {
     setNewStudents(prev =>
       prev.map(student =>
-        student.id === id ? { ...student, rollNo } : student
+        student._id === _id ? { ...student, rollNo } : student
       )
     );
   };
+const handleRegistrationChange = (_id, registrationNo) => {
+  setNewStudents(prev =>
+    prev.map(student =>
+      student._id === _id ? { ...student, registrationNo } : student
+    )
+  );
+};
 
-  const toggleSelectStudent = (id) => {
+  const toggleSelectStudent = (_id) => {
     setSelectedStudents(prev =>
-      prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]
+      prev.includes(_id) ? prev.filter(sId => sId !== _id) : [...prev, _id]
     );
   };
 
@@ -99,7 +47,7 @@ const StudentAssign = () => {
     if (selectedStudents.length === newStudents.length) {
       setSelectedStudents([]);
     } else {
-      setSelectedStudents(newStudents.map(s => s.id));
+      setSelectedStudents(newStudents.map(s => s._id));
     }
   };
 
@@ -112,7 +60,7 @@ const StudentAssign = () => {
     let counter = startingNumber;
     setNewStudents(prev =>
       prev.map(student => {
-        if (selectedStudents.includes(student.id) && !student.rollNo) {
+        if (selectedStudents.includes(student._id) && !student.rollNo) {
           const rollNo = `${rollNoPrefix}-${String(counter).padStart(3, '0')}`;
           counter++;
           return { ...student, rollNo };
@@ -122,37 +70,95 @@ const StudentAssign = () => {
     );
   };
 
-  const assignRollNumbers = () => {
-    const studentsToAssign = newStudents.filter(s => 
-      selectedStudents.includes(s.id) && s.rollNo && s.section
+  
+    const fetchUnassignRollStd = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          navigate('/admin/login');
+          return;
+        }
+        const res = await axios.get("http://localhost:8000/api/admin/stats/students/unassign",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        
+        //  setUnassignedCount(res.data.count);
+        console.log('API Response:', res.data); // Debug log
+        if (res.data && res.data.success) {
+          setNewStudents(res.data.Students || []);
+        }
+        else {
+          toast.error('Failed to fetch students');
+        }
+      } catch (error) {
+        console.error('Failed to fetch students:', error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("adminToken");
+          navigate('/admin/login');
+        }
+      }
+    }
+    useEffect(()=>{
+      fetchUnassignRollStd();
+    },[])
+    
+  
+
+
+  const assignRollNumbers = async() => {
+    const studentsToAssign = newStudents.filter(s =>
+      selectedStudents.includes(s._id) && s.rollNo &&  s.registrationNo && s.section
     );
 
     if (studentsToAssign.length === 0) {
-      alert('Please select students and assign roll numbers and sections!');
+      toast.info('Please select students and assign roll numbers and sections!');
       return;
     }
-
-    const missingData = studentsToAssign.filter(s => !s.rollNo || !s.section);
-    if (missingData.length > 0) {
-      alert('Some students are missing roll numbers or sections!');
-      return;
-    }
-
-    // Update status
-    setNewStudents(prev =>
-      prev.map(student =>
-        studentsToAssign.find(s => s.id === student.id)
-          ? { ...student, status: 'assigned' }
-          : student
+    try {
+      const token = localStorage.getItem("adminToken");
+      if(!token){
+        toast.error("No Token exist , Unauthorized");
+        return;
+      }
+      const res = await axios.put("http://localhost:8000/api/admin/stats/students/assign/",
+         { assignedStudents: studentsToAssign },
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
       )
-    );
+      console.log("Server Response:", res.data);
+        toast.success(res.data.message || "Roll Numbers & Registration Number Assigned Successfully!");
+        fetchUnassignRollStd();
+        setSelectedStudents([]);
+    } catch (error) {
+      console.log("Assign Error:", error.response?.data || error);
 
-    setSelectedStudents([]);
-    alert(`Successfully assigned ${studentsToAssign.length} students!`);
+  toast.error(error.response?.data?.message || "Failed to assign roll numbers");
+    }
+    // const missingData = studentsToAssign.filter(s => !s.rollNo || !s.section);
+    // if (missingData.length > 0) {
+    //   toast.info('Some students are missing roll numbers or sections!');
+    //   return;
+    // }
+
+    // // Update status
+    // setNewStudents(prev =>
+    //   prev.map(student =>
+    //     studentsToAssign.find(s => s._id === student._id)
+    //       ? { ...student, status: 'assigned' }
+    //       : student
+    //   )
+    // );
   };
 
-  const unassignedCount = newStudents.filter(s => s.status === 'unassigned').length;
-  const assignedCount = newStudents.filter(s => s.status === 'assigned').length;
+  const unassignedCount = newStudents.filter(s => !s.rollNo).length;
+  const assignedCount = newStudents.filter(s => s.rollNo).length;
 
   return (
     <div className="assign-container">
@@ -171,7 +177,7 @@ const StudentAssign = () => {
 
         {/* Stats Row */}
         <div className="row g-3 mb-4">
-          <div className="col-md-4">
+          <div className="col-6 col-md-3">
             <div className="stat-card-assign">
               <div className="stat-icon bg-warning">
                 <i className="fas fa-clock"></i>
@@ -182,7 +188,7 @@ const StudentAssign = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-4">
+          <div className="col-6 col-md-3">
             <div className="stat-card-assign">
               <div className="stat-icon bg-success">
                 <i className="fas fa-check-circle"></i>
@@ -193,7 +199,7 @@ const StudentAssign = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-4">
+          <div className="col-6 col-md-3">
             <div className="stat-card-assign">
               <div className="stat-icon bg-info">
                 <i className="fas fa-users"></i>
@@ -329,29 +335,32 @@ const StudentAssign = () => {
               <div className="students-list-assign">
                 {newStudents.map(student => (
                   <div
-                    key={student.id}
-                    className={`student-assign-card ${student.status === 'assigned' ? 'assigned' : ''} ${selectedStudents.includes(student.id) ? 'selected' : ''}`}
+                    key={student._id}
+                    className={`student-assign-card ${student.status === 'assigned' ? 'assigned' : ''} ${selectedStudents.includes(student._id) ? 'selected' : ''}`}
                   >
                     <div className="student-checkbox">
                       <input
                         type="checkbox"
-                        checked={selectedStudents.includes(student.id)}
-                        onChange={() => toggleSelectStudent(student.id)}
+                        checked={selectedStudents.includes(student._id)}
+                        onChange={() => toggleSelectStudent(student._id)}
                         disabled={student.status === 'assigned'}
                       />
                     </div>
 
                     <div className="student-main-info">
-                      <img src={student.image} alt={student.name} className="student-photo-small" />
+                      <img
+                        src={student.profileImage?.url || "https://via.placeholder.com/100"}
+                        alt={student.firstName}
+                        className="student-photo-small" />
                       <div className="student-basic">
-                        <h4 className="student-name-assign">{student.name}</h4>
+                        <h5 className="student-name-assign">{student.firstName + " " + student.lastName}</h5>
                         <p className="student-details-small">
                           <i className="fas fa-envelope me-2"></i>
-                          {student.email}
+                          {student?.user?.email}
                         </p>
                         <p className="student-details-small">
                           <i className="fas fa-graduation-cap me-2"></i>
-                          {student.department} - {student.program}
+                          {student.enrollment.program} - {student.enrollment.department}
                         </p>
                       </div>
                     </div>
@@ -363,18 +372,29 @@ const StudentAssign = () => {
                           type="text"
                           className="control-input"
                           placeholder="Enter roll no."
-                          value={student.rollNo}
-                          onChange={(e) => handleRollNoChange(student.id, e.target.value.toUpperCase())}
+                          value={student.rollNo || ""}
+                          onChange={(e) => handleRollNoChange(student._id, e.target.value.toUpperCase())}
                           disabled={student.status === 'assigned'}
                         />
                       </div>
+                    <div className="control-group">
+  <label className="control-label">Registration No</label>
+  <input
+    type="text"
+    className="control-input"
+    placeholder="Enter Reg No."
+    value={student.registrationNo || ""}
+    onChange={(e) => handleRegistrationChange(student._id, e.target.value.toUpperCase())}
+    disabled={student.status === 'assigned'}
+  />
+</div>
 
                       <div className="control-group">
                         <label className="control-label">Section</label>
                         <select
                           className="control-select"
-                          value={student.section}
-                          onChange={(e) => handleSectionChange(student.id, e.target.value)}
+                          value={student.section || ""}
+                          onChange={(e) => handleSectionChange(student._id, e.target.value)}
                           disabled={student.status === 'assigned'}
                         >
                           <option value="">Select</option>

@@ -117,29 +117,29 @@ const StudentApprovals = () => {
     setShowModal(true);
   };
 
-  const confirmAction = async() => {
-      if(!selectedStudent) return;
-      try {
-         if(actionType ==='approve'){
-          const res = await API.put(`/stats/students/approve/${selectedStudent._id}`)
-          if(res.data.success){
-            toast.success(`${selectedStudent.firstName} ${selectedStudent.lastName} are approved Successfully`)
-             setPendingStudents(prev => prev.filter(s => s.id !== selectedStudent.id));
-          }
-         }
-         else if(actionType === 'rejected'){
-          const res = await API.put(`/stats/students/rejected/${selectedStudent._id}`,{
-           rejectionReason:rejectReason
-          });
-          if(res.data.success){
-            toast.info(`${selectedStudent.firstName} ${selectedStudent.lastName} has been rejected`)
-            setPendingStudents(prev=>prev.filter(s=>s._id !== selectedStudent._id));
-          }
-         }
-      } catch (error) {
-         console.error("Approval/Reject Error:", error);
-         toast.error("Something went wrong while updating the status!");
+  const confirmAction = async () => {
+    if (!selectedStudent) return;
+    try {
+      if (actionType === 'approve') {
+        const res = await API.put(`/stats/students/approve/${selectedStudent._id}`)
+        if (res.data.success) {
+          toast.success(`${selectedStudent.firstName} ${selectedStudent.lastName} are approved Successfully`)
+          setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));
+        }
       }
+      else if (actionType === 'rejected') {
+        const res = await API.put(`/stats/students/rejected/${selectedStudent._id}`, {
+          rejectionReason: rejectReason
+        });
+        if (res.data.success) {
+          toast.info(`${selectedStudent.firstName} ${selectedStudent.lastName} has been rejected`)
+          setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));
+        }
+      }
+    } catch (error) {
+      console.error("Approval/Reject Error:", error);
+      toast.error("Something went wrong while updating the status!");
+    }
     setShowModal(false);
     setRejectReason('');
   };
@@ -153,9 +153,12 @@ const StudentApprovals = () => {
     return { completed, total, percentage: (completed / total) * 100 };
   };
 
-  const filteredStudents = filter === 'all'
-    ? pendingStudents
-    : pendingStudents.filter(s => s.department === filter);
+  const filteredStudents =
+    filter === 'all'
+      ? pendingStudents
+      : pendingStudents.filter((s) =>
+        s.enrollment?.department?.toLowerCase().includes(filter.toLowerCase())
+      );
 
   const departments = ['all', ...new Set(pendingStudents.map(s => s.department))];
 
@@ -181,20 +184,30 @@ const StudentApprovals = () => {
         </div>
 
         {/* Filter Section */}
+        {/* Filter Section */}
         <div className="filter-section">
-          <div className="filter-label">Filter by Department:</div>
-          <div className="filter-buttons">
-            {departments.map(dept => (
-              <button
-                key={dept}
-                className={`filter-btn ${filter === dept ? 'active' : ''}`}
-                onClick={() => setFilter(dept)}
-              >
-                {dept === 'all' ? 'All Departments' : dept}
-              </button>
-            ))}
+          <div className="filter-label">Search by Department:</div>
+          <div className="filter-controls">
+            <button
+              className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+              onClick={() => setFilter('all')}
+            >
+              All Departments
+            </button>
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Type department name (e.g. Software Engineering)"
+              value={filter === 'all' ? '' : filter}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFilter(value === '' ? 'all' : value);
+              }}
+            />
           </div>
         </div>
+
+
 
         {/* Approvals Grid */}
         <div className="approvals-grid">
@@ -213,7 +226,7 @@ const StudentApprovals = () => {
                       <h3 className="student-name">{student.firstName} {student.lastName}</h3>
                       <p className="student-email">
                         <i className="fas fa-envelope me-2"></i>
-                        {student.email}
+                       {student?.user?.email || "No Email"}
                       </p>
                       <p className="student-phone">
                         <i className="fas fa-phone me-2"></i>
@@ -348,7 +361,7 @@ const StudentApprovals = () => {
                     </div>
                     <div className="detail-item">
                       <i className="fas fa-envelope"></i>
-                      <span>{selectedStudent?.email}</span>
+                      <span>{selectedStudent?.user?.email}</span>
                     </div>
                   </div>
                   <div className="alert alert-info">

@@ -62,12 +62,13 @@ const CoodList = () => {
     }
   ]);
 
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterRole, setFilterRole] = useState('all');
 
   const departments = ['all', ...new Set(coordinators.map(c => c.department))];
-  const roles = ['all', 'Department Coordinator', 'Semester Coordinator', 'Examination Coordinator'];
+  const roles = ['all', 'Department Coordinator', 'Semester Coordinator', 'Program Coordinator' , 'Fee Coordinator', 'Examination Coordinator'];
 
   const filteredCoordinators = coordinators.filter(coord => {
     const matchesSearch = coord.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

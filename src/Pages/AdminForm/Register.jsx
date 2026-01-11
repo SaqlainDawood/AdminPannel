@@ -1,19 +1,8 @@
 import React, { useState } from 'react';
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBInput,
-  MDBBtn,
-  MDBIcon,
-  MDBInputGroup, // Import MDBInputGroup
-} from 'mdb-react-ui-kit';
-import { Link } from 'react-router-dom';
-import {toast} from 'react-toastify'
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import API from '../../api';
-import { useNavigate } from 'react-router-dom';
+import './AdminRegister.css'; // New CSS file with unique class names
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,11 +14,13 @@ const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [confirmShowPass, setConfirmShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const togglePass = () => {
     setShowPassword(!showPassword);
   };
-  const toggleConfrimPass = () => {
+
+  const toggleConfirmPass = () => {
     setConfirmShowPass(!confirmShowPass);
   };
 
@@ -40,141 +31,243 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if(formData.password !== formData.confirmPassword){
+    
+    if (formData.password !== formData.confirmPassword) {
       toast.info("Password do not match. Please rewrite same password");
+      return;
     }
+
+    setLoading(true);
+    
     try {
-      const res = await API.post('/register' ,{
-      name:formData.name,
-      email:formData.email,
-      password:formData.password,
-      })
-      if(res.data.success){
-        toast.success("Admin Register Successfully , Redirect to Login")
-        setTimeout(()=>{
-            navigate('/admin/login');
-        } ,2000)
+      const res = await API.post('/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+      
+      if (res.data.success) {
+        toast.success("Admin Registered Successfully, Redirecting to Login");
+        setTimeout(() => {
+          navigate('/admin/login');
+        }, 2000);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!!!!")
+      toast.error(error.response?.data?.message || "Something went wrong!!!!");
+    } finally {
+      setLoading(false);
     }
-    
-    // console.log('Admin Registration Data:', formData);
   };
 
   return (
-    <>
-      <MDBContainer fluid className="p-4 bg-light" style={{ minHeight: '100vh' }}>
-        <MDBRow className="justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-          <MDBCol md="6" lg="4">
-            <MDBCard className="shadow-5">
-              <MDBCardBody className="p-5">
-                
-                {/* Header */}
-                <div className="text-center mb-4">
-                  <h3 className="fw-bold text-primary">Admin Registration</h3>
-                  <p className="text-muted">Create new admin account</p>
+    <div className="admin-register-container">
+      {/* Background Animation */}
+      <div className="register-background">
+        <div className="register-floating-elements">
+          <div className="register-element reg-el-1"></div>
+          <div className="register-element reg-el-2"></div>
+          <div className="register-element reg-el-3"></div>
+          <div className="register-element reg-el-4"></div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="register-content">
+        {/* Left Section - Illustration */}
+        <div className="register-left">
+          <div className="register-illustration-container">
+            <div className="register-main-illustration">
+              <div className="register-illustration-icon">
+                <i className="fas fa-user-shield"></i>
+              </div>
+              <h2>Create Admin Account</h2>
+              <p>Setup a new administrator account with full system privileges and access controls.</p>
+            </div>
+            
+            <div className="register-features-list">
+              <div className="register-feature-item">
+                <i className="fas fa-crown"></i>
+                <span>Full System Access</span>
+              </div>
+              <div className="register-feature-item">
+                <i className="fas fa-users-cog"></i>
+                <span>User Management</span>
+              </div>
+              <div className="register-feature-item">
+                <i className="fas fa-chart-bar"></i>
+                <span>Analytics Dashboard</span>
+              </div>
+              <div className="register-feature-item">
+                <i className="fas fa-shield-alt"></i>
+                <span>Security Controls</span>
+              </div>
+            </div>
+
+            {/* Admin Privileges */}
+            <div className="admin-privileges">
+              <h4>Administrator Privileges</h4>
+              <ul>
+                <li>Full system configuration access</li>
+                <li>User account management</li>
+                <li>System analytics and reports</li>
+                <li>Security and permission settings</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section - Registration Form */}
+        <div className="register-right">
+          <div className="register-form-container">
+            {/* Header */}
+            <div className="register-form-header">
+              <div className="register-logo">
+                <i className="fas fa-graduation-cap"></i>
+                <span>UMS Admin Setup</span>
+              </div>
+              <h1>Create Admin Account</h1>
+              <p>Setup your administrator credentials</p>
+            </div>
+
+            {/* Registration Form */}
+            <form onSubmit={handleSubmit} className="register-form">
+              {/* Name Field */}
+              <div className="register-form-group">
+                <label htmlFor="name">Full Name</label>
+                <div className="register-input-container">
+                  <i className="fas fa-user input-icon-register"></i>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter your full name"
+                    required
+                    className="register-form-input"
+                  />
                 </div>
+              </div>
 
-                <form onSubmit={handleSubmit}>
-                  {/* Name Field */}
-                  <div className="mb-3">
-                    <MDBInput
-                      label="Full Name"
-                      name="name"
-                      type="text"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
+              {/* Email Field */}
+              <div className="register-form-group">
+                <label htmlFor="email">Institutional Email</label>
+                <div className="register-input-container">
+                  <i className="fas fa-envelope input-icon-register"></i>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="admin@university.edu"
+                    required
+                    className="register-form-input"
+                  />
+                </div>
+              </div>
 
-                  {/* Email Field */}
-                  <div className="mb-3">
-                    <MDBInput
-                      label="Email Address"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
+              {/* Password Field */}
+              <div className="register-form-group">
+                <label htmlFor="password">Admin Password</label>
+                <div className="register-input-container">
+                  <i className="fas fa-lock input-icon-register"></i>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Create a strong password"
+                    required
+                    className="register-form-input"
+                  />
+                  <button
+                    type="button"
+                    className="register-password-toggle"
+                    onClick={togglePass}
+                  >
+                    <i className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
+              </div>
 
-                  {/* Password Field */}
-                  <div className="mb-3">
-                    <MDBInputGroup className="w-100">
-                      <MDBInput
-                        label="Password"
-                        name="password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                      />
-                      <MDBBtn
-                        color='primary'
-                        type='button'
-                        onClick={togglePass}
-                        // className='input-group-text'
-                        style={{cursor: 'pointer'}}
-                      >
-                        <MDBIcon icon={showPassword ? 'eye-slash' : 'eye'} />
-                      </MDBBtn>
-                    </MDBInputGroup>
-                  </div>
+              {/* Confirm Password Field */}
+              <div className="register-form-group">
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <div className="register-input-container">
+                  <i className="fas fa-lock input-icon-register"></i>
+                  <input
+                    type={confirmShowPass ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm your password"
+                    required
+                    className="register-form-input"
+                  />
+                  <button
+                    type="button"
+                    className="register-password-toggle"
+                    onClick={toggleConfirmPass}
+                  >
+                    <i className={`fas ${confirmShowPass ? "fa-eye-slash" : "fa-eye"}`}></i>
+                  </button>
+                </div>
+              </div>
 
-                  {/* Confirm Password Field */}
-                  <div className="mb-4">
-                    <MDBInputGroup className="w-100">
-                      <MDBInput
-                        label="Confirm Password"
-                        name="confirmPassword"
-                        type={confirmShowPass ? 'text' : 'password'}
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        required
-                      />
-                      <MDBBtn
-                      type='button'
-                        color='primary'
-                        onClick={toggleConfrimPass}
-                        // className='input-group-text'
-                        style={{cursor: 'pointer'}}
-                      >
-                        <MDBIcon icon={confirmShowPass ? 'eye-slash' : 'eye'} />
-                      </MDBBtn>
-                    </MDBInputGroup>
-                  </div>
+              {/* Password Requirements */}
+              <div className="password-requirements">
+                <h5>Password Requirements:</h5>
+                <ul>
+                  <li>Minimum 8 characters</li>
+                  <li>Include uppercase and lowercase letters</li>
+                  <li>Include numbers and special characters</li>
+                </ul>
+              </div>
 
-                  {/* Submit Button */}
-                  <MDBBtn type="submit" color="primary" className="w-100 mb-3" size="lg">
-                    Register Admin
-                  </MDBBtn>
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                className="register-button admin-register-btn"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-user-plus"></i>
+                    Create Admin Account
+                  </>
+                )}
+              </button>
 
-                  {/* Login Link */}
-                  <div className="text-center">
-                    <p className="mb-0">
-                      Already have an account?
-                      <Link to="/admin/login" className="text-decoration-none">
-                        Sign In
-                      </Link>
-                    </p>
-                  </div>
-                </form>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-    </>
+              {/* Login Link */}
+              <div className="register-login-link">
+                <p>Already have an admin account?</p>
+                <Link to="/admin/login" className="register-login-button">
+                  <i className="fas fa-sign-in-alt"></i>
+                  Sign In to Existing Account
+                </Link>
+              </div>
+            </form>
+
+            {/* Security Footer */}
+            <div className="register-security-footer">
+              <i className="fas fa-shield-alt"></i>
+              <span>All administrator accounts require verification and approval</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default Register;
-
-
-// 03417724614
-// abdullah

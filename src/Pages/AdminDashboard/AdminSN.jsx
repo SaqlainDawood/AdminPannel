@@ -45,8 +45,8 @@ const navigate = useNavigate();
       submenu: [
         { id: 'faculty-list', title: 'All Faculty',  icon: 'fa-list', path: '/admin/dashboard/faculty/list' },
         { id: 'faculty-add', title: 'Register Faculty', icon: 'fa-user-plus', path: '/admin/dashboard/faculty/add' },
-        { id:'faculty-update',title:'Update Faculty' , icon:'fa-user-plus', path:'/admin/dashboard/faculty/update/:id'},
-        { id:'faculty-view', title:'View Faculty' , icon:'fa-list' ,path:'/admin/dashboard/faculty/view/:id'},
+        // { id:'faculty-update',title:'Update Faculty' , icon:'fa-user-plus', path:'/admin/dashboard/faculty/update/:id'},
+        // { id:'faculty-view', title:'View Faculty' , icon:'fa-list' ,path:'/admin/dashboard/faculty/view/:id'},
       ]
     },
     {
@@ -107,7 +107,7 @@ const navigate = useNavigate();
       id: 'logout',
       title: 'Logout',
       icon: 'fa-sign-out-alt',
-      path: '/logout',
+      path: '/admin/login',
       className: 'logout-item'
     }
   ];
