@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import API from '../../api';
+import AdminAPI from '../../api'
+import axios from 'axios'
 import './AdminLogin.css'; // We'll create this CSS file
 
 export default function AdminLogin() {
@@ -29,7 +30,7 @@ export default function AdminLogin() {
     setLoading(true);
     
     try {
-      const res = await API.post('/login', {
+      const res = await axios.post('http://localhost:8000/api/admin/login', {
         email: login.email,
         password: login.password,
       });

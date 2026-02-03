@@ -307,17 +307,63 @@ const exportToCSV = () => {
 };
 
 const getStatusBadge = (status) => {
-  const statusConfig = {
-    'Active': { class: 'badge-success', icon: 'fa-check-circle' },
-    'Suspended': { class: 'badge-warning', icon: 'fa-exclamation-circle' },
-    'Graduated': { class: 'badge-info', icon: 'fa-graduation-cap' },
-    'Inactive': { class: 'badge-secondary', icon: 'fa-times-circle' }
+   const statusConfig = {
+    // Your actual database values from schema
+    'active': { 
+      class: 'badge-success', 
+      icon: 'fa-check-circle',
+      label: 'Active'
+    },
+    'approved': { 
+      class: 'badge-primary', 
+      icon: 'fa-check',
+      label: 'Approved'
+    },
+    'pending': { 
+      class: 'badge-warning', 
+      icon: 'fa-clock',
+      label: 'Pending'
+    },
+    'assign': { 
+      class: 'badge-info', 
+      icon: 'fa-user-check',
+      label: 'Assigned'
+    },
+    'unassigned': { 
+      class: 'badge-secondary', 
+      icon: 'fa-user-times',
+      label: 'Unassigned'
+    },
+    'rejected': { 
+      class: 'badge-danger', 
+      icon: 'fa-times-circle',
+      label: 'Rejected'
+    },
+    'suspend': { 
+      class: 'badge-dark', 
+      icon: 'fa-pause-circle',
+      label: 'Suspended'
+    },
+    // Fallback for any unexpected status
+    'default': { 
+      class: 'badge-light', 
+      icon: 'fa-question-circle',
+      label: status || 'Unknown'
+    }
   };
-  const config = statusConfig[status] || statusConfig['Active'];
+  const config = statusConfig[status] || statusConfig['default'];
+  
+  // const statusConfig = {
+  //   'Active': { class: 'badge-success', icon: 'fa-check-circle' },
+  //   'Suspended': { class: 'badge-warning', icon: 'fa-exclamation-circle' },
+  //   'Graduated': { class: 'badge-info', icon: 'fa-graduation-cap' },
+  //   'Inactive': { class: 'badge-secondary', icon: 'fa-times-circle' }
+  // };
+  // const config = statusConfig[status] || statusConfig['Active'];
   return (
-    <span className={`status-badge ${config.class}`}>
+   <span className={`badge ${config.class} p-2 d-inline-flex align-items-center`}>
       <i className={`fas ${config.icon} me-1`}></i>
-      {status}
+      {config.label}
     </span>
   );
 };
@@ -456,13 +502,13 @@ return (
                   onChange={(e) => setFilterStatus(e.target.value)}
                 >
                   <option value="all">All Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Approved">Approved</option>
+                  <option value="active">Active</option>
+                  <option value="approved">Approved</option>
                   <option value="unassigned">Roll Unassign</option>
                   <option value="rejected">Rejected</option>
-                  <option value="Suspended">Suspended</option>
-                  <option value="Graduated">Graduated</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="suspended">Suspended</option>
+                  <option value="graduated">Graduated</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </div>
             </div>

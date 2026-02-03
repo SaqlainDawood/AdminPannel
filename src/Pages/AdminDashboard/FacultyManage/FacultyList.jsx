@@ -31,7 +31,6 @@ const navigate = useNavigate();
       fetchFaculties();
     } , []);
 
-
    const handleDelete = async(id) => {
      if (!id) {
       toast.error("Invalid faculty ID");

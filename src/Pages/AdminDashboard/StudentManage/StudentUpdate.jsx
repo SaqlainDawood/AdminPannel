@@ -1,10 +1,16 @@
-import React from 'react';
-import './StudentUpdate.css'
-import { useNavigate, useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { MDBContainer, MDBCard, MDBCardBody, MDBBtn, MDBSpinner } from 'mdb-react-ui-kit';
+import React from "react";
+import "./StudentUpdate.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  MDBContainer,
+  MDBCard,
+  MDBCardBody,
+  MDBBtn,
+  MDBSpinner,
+} from "mdb-react-ui-kit";
 
 const StudentUpdate = () => {
   const { id } = useParams();
@@ -15,54 +21,54 @@ const StudentUpdate = () => {
   const [notFound, setNotFound] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Information
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNo: '',
-    cnic: '',
-    DOB: '',
-    gender: '',
-    bloodGroup: '',
-    maritalStatus: '',
-    religion: '',
-    nationality: '',
-    province: '',
-    domicile: '',
-    presentAddress: '',
-    permanentAddress: '',
-    status: '',
-    
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNo: "",
+    cnic: "",
+    DOB: "",
+    gender: "",
+    bloodGroup: "",
+    maritalStatus: "",
+    religion: "",
+    nationality: "",
+    province: "",
+    domicile: "",
+    presentAddress: "",
+    permanentAddress: "",
+    status: "",
+
     // Academic Information
     enrollment: {
-      program: '',
-      semester: '',
-      session: '',
-      department: '',
-      shift: '',
-      campus: ''
+      program: "",
+      semester: "",
+      session: "",
+      department: "",
+      shift: "",
+      campus: "",
     },
-    
+
     // Family Information
     family: {
-      fatherName: '',
-      motherName: '',
-      fatherCnic: '',
-      fatherMobile: ''
+      fatherName: "",
+      motherName: "",
+      fatherCnic: "",
+      fatherMobile: "",
     },
-    
+
     // Documents
     documents: {
       cnic: false,
       marksheet: false,
       photo: false,
-      domicile: false
+      domicile: false,
     },
-    
+
     // Academic Performance
-    cgpa: '',
-    section: '',
-    registrationNo: '',
-    rollNo: ''
+    cgpa: "",
+    section: "",
+    registrationNo: "",
+    rollNo: "",
   });
 
   // Fetch student data
@@ -72,7 +78,7 @@ const StudentUpdate = () => {
         const token = localStorage.getItem("adminToken");
         if (!token) {
           toast.error("Not Authorized User");
-          navigate('/admin/login');
+          navigate("/admin/login");
           return;
         }
 
@@ -82,66 +88,71 @@ const StudentUpdate = () => {
           return;
         }
 
-        const res = await axios.get(`http://localhost:8000/api/admin/student/view/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await axios.get(
+          `http://localhost:8000/api/admin/student/view/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
         if (res.data.success && res.data.student) {
           const studentData = res.data.student;
           setStudent(studentData);
-          
+
           // Populate form with existing data
           setFormData({
-            firstName: studentData.firstName || '',
-            lastName: studentData.lastName || '',
-            email: studentData?.user?.email || '',
-            phoneNo: studentData.phoneNo || '',
-            cnic: studentData.cnic || '',
-            DOB: studentData.DOB ? new Date(studentData.DOB).toISOString().split('T')[0] : '',
-            gender: studentData.gender || '',
-            bloodGroup: studentData.bloodGroup || '',
-            maritalStatus: studentData.maritalStatus || '',
-            religion: studentData.religion || '',
-            nationality: studentData.nationality || '',
-            province: studentData.province || '',
-            domicile: studentData.domicile || '',
-            presentAddress: studentData.presentAddress || '',
-            permanentAddress: studentData.permanentAddress || '',
-            status: studentData.status || '',
-            
+            firstName: studentData.firstName || "",
+            lastName: studentData.lastName || "",
+            email: studentData?.user?.email || "",
+            phoneNo: studentData.phoneNo || "",
+            cnic: studentData.cnic || "",
+            DOB: studentData.DOB
+              ? new Date(studentData.DOB).toISOString().split("T")[0]
+              : "",
+            gender: studentData.gender || "",
+            bloodGroup: studentData.bloodGroup || "",
+            maritalStatus: studentData.maritalStatus || "",
+            religion: studentData.religion || "",
+            nationality: studentData.nationality || "",
+            province: studentData.province || "",
+            domicile: studentData.domicile || "",
+            presentAddress: studentData.presentAddress || "",
+            permanentAddress: studentData.permanentAddress || "",
+            status: studentData.status || "",
+
             enrollment: {
-              program: studentData.enrollment?.program || '',
-              semester: studentData.enrollment?.semester || '',
-              session: studentData.enrollment?.session || '',
-              department: studentData.enrollment?.department || '',
-              shift: studentData.enrollment?.shift || '',
-              campus: studentData.enrollment?.campus || ''
+              program: studentData.enrollment?.program || "",
+              semester: studentData.enrollment?.semester || "",
+              session: studentData.enrollment?.session || "",
+              department: studentData.enrollment?.department || "",
+              shift: studentData.enrollment?.shift || "",
+              campus: studentData.enrollment?.campus || "",
             },
-            
+
             family: {
-              fatherName: studentData.family?.fatherName || '',
-              motherName: studentData.family?.motherName || '',
-              fatherCnic: studentData.family?.fatherCnic || '',
-              fatherMobile: studentData.family?.fatherMobile || ''
+              fatherName: studentData.family?.fatherName || "",
+              motherName: studentData.family?.motherName || "",
+              fatherCnic: studentData.family?.fatherCnic || "",
+              fatherMobile: studentData.family?.fatherMobile || "",
             },
-            
+
             documents: {
               cnic: studentData.documents?.cnic || false,
               marksheet: studentData.documents?.marksheet || false,
               photo: studentData.documents?.photo || false,
-              domicile: studentData.documents?.domicile || false
+              domicile: studentData.documents?.domicile || false,
             },
-            
-            cgpa: studentData.cgpa || '',
-            section: studentData.section || '',
-            registrationNo: studentData.registrationNo || '',
-            rollNo: studentData.rollNo || ''
+
+            cgpa: studentData.cgpa || "",
+            section: studentData.section || "",
+            registrationNo: studentData.registrationNo || "",
+            rollNo: studentData.rollNo || "",
           });
         } else {
           toast.error("Student data not found");
           setNotFound(true);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.log("Error fetching student:", error);
@@ -151,37 +162,36 @@ const StudentUpdate = () => {
         } else if (error.response?.status === 401) {
           toast.error("Unauthorized! Please login again.");
           localStorage.removeItem("adminToken");
-          navigate('/admin/login');
+          navigate("/admin/login");
         } else {
           toast.error("Error fetching student details!");
         }
         setLoading(false);
       }
     };
-    
+
     fetchStudentById();
   }, [id, navigate]);
 
   // Handle input changes
   const handleInputChange = (e) => {
-
     const { name, value, type, checked } = e.target;
-    
-    if (name.includes('.')) {
+
+    if (name.includes(".")) {
       // Handle nested objects (enrollment.program, family.fatherName, etc.)
-      const [parent, child] = name.split('.');
-      setFormData(prev => ({
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: type === 'checkbox' ? checked : value
-        }
+          [child]: type === "checkbox" ? checked : value,
+        },
       }));
     } else {
       // Handle top-level fields
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: type === 'checkbox' ? checked : value
+        [name]: type === "checkbox" ? checked : value,
       }));
     }
   };
@@ -189,42 +199,46 @@ const StudentUpdate = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       setUpdating(true);
 
       const token = localStorage.getItem("adminToken");
-      
+      if (!token) {
+        toast.error("Not Authorized !!!!");
+        navigate("/admin/dashboard/students/list");
+        return;
+      }
       const res = await axios.put(
         `http://localhost:8000/api/admin/student/update/${id}`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       if (res.data.success) {
         toast.success("Student updated successfully!");
-        // navigate(`/admin/dashboard/students/view/${id}`);
+        navigate(`/admin/dashboard/students/view/${id}`);
       } else {
-        toast.error(res.data.message || 'Failed to update student');
+        toast.error(res.data.message || "Failed to update student");
       }
     } catch (error) {
       console.error("Error updating student:", error);
-      
+
       if (error.response?.status === 401) {
         toast.error("Unauthorized! Please login again.");
         localStorage.removeItem("adminToken");
-        navigate('/admin/login');
+        navigate("/admin/login");
       } else if (error.response?.status === 400) {
         // Validation errors or duplicate field
         if (error.response.data.errors) {
-          error.response.data.errors.forEach(err => toast.error(err));
+          error.response.data.errors.forEach((err) => toast.error(err));
         } else {
-          toast.error(error.response.data.message || 'Validation error');
+          toast.error(error.response.data.message || "Validation error");
         }
       } else if (error.response?.status === 404) {
         toast.error("Student not found!");
@@ -258,30 +272,37 @@ const StudentUpdate = () => {
           className="btn btn-primary mt-3"
           onClick={() => navigate("/admin/dashboard/students/list")}
         >
-          ← Back to Student List
+          <i className="fas fa-arrow-left me-2"></i> Back to Student List
         </button>
       </div>
     );
   }
 
   return (
-    <div className='student-update-container'>
-      <MDBContainer className='py-4'>
-        <MDBCard className='shadow-4'>
-          <MDBCardBody className=''>
+    <div className="student-update-container">
+      <MDBContainer className="py-4">
+        <MDBCard className="shadow-4">
+          <MDBCardBody className="">
             {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h3 className='text-primary fw-bold'>
+              <h3 className="text-primary fw-bold">
                 <i className="fas fa-edit me-2"></i>
                 Update Student Information
               </h3>
               <div>
-                <MDBBtn color='outline-primary' className='me-2' 
-                  onClick={() => navigate(`/admin/dashboard/students/view/${id}`)}>
+                <MDBBtn
+                  color="outline-primary"
+                  className="me-2"
+                  onClick={() =>
+                    navigate(`/admin/dashboard/students/view/${id}`)
+                  }
+                >
                   <i className="fas fa-eye me-2"></i>View
                 </MDBBtn>
-                <MDBBtn color='secondary' 
-                  onClick={() => navigate("/admin/dashboard/students/list")}>
+                <MDBBtn
+                  color="secondary"
+                  onClick={() => navigate("/admin/dashboard/students/list")}
+                >
                   ← Back to List
                 </MDBBtn>
               </div>
@@ -441,11 +462,11 @@ const StudentUpdate = () => {
                         onChange={handleInputChange}
                       >
                         <option value="pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Active">Active</option>
-                        <option value='assign'>Assign</option>
-                        <option value='unassigned'>UnAssigned</option>
-                        <option value="Suspend">Suspend</option>
+                        <option value="approved">Approved</option>
+                        <option value="active">Active</option>
+                        <option value="assign">Assign</option>
+                        <option value="unassigned">UnAssigned</option>
+                        <option value="suspend">Suspend</option>
                         <option value="rejected">Rejected</option>
                       </select>
                     </div>
@@ -697,7 +718,9 @@ const StudentUpdate = () => {
                           checked={formData.documents.cnic}
                           onChange={handleInputChange}
                         />
-                        <label className="form-check-label">CNIC Verified</label>
+                        <label className="form-check-label">
+                          CNIC Verified
+                        </label>
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -709,7 +732,9 @@ const StudentUpdate = () => {
                           checked={formData.documents.marksheet}
                           onChange={handleInputChange}
                         />
-                        <label className="form-check-label">Marksheet Verified</label>
+                        <label className="form-check-label">
+                          Marksheet Verified
+                        </label>
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -721,7 +746,9 @@ const StudentUpdate = () => {
                           checked={formData.documents.photo}
                           onChange={handleInputChange}
                         />
-                        <label className="form-check-label">Photo Verified</label>
+                        <label className="form-check-label">
+                          Photo Verified
+                        </label>
                       </div>
                     </div>
                     <div className="col-md-3">
@@ -733,7 +760,9 @@ const StudentUpdate = () => {
                           checked={formData.documents.domicile}
                           onChange={handleInputChange}
                         />
-                        <label className="form-check-label">Domicile Verified</label>
+                        <label className="form-check-label">
+                          Domicile Verified
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -742,7 +771,10 @@ const StudentUpdate = () => {
 
               {/* Form Actions */}
               <div className="d-flex justify-content-end gap-3">
-                <MDBBtn color="secondary" onClick={() => navigate("/admin/dashboard/students/list")}>
+                <MDBBtn
+                  color="secondary"
+                  onClick={() => navigate("/admin/dashboard/students/list")}
+                >
                   Cancel
                 </MDBBtn>
                 <MDBBtn type="submit" color="primary" disabled={updating}>

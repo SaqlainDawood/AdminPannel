@@ -62,102 +62,168 @@ const ViewFaculty = () => {
     );
   }
   if (!faculty) return <h1 className='text-center mt-10'>Loading.........</h1>
-
+// Add this function at the top of your component
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
   return (
     <>
-      <div className='table-responsive'>
-        <MDBContainer className='py-4'>
-          <MDBCard className='shadow-4'>
-            <MDBCardBody className=''>
-              <div className='d-flex justify-content-between align-item-center mb-4'>
-                <h3 className='text-primary fw-bold'>View Faculty Information</h3>
-              <button  className="btn btn-outline-primary"
-              onClick={()=>navigate('/admin/dashboard/faculty/list')}
-              >Back to List</button>
-              </div>
-              <MDBTable bordered hover responsive className="align-middle custom-table" >
-                <MDBTableHead>
-                  <tr className='text-center table-primary'>
-                    <th colSpan={4}>View Faculty Member</th>
-                  </tr>
-                  
-                </MDBTableHead>
-                <MDBTableBody>
-                  <tr>
-                    <th scope='col'>Facutly ID</th>
-                    <td className='text-success fw-bold'>{faculty?.employeeID}</td>
-                    <th scope='col'>Faculty Name</th>
-                    <td className='text-success fw-bold'>{faculty?.name}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Email</th>
-                    <td className='text-warning fw-bold'>{faculty?.email}</td>
-                    <th scope='col'>Designation</th>
-                    <td className='text-warning fw-bold'>{faculty?.designation}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Department</th>
-                    <td className='text-info fw-bold'>{faculty?.department}</td>
-                    <th scope='col'>Qualification</th>
-                    <td className='text-info fw-bold'>{faculty?.qualification}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Specialization</th>
-                    <td className='text-warning fw-bold'>{faculty?.specialization}</td>
-                    <th scope='col'>Experience Level</th>
-                    <td className='text-warning fw-bold'>{faculty?.experience}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Phone Number</th>
-                    <td className='text-info fw-bold'>{faculty?.phone}</td>
-                    <th scope='col'>Status</th>
-                    <td className='text-info fw-bold'>{faculty?.status}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>CNIC</th>
-                    <td className='text-success fw-bold'>{faculty.cnic}</td>
-                    <th scope='col'>City</th>
-                    <td className='text-warning fw-bold'>{faculty?.city}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Date of Birth</th>
-                    <td>{faculty.dateOfBirth}</td>
-                    <th scope='col'>Gender</th>
-                    <td className='text-success fw-bold'>{faculty?.gender}</td>
-                  </tr>
-                  <tr>
-                    <th>Salary</th>
-                    <td className='text-success fw-bold'>{faculty?.salary}</td>
-                    <th>Bank Name</th>
-                    <td className='text-danger fw-bold'>{faculty?.bankName}</td>
-                  </tr>
+     <div className='table-responsive'>
+  <MDBContainer className='py-4'>
+    <MDBCard className='shadow-4'>
+      <MDBCardBody className=''>
+        <div className='d-flex justify-content-between align-items-center mb-4'>
+          <h3 className='text-primary fw-bold'>Faculty Information</h3>
+          <button 
+            className="btn btn-outline-primary d-flex align-items-center gap-2"
+            onClick={() => navigate('/admin/dashboard/faculty/list')}
+          >
+           <i className="fas fa-arrow-left me-2"></i>Back
+          </button>
+        </div>
+        
+        <MDBTable bordered hover responsive className="align-middle custom-table">
+          <MDBTableHead>
+            <tr className='text-center table-primary'>
+              <th colSpan={4}>Faculty Details</th>
+            </tr>
+          </MDBTableHead>
+          
+          <MDBTableBody>
+            {/* Personal Information */}
+            <tr>
+              <th scope='col'>Faculty ID</th>
+              <td className='text-success fw-bold'>{faculty?.employeeID || "N/A"}</td>
+              <th scope='col'>Full Name</th>
+              <td className='text-success fw-bold'>{faculty?.name || "N/A"}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Email</th>
+              <td className='text-warning fw-bold'>{faculty?.user?.email || "N/A"}</td>
+              <th scope='col'>Phone Number</th>
+              <td className='text-warning fw-bold'>{faculty?.phone || "N/A"}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>CNIC</th>
+              <td className='text-info fw-bold'>{faculty?.cnic || "N/A"}</td>
+              <th scope='col'>Date of Birth</th>
+              <td className='text-info fw-bold'>{formatDate(faculty?.dateOfBirth)}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Gender</th>
+              <td className='text-warning fw-bold'>{faculty?.gender || "N/A"}</td>
+              <th scope='col'>City</th>
+              <td className='text-warning fw-bold'>{faculty?.city || "N/A"}</td>
+            </tr>
 
-                  <tr>
-                    <th scope='col'>Account Title</th>
-                    <td className='text-ternary fw-bold'>{faculty.accountTitle}</td>
-                    <th scope='col'>Account Number</th>
-                    <td>{faculty.accountNumber}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Emergency Contact Person</th>
-                    <td className='text-warning fw-bold'>{faculty.emergencyPerson}</td>
-                    <th scope='col'>Emergency Contact Number</th>
-                    <td className='text-info fw-bold'>{faculty?.emergencyContact}</td>
-                  </tr>
-                  <tr>
-                    <th scope='col'>Joining Date</th>
-                    <td colSpan={1} className='text-info fw-bold'>{faculty?.joiningDate}</td>
-                    <th scope='col'>User Name</th>
-                    <td colSpan={1} className='text-info fw-bold'>{faculty?.userName}</td>
-                  </tr>
-                </MDBTableBody>
-              </MDBTable>
-            </MDBCardBody>
+            {/* Professional Information */}
+            <tr className="table-info">
+              <th colSpan={4} className="text-center">Professional Information</th>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Designation</th>
+              <td className='text-success fw-bold'>{faculty?.designation || "N/A"}</td>
+              <th scope='col'>Department</th>
+              <td className='text-success fw-bold'>{faculty?.department || "N/A"}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Qualification</th>
+              <td className='text-warning fw-bold'>{faculty?.qualification || "N/A"}</td>
+              <th scope='col'>Specialization</th>
+              <td className='text-warning fw-bold'>{faculty?.specialization || "N/A"}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Experience Level</th>
+              <td colSpan={3} className='text-info fw-bold'>
+                {faculty?.experience ? `${faculty.experience} years` : "N/A"}
+              </td>
+            </tr>
 
-          </MDBCard>
+            {/* Employment Details */}
+            <tr className="table-warning">
+              <th colSpan={4} className="text-center">Employment Details</th>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Joining Date</th>
+              <td className='text-success fw-bold'>{formatDate(faculty?.joiningDate)}</td>
+              <th scope='col'>Status</th>
+              <td className='text-success fw-bold'>
+                <span className={`badge ${
+                  faculty?.status === 'Active' ? 'bg-success' :
+                  faculty?.status === 'Inactive' ? 'bg-warning' :
+                  faculty?.status === 'Suspended' ? 'bg-danger' : 'bg-secondary'
+                }`}>
+                  {faculty?.status || "N/A"}
+                </span>
+              </td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Salary</th>
+              <td className='text-warning fw-bold'>
+                {faculty?.salary ? `$${faculty.salary}` : "N/A"}
+              </td>
+              <th scope='col'>User Name</th>
+              <td className='text-warning fw-bold'>{faculty?.userName || "N/A"}</td>
+            </tr>
 
-        </MDBContainer>
-      </div>
+            {/* Bank Details */}
+            <tr className="table-success">
+              <th colSpan={4} className="text-center">Bank Details</th>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Bank Name</th>
+              <td className='text-success fw-bold'>{faculty?.bankName || "N/A"}</td>
+              <th scope='col'>Account Title</th>
+              <td className='text-success fw-bold'>{faculty?.accountTitle || "N/A"}</td>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Account Number</th>
+              <td colSpan={3} className='text-info fw-bold'>
+                {faculty?.accountNumber || "N/A"}
+              </td>
+            </tr>
+
+            {/* Emergency Contact */}
+            <tr className="table-info">
+              <th colSpan={4} className="text-center">Emergency Contact</th>
+            </tr>
+            
+            <tr>
+              <th scope='col'>Contact Person</th>
+              <td className='text-success fw-bold'>{faculty?.emergencyPerson || "N/A"}</td>
+              <th scope='col'>Contact Number</th>
+              <td className='text-success fw-bold'>{faculty?.emergencyContact || "N/A"}</td>
+            </tr>
+
+            {/* Additional Information */}
+            <tr>
+              <th scope='col'>Created At</th>
+              <td colSpan={3} className='text-muted'>
+                {formatDate(faculty?.createdAt)}
+              </td>
+            </tr>
+          </MDBTableBody>
+        </MDBTable>
+      </MDBCardBody>
+    </MDBCard>
+  </MDBContainer>
+</div>
     </>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import API from '../../api';
+import AdminAPI from '../../api';
 import './AdminRegister.css'; // New CSS file with unique class names
 
 const Register = () => {
@@ -42,7 +42,7 @@ const Register = () => {
     setLoading(true);
     
     try {
-      const res = await API.post('/register', {
+      const res = await AdminAPI.post('/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,

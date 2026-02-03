@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Student.css';
 import { toast } from 'react-toastify'
-import API from '../../../api'
+// import API from '../../../api'
+import axios from 'axios';
 const StudentApprovals = () => {
   const [pendingStudents, setPendingStudents] = useState([]);
   // {
@@ -93,13 +94,34 @@ const StudentApprovals = () => {
   const [actionType, setActionType] = useState(''); // 'approve' or 'reject'
   const [rejectReason, setRejectReason] = useState('');
   const [filter, setFilter] = useState('all');
+    const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchPendingStudents = async () => {
       try {
-        const res = await API.get("/stats/students/pending");
-        setPendingStudents(res.data)
+        const res = await axios.get("http://localhost:8000/api/admin/stats/students/pending");
+        //  console.log("API Response:", res.data); 
+          // Handle different API response structures
+        let studentsArray = [];
+        
+        if (Array.isArray(res.data)) {
+          studentsArray = res.data;
+        } else if (res.data && Array.isArray(res.data.students)) {
+          studentsArray = res.data.students;
+        } else if (res.data && Array.isArray(res.data.data)) {
+          studentsArray = res.data.data;
+        } else if (res.data && Array.isArray(res.data.pendingStudents)) {
+          studentsArray = res.data.pendingStudents;
+        } else {
+          console.error("Unexpected API structure:", res.data);
+          toast.error("Unexpected data format received");
+        }
+        setPendingStudents(studentsArray)
       } catch (error) {
         console.log("Fetch Pending students Error!!!", error)
+        toast.error("Failed to load pending students");
+        setPendingStudents([]);
+      }finally {
+        setLoading(false);
       }
     }
     fetchPendingStudents();
@@ -121,14 +143,14 @@ const StudentApprovals = () => {
     if (!selectedStudent) return;
     try {
       if (actionType === 'approve') {
-        const res = await API.put(`/stats/students/approve/${selectedStudent._id}`)
+        const res = await axios.put(`http://localhost:8000/api/admin/stats/students/approve/${selectedStudent._id}`)
         if (res.data.success) {
           toast.success(`${selectedStudent.firstName} ${selectedStudent.lastName} are approved Successfully`)
           setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));
         }
       }
       else if (actionType === 'rejected') {
-        const res = await API.put(`/stats/students/rejected/${selectedStudent._id}`, {
+        const res = await axios.put(`/stats/students/rejected/${selectedStudent._id}`, {
           rejectionReason: rejectReason
         });
         if (res.data.success) {
@@ -161,7 +183,18 @@ const StudentApprovals = () => {
       );
 
   const departments = ['all', ...new Set(pendingStudents.map(s => s.department))];
-
+       if (loading) {
+    return (
+      <div className="approvals-container">
+        <div className="container-fluid text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3">Loading pending approvals...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="approvals-container">
       <div className="container-fluid">

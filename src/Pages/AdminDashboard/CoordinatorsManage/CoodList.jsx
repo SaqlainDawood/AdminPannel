@@ -1,91 +1,120 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Coordinator.css';
+import React, { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import "./Coordinator.css";
+import { useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CoodList = () => {
-  const [coordinators, setCoordinators] = useState([
-    {
-      id: 1,
-      coordId: 'COORD-001',
-      name: 'Dr. Sarah Ahmed',
-      email: 'sarah.ahmed@university.edu.pk',
-      phone: '+92 300 1234567',
-      department: 'Computer Science',
-      role: 'Department Coordinator',
-      assignedPrograms: ['BS Computer Science', 'MS Computer Science'],
-      studentsManaged: 450,
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
-      joiningDate: '2020-01-15'
-    },
-    {
-      id: 2,
-      coordId: 'COORD-002',
-      name: 'Engr. Usman Ali',
-      email: 'usman.ali@university.edu.pk',
-      phone: '+92 301 2345678',
-      department: 'Electrical Engineering',
-      role: 'Semester Coordinator',
-      assignedPrograms: ['BS Electrical Engineering'],
-      studentsManaged: 320,
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop',
-      joiningDate: '2021-03-20'
-    },
-    {
-      id: 3,
-      coordId: 'COORD-003',
-      name: 'Dr. Fatima Khan',
-      email: 'fatima.khan@university.edu.pk',
-      phone: '+92 302 3456789',
-      department: 'Mechanical Engineering',
-      role: 'Examination Coordinator',
-      assignedPrograms: ['BS Mechanical Engineering'],
-      studentsManaged: 280,
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-      joiningDate: '2019-09-01'
-    },
-    {
-      id: 4,
-      coordId: 'COORD-004',
-      name: 'Engr. Hassan Raza',
-      email: 'hassan.raza@university.edu.pk',
-      phone: '+92 303 4567890',
-      department: 'Software Engineering',
-      role: 'Department Coordinator',
-      assignedPrograms: ['BS Software Engineering'],
-      studentsManaged: 380,
-      status: 'On Leave',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
-      joiningDate: '2020-06-15'
-    }
-  ]);
+  const [coordinators, setCoordinators] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterDepartment, setFilterDepartment] = useState("all");
+  const [filterRole, setFilterRole] = useState("all");
+  const departments = [
+    "all",
+    ...new Set(coordinators.map((c) => c.department)),
+  ];
+  const roles = [
+    "all",
+    "Department Coordinator",
+    "Semester Coordinator",
+    "Program Coordinator",
+    "Fee Coordinator",
+    "Examination Coordinator",
+  ];
+  const filteredCoordinators = coordinators.filter((coord) => {
+    const matchesSearch =
+      coord.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      coord.coordId.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesDepartment =
+      filterDepartment === "all" || coord.department === filterDepartment;
+    const matchesRole = filterRole === "all" || coord.role === filterRole;
 
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterDepartment, setFilterDepartment] = useState('all');
-  const [filterRole, setFilterRole] = useState('all');
-
-  const departments = ['all', ...new Set(coordinators.map(c => c.department))];
-  const roles = ['all', 'Department Coordinator', 'Semester Coordinator', 'Program Coordinator' , 'Fee Coordinator', 'Examination Coordinator'];
-
-  const filteredCoordinators = coordinators.filter(coord => {
-    const matchesSearch = coord.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         coord.coordId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = filterDepartment === 'all' || coord.department === filterDepartment;
-    const matchesRole = filterRole === 'all' || coord.role === filterRole;
-    
     return matchesSearch && matchesDepartment && matchesRole;
   });
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchCoordinator = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          console.log("No Token Found. Redirecting to Login Page");
+          window.location.href = "/login";
+          return;
+        }
+        const res = await axios.get(
+          "http://localhost:8000/api/admin/coordinator/all",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        console.log("API Response:", res.data);
+        if (res.data.success) {
+          setCoordinators(res.data.data?.coordinators || []);
+        }
+      } catch (error) {
+        console.log("Error for fetching the coordinator data : ", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("adminToken");
+          localStorage.removeItem("adminData");
+          window.location.href = "/login";
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCoordinator();
+  }, []);
+  const handleDelete = async (id) => {
+    if (!id) {
+      toast.error(`Invalid Coordinator ID ${id}`);
+    }
+    const confirmDelCoord = window.confirm("Are you sure you want to delete this coordiantor ?");
+    if (!confirmDelCoord) return;
+    const coordMember = coordinators.find((c) => c._id === id);
+    try {
+      const token = localStorage.getItem("adminToken");
+      if(!token){
+        toast.error("No Token Found!! Admin not loggin");
+        return;
+      }
+       toast.info("Deleting coordinator...");
+      const res = await axios.delete(
+        `http://localhost:8000/api/admin/coordinator/delete/${id}`,{
+          headers:{
+            'Authorization':`Bearer ${token}`,
+            'Content-Type':'application/json',
+          }
+        }
+      );
+      if (res.status === 200 && res.data.success) {
+        toast.success(`Coordinator ${coordMember?.name|| ""} deleted successfully`);
+        setCoordinators((prev) => prev.filter((cord) => cord._id !== id));
+      }
+    } catch (error) {
+      console.log("Error for deleting the coordinator");
+      toast.error(
+        error.response?.data?.message || "Faculty not deleted! (Server error)",
+      );
+    }
+  };
   const getStatusBadge = (status) => {
     const config = {
-      'Active': { class: 'badge-success', icon: 'fa-check-circle' },
-      'On Leave': { class: 'badge-warning', icon: 'fa-exclamation-circle' },
-      'Inactive': { class: 'badge-secondary', icon: 'fa-times-circle' }
-    };
-    const c = config[status] || config['Active'];
+        'active':{class:"badge-success", icon: "fa-check-circle"},
+        'on_leave':{ class: "badge-warning", icon: "fa-exclamation-circle"},
+        'inactive':{ class: "badge-secondary", icon: "fa-times-circle"},
+    }
+    const c = config[status] || "N/A";
+    // const config = {
+    //   Active: { class: "badge-success", icon: "fa-check-circle" },
+    //   "On Leave": { class: "badge-warning", icon: "fa-exclamation-circle" },
+    //   Inactive: { class: "badge-secondary", icon: "fa-times-circle" },
+    // };
+    // const c = config[status] || config["Active"];
     return (
       <span className={`status-badge ${c.class}`}>
         <i className={`fas ${c.icon} me-1`}></i>
@@ -93,7 +122,18 @@ const CoodList = () => {
       </span>
     );
   };
-
+  if (loading) {
+    return (
+      <div className="approvals-container">
+        <div className="container-fluid text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="mt-3 text-success fw-bold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="cood-list-container">
       <div className="container-fluid">
@@ -108,7 +148,10 @@ const CoodList = () => {
             </p>
           </div>
           <div className="header-actions">
-            <Link to="/admin/dashboard/coordinators/add" className="btn btn-primary btn-lg">
+            <Link
+              to="/admin/dashboard/coordinators/add"
+              className="btn btn-primary btn-lg"
+            >
               <i className="fas fa-user-plus me-2"></i>Add Coordinator
             </Link>
           </div>
@@ -133,19 +176,14 @@ const CoodList = () => {
                 <i className="fas fa-user-check"></i>
               </div>
               <div className="stat-info">
-                <h3>{coordinators.filter(c => c.status === 'Active').length}</h3>
+                <h3>
+                  {
+                    coordinators.filter(
+                      (c) => c.status === "active" || c.status === "Active",
+                    ).length
+                  }
+                </h3>
                 <p>Active</p>
-              </div>
-            </div>
-          </div>
-          <div className="col-6 col-md-3">
-            <div className="stat-card-small">
-              <div className="stat-icon bg-info">
-                <i className="fas fa-users"></i>
-              </div>
-              <div className="stat-info">
-                <h3>{coordinators.reduce((sum, c) => sum + c.studentsManaged, 0)}</h3>
-                <p>Students Managed</p>
               </div>
             </div>
           </div>
@@ -184,9 +222,9 @@ const CoodList = () => {
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
             >
-              {departments.map(dept => (
+              {departments.map((dept) => (
                 <option key={dept} value={dept}>
-                  {dept === 'all' ? 'All Departments' : dept}
+                  {dept === "all" ? "All Departments" : dept}
                 </option>
               ))}
             </select>
@@ -195,9 +233,9 @@ const CoodList = () => {
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
             >
-              {roles.map(role => (
+              {roles.map((role) => (
                 <option key={role} value={role}>
-                  {role === 'all' ? 'All Roles' : role}
+                  {role === "all" ? "All Roles" : role}
                 </option>
               ))}
             </select>
@@ -205,15 +243,19 @@ const CoodList = () => {
 
           {/* Coordinators Grid */}
           <div className="coordinators-grid">
-            {filteredCoordinators.map(coord => (
-              <div key={coord.id} className="coordinator-card">
+            {filteredCoordinators.map((coord) => (
+              <div key={coord._id} className="coordinator-card">
                 <div className="coord-card-header">
-                  <img src={coord.image} alt={coord.name} className="coord-avatar" />
+                  <img
+                    src={coord.profileImage?.url}
+                    alt={coord.name}
+                    className="coord-avatar"
+                  />
                   {getStatusBadge(coord.status)}
                 </div>
                 <div className="coord-card-body">
-                  <h3 className="coord-name">{coord.name}</h3>
-                  <p className="coord-role">{coord.role}</p>
+                  <h3 className="coord-name">{coord.name || "No Name"}</h3>
+                  <p className="coord-role">{coord.coordinatorRole}</p>
                   <p className="coord-id">
                     <i className="fas fa-id-badge me-2"></i>
                     {coord.coordId}
@@ -224,21 +266,21 @@ const CoodList = () => {
                   </p>
                   <p className="coord-detail">
                     <i className="fas fa-envelope me-2"></i>
-                    {coord.email}
+                    {coord.user?.email}
                   </p>
                   <p className="coord-detail">
                     <i className="fas fa-phone me-2"></i>
                     {coord.phone}
                   </p>
-                  
-                  <div className="programs-section">
+
+                  {/* <div className="programs-section">
                     <h4>Assigned Programs</h4>
                     {coord.assignedPrograms.map((program, index) => (
                       <span key={index} className="program-badge">
                         {program}
                       </span>
                     ))}
-                  </div>
+                  </div> */}
 
                   <div className="coord-stats">
                     <div className="stat-item">
@@ -247,18 +289,34 @@ const CoodList = () => {
                     </div>
                     <div className="stat-item">
                       <i className="fas fa-calendar"></i>
-                      <span>Since {new Date(coord.joiningDate).getFullYear()}</span>
+                      <span>
+                        Since {new Date(coord.joiningDate).getFullYear()}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div className="coord-card-footer">
-                  <button className="btn-action btn-view" title="View Details">
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/admin/dashboard/coordinators/view/${coord._id}`,
+                      )
+                    }
+                    className="btn-action btn-view"
+                    title="View Details"
+                  >
                     <i className="fas fa-eye"></i>
                   </button>
-                  <button className="btn-action btn-edit" title="Edit">
+                  <button 
+                  onClick={()=>navigate(`/admin/dashboard/coordinators/update/${coord._id}`)} 
+                  className="btn-action btn-edit" title="Edit">
                     <i className="fas fa-edit"></i>
                   </button>
-                  <button className="btn-action btn-delete" title="Remove">
+                  <button
+                    onClick={() => handleDelete(coord._id)}
+                    className="btn-action btn-delete"
+                    title="Remove"
+                  >
                     <i className="fas fa-trash"></i>
                   </button>
                 </div>

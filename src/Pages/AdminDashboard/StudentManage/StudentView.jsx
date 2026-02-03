@@ -47,11 +47,9 @@ const StudentView = () => {
           toast.error("Student data not found in response");
           setNotFound(true);
         }
-        
         setLoading(false);
       } catch (error) {
         console.log("Error fetching Student by id:", error);
-        
         // FIXED: error.response instead of error.res
         if (error.response && error.response.status === 404) {
           setNotFound(true);
@@ -114,7 +112,7 @@ const StudentView = () => {
                 className="btn btn-outline-primary"
                 onClick={() => navigate("/admin/dashboard/students/list")}
               >
-                ← Back to List
+               <i className="fas fa-arrow-left me-2"></i>
               </button>
             </div>
             
@@ -126,6 +124,7 @@ const StudentView = () => {
               </MDBTableHead>
               <MDBTableBody>
                 {/* Personal Information */}
+                
                 <tr>
                   <th scope='col'>Roll Number</th>
                   <td className='text-success fw-bold'>{student.rollNo || 'N/A'}</td>

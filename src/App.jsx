@@ -28,8 +28,9 @@ import ViewFaculty from './Pages/AdminDashboard/FacultyManage/ViewFaculty'
 import StudentView from './Pages/AdminDashboard/StudentManage/StudentView'
 import StudentUpdate from './Pages/AdminDashboard/StudentManage/StudentUpdate'
 import CoordinatorLogin from './CoordinatorForm/Login'
-
-
+import CoordinatorDashboard from './CoordinatorDashboard/CoordSideNav/CoordSideNav'
+import CoodView from './Pages/AdminDashboard/CoordinatorsManage/CoodView'
+import CoodUpdate from './Pages/AdminDashboard/CoordinatorsManage/CoodUpdate'
 function App() {
 
   return (
@@ -64,6 +65,8 @@ function App() {
               <Route index element={<Navigate to='list' replace />} />
               <Route path='list' element={<CoodList />} />
               <Route path='add' element={<CoodAdd />} />
+              <Route path='view/:id' element={<CoodView/>}/>
+              <Route path='update/:id' element={<CoodUpdate/>}/>
             </Route>
 
             <Route path='fee'>
@@ -85,6 +88,8 @@ function App() {
             <Route path="system-settings" element={<SystemSett />} />
          </Route>
             <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+            {/* Coordinator Side */}
+          <Route path="/coordinator" element={<CoordinatorDashboard/>}/>
         </Routes>
       </Router>
       <ToastContainer position="top-right" autoClose={3000} />

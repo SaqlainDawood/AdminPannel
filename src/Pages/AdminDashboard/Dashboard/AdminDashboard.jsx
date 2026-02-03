@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import axios from 'axios'
+import AdminAPI from '../../../api'
 import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 const Dashboard = () => {
   const [error , setError] = useState("")
   const [stats, setStats] = useState({});
@@ -19,7 +20,8 @@ const Dashboard = () => {
          }
          const res = await axios.get("http://localhost:8000/api/admin/stats/total-students",{
           headers:{
-            Authorization:`Bearer ${token}`
+            'Authorization':`Bearer ${token}`,
+            "Content-Type":'application/json'
           }
          })
           if(res.data.success){
