@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AdminAPI from '../../api'
-import axios from 'axios'
+
 import './AdminLogin.css'; // We'll create this CSS file
 
 export default function AdminLogin() {
@@ -30,6 +30,7 @@ export default function AdminLogin() {
     setLoading(true);
     
     try {
+      console.log("API URL:", import.meta.env.VITE_API_URL);
       const res = await AdminAPI.post('/login', {
         email: login.email,
         password: login.password,
