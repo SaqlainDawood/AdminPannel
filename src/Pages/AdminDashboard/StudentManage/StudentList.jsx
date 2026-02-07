@@ -143,7 +143,6 @@ const StudentList = () => {
     fetchallStudentList();
   }, [navigate]);
 
-
   const handleDeleteStudent = async (studentId, studentName) => {
 
     setDeleteLoading(studentId);
@@ -233,8 +232,16 @@ const StudentList = () => {
       setLoading(false);
     }
   }
+  useEffect(()=>{
+    console.log(
+      students.map(s=>({
+        name:`${s.firstName} ${s.lastName}`,
+        department:`${s.enrollment?.department}`
+      }))
+    )
+  },[students]);
 // Get unique departments
-const departments = ['all', ...new Set(students.map(s => s.department))];
+const departments = ['all', ...new Set(students.map(s => s.enrollment?.department).filter(Boolean))];
 const semesters = ['all', '2nd', '4th', '5th', '6th', '8th'];
 
 // Filter students
