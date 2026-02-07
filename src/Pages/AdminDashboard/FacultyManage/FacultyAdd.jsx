@@ -91,7 +91,7 @@ const FacultyAdd = () => {
             'Content-Type': 'multipart/form-data',
           }
         })
-         console.log("✅ Backend Response:", res.data); 
+        //  console.log("✅ Backend Response:", res.data); 
     console.log("📧 Form Email:", formData.email);
       if (res.data.success) {
         setRegisteredFaculty({
@@ -100,16 +100,10 @@ const FacultyAdd = () => {
           employeeID: formData.employeeID,
           department: formData.department,
           designation: formData.designation,
-          userName: formData.userName,         // Add this
-          password: formData.password,         // Add this
-          joiningDate: formData.joiningDate    // Add this
-        });
-              console.log("✅ registeredFaculty state:", {  // Add this
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        // ... other fields
-      });
-      
+          userName: formData.userName,        
+          password: formData.password,        
+          joiningDate: formData.joiningDate   
+        });      
         setShowSuccessModal(true);
         // toast.success('Faculty member added successfully!');
         setFormData({
