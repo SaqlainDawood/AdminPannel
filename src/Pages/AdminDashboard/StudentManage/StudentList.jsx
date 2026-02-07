@@ -232,14 +232,6 @@ const StudentList = () => {
       setLoading(false);
     }
   }
-  useEffect(()=>{
-    console.log(
-      students.map(s=>({
-        name:`${s.firstName} ${s.lastName}`,
-        department:`${s.enrollment?.department}`
-      }))
-    )
-  },[students]);
 // Get unique departments
 const departments = ['all', ...new Set(students.map(s => s.enrollment?.department).filter(Boolean))];
 const semesters = ['all', '2nd', '4th', '5th', '6th', '8th'];
@@ -319,7 +311,7 @@ const getStatusBadge = (status) => {
     // Your actual database values from schema
     'active': { 
       class: 'badge-success', 
-      icon: 'fa-check-circle',
+      icon: 'fa-user-check',
       label: 'Active'
     },
     'approved': { 
