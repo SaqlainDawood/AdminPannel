@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Faculty.css';
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import AdminAPI from '../../../api';
 const FacultyAdd = () => {
   const navigate = useNavigate();
 
@@ -83,7 +84,7 @@ const FacultyAdd = () => {
       if (profileImage) {
         submitData.append('profileImage', profileImage);
       }
-      const res = await axios.post('http://localhost:8000/api/faculty/add',
+      const res = await AdminAPI.post('/faculty/add',
         submitData,
         {
           headers: {
