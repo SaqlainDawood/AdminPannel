@@ -3,6 +3,7 @@ import './Student.css';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'
+import AdminAPI from '../../../api';
 const StudentAssign = () => {
   const navigate = useNavigate();
   const [newStudents, setNewStudents] = useState([]);
@@ -78,7 +79,7 @@ const handleRegistrationChange = (_id, registrationNo) => {
           navigate('/admin/login');
           return;
         }
-        const res = await axios.get("http://localhost:8000/api/admin/stats/students/unassign",
+        const res = await AdminAPI.get("/stats/students/unassign",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -124,7 +125,7 @@ const handleRegistrationChange = (_id, registrationNo) => {
         toast.error("No Token exist , Unauthorized");
         return;
       }
-      const res = await axios.put("http://localhost:8000/api/admin/stats/students/assign/",
+      const res = await AdminAPI.put("/stats/students/assign/",
          { assignedStudents: studentsToAssign },
         {
           headers:{

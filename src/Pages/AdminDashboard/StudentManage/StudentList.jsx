@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Student.css';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import AdminAPI from '../../../api';
 const StudentList = () => {
   const [students, setStudents] = useState([]);
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ const StudentList = () => {
           navigate('/admin/login');
           return;
         }
-        const res = await axios.get("http://localhost:8000/api/admin/stats/students/all", {
+        const res = await AdminAPI.get("/stats/students/all", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -198,7 +199,7 @@ const StudentList = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
-      const res = await axios.post("http://localhost:8000/api/admin/student/delete-bulk",
+      const res = await AdminAPI.post("/student/delete-bulk",
         { studentIds: selectedStudents },
         {
           headers: {

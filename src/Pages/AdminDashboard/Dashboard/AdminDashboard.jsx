@@ -18,7 +18,7 @@ const Dashboard = () => {
           toast.error("No token found! Please Login Again");
           return;
          }
-         const res = await axios.get("http://localhost:8000/api/admin/stats/total-students",{
+         const res = await AdminAPI.get("/stats/total-students",{
           headers:{
             'Authorization':`Bearer ${token}`,
             "Content-Type":'application/json'

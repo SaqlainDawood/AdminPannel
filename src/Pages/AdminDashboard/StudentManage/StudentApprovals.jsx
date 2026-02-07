@@ -3,6 +3,7 @@ import './Student.css';
 import { toast } from 'react-toastify'
 // import API from '../../../api'
 import axios from 'axios';
+import AdminAPI from '../../../api';
 const StudentApprovals = () => {
   const [pendingStudents, setPendingStudents] = useState([]);
   // {
@@ -98,7 +99,7 @@ const StudentApprovals = () => {
   useEffect(() => {
     const fetchPendingStudents = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/admin/stats/students/pending");
+        const res = await AdminAPI.get("/stats/students/pending");
         //  console.log("API Response:", res.data); 
           // Handle different API response structures
         let studentsArray = [];
@@ -143,7 +144,7 @@ const StudentApprovals = () => {
     if (!selectedStudent) return;
     try {
       if (actionType === 'approve') {
-        const res = await axios.put(`http://localhost:8000/api/admin/stats/students/approve/${selectedStudent._id}`)
+        const res = await AdminAPI.put(`/stats/students/approve/${selectedStudent._id}`)
         if (res.data.success) {
           toast.success(`${selectedStudent.firstName} ${selectedStudent.lastName} are approved Successfully`)
           setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));

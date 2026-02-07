@@ -11,6 +11,7 @@ import {
   MDBBtn,
   MDBSpinner,
 } from "mdb-react-ui-kit";
+import AdminAPI from "../../../api";
 
 const StudentUpdate = () => {
   const { id } = useParams();
@@ -209,8 +210,8 @@ const StudentUpdate = () => {
         navigate("/admin/dashboard/students/list");
         return;
       }
-      const res = await axios.put(
-        `http://localhost:8000/api/admin/student/update/${id}`,
+      const res = await AdminAPI.put(
+        `/student/update/${id}`,
         formData,
         {
           headers: {

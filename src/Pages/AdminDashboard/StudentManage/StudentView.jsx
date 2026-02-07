@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify'
 import { MDBNavbar, MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBNavbarBrand, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
+import AdminAPI from '../../../api';
 
 const StudentView = () => {
   const { id } = useParams();
@@ -30,7 +31,7 @@ const StudentView = () => {
           }, 2000);
           return;
         }
-        const res = await axios.get(`http://localhost:8000/api/admin/student/view/${id}`,
+        const res = await AdminAPI.get(`/student/view/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
