@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import axios from 'axios'
 import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
+import AdminAPI from '../../../api';
 const FacultyList = () => {
   const [faculty, setFaculty] = useState([]);
   const [loading , setLoading] = useState(true);
@@ -17,7 +18,7 @@ const navigate = useNavigate();
     useEffect(()=>{
       const fetchFaculties = async()=>{
         try {
-          const res = await axios.get("http://localhost:8000/api/faculty/all")
+          const res = await AdminAPI.get("/faculty/all")
           if(res.data.success){
             setFaculty(res.data.data);
             // console.log("Faculty Data:", res.data.data);
@@ -41,7 +42,7 @@ const navigate = useNavigate();
   
   const member = faculty.find(f => f._id === id);
   try {
-    const res = await axios.delete(`http://localhost:8000/api/faculty/${id}`)        
+    const res = await AdminAPI.delete(`/faculty/${id}`)        
     if(res.status === 200 && res.data.success){
       toast.success(`${member?.name || "Faculty"} was deleted successfully`)
       setFaculty((prev) => prev.filter((f) => f._id !== id));
