@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import AdminAPI from "../../../api";
 const CoodUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -197,8 +198,8 @@ const CoodUpdate = () => {
         return;
       }
 
-      const res = await axios.put(
-        `http://localhost:8000/api/admin/coordinator/update/${id}`,
+      const res = await AdminAPI.put(
+        `/coordinator/update/${id}`,
         formData,
         {
           headers: {

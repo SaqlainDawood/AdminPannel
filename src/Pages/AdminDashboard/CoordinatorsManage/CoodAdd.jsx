@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AdminAPI from "../../../api";
 
 const CoodAdd = () => {
   const navigate = useNavigate();
@@ -183,8 +184,8 @@ const CoodAdd = () => {
       if (degreeCertificate)
         formDataToSend.append("degreeCertificate", degreeCertificate);
 
-      const response = await axios.post(
-        "http://localhost:8000/api/admin/coordinator/register",
+      const response = await AdminAPI.post(
+        "/coordinator/register",
         formDataToSend,
         {
           headers: {

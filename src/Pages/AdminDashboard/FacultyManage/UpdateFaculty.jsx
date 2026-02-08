@@ -13,6 +13,7 @@ import {
   MDBCard,
   MDBCardBody,
 } from "mdb-react-ui-kit";
+import AdminAPI from "../../../api";
 
 const UpdateFaculty = () => {
   const { id } = useParams();
@@ -53,7 +54,7 @@ const UpdateFaculty = () => {
 
     const fetchFacultyData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/faculty/view/${id}`);
+        const res = await AdminAPI.get(`/faculty/view/${id}`);
         const facultyData = {
           ...res.data,
           experience:res.data.experience?parseInt(res.data.experience)||0:0

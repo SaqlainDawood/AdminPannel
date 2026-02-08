@@ -4,6 +4,7 @@ import "./Coordinator.css";
 import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AdminAPI from "../../../api";
 
 const CoodList = () => {
   const [coordinators, setCoordinators] = useState([]);
@@ -43,8 +44,8 @@ const CoodList = () => {
           window.location.href = "/login";
           return;
         }
-        const res = await axios.get(
-          "http://localhost:8000/api/admin/coordinator/all",
+        const res = await AdminAPI.get(
+          "/coordinator/all",
           {
             headers: {
               Authorization: `Bearer ${token}`,

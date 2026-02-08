@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Faculty.css';
 import { toast } from 'react-toastify'
-import axios from 'axios'
 import AdminAPI from '../../../api';
 const FacultyAdd = () => {
   const navigate = useNavigate();
@@ -91,7 +90,6 @@ const FacultyAdd = () => {
             'Content-Type': 'multipart/form-data',
           }
         })
-        //  console.log("✅ Backend Response:", res.data); 
     console.log("📧 Form Email:", formData.email);
       if (res.data.success) {
         setRegisteredFaculty({
@@ -134,9 +132,6 @@ const FacultyAdd = () => {
         })
         setProfileImage(null);
         setImagePreview('');
-
-
-        // navigate('/admin/dashboard/faculty/list');
       }
     } catch (error) {
       console.error('API Error:', error);

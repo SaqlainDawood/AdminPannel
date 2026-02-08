@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from "axios";
+import AdminAPI from "../../../api";
 const CoodView = () => {
   const { id } = useParams();
   const [viewCoord, setViewCoord] = useState([]);
@@ -39,8 +40,8 @@ const CoodView = () => {
           }, 2000);
           return;
         }
-        const res = await axios.get(
-          `http://localhost:8000/api/admin/coordinator/view/${id}`,
+        const res = await AdminAPI.get(
+          `/coordinator/view/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

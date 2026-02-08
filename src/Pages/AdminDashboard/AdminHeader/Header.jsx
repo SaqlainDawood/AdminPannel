@@ -57,9 +57,9 @@ const Header = () => {
       {/* Dropdown Menu for Mobile */}
       {menuOpen && (
         <div className="dropdown-menu">
-          <button className="dropdown-item">
+          {/* <button className="dropdown-item">
             <FaBell /> Notifications
-          </button>
+          </button> */}
           <button className="dropdown-item">
             <FaUserCircle /> Profile
           </button>
