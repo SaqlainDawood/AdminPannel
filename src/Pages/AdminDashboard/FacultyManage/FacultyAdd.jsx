@@ -173,7 +173,7 @@ const FacultyAdd = () => {
       joiningDate: registeredFaculty.joiningDate
     };
 
-    const res = await axios.post("http://localhost:8000/api/faculty/send-credential",
+    const res = await AdminAPI.post("/faculty/send-credential",
       emailData,
       {
         headers: {
