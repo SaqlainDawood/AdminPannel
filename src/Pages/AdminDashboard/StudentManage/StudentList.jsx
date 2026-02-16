@@ -152,7 +152,7 @@ const StudentList = () => {
     }
     try {
       const token = localStorage.getItem("adminToken")
-      const res = await axios.delete(`http://localhost:8000/api/admin/student/delete/${studentId}`, {
+      const res = await AdminAPI.delete(`/student/delete/${studentId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
