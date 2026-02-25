@@ -81,6 +81,16 @@ const navigate = useNavigate();
       ]
     },
     {
+      id: 'classes',
+      title: 'Assign Classes',
+      icon: 'fa-file-alt',
+      path: '/admin/dashboard/classes',
+      submenu: [
+        { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
+        { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path:'/admin/dashboard/class/listclass' },
+      ]
+    },
+    {
       id: 'attendance',
       title: 'Attendance',
       icon: 'fa-clipboard-check',

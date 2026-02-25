@@ -31,6 +31,8 @@ import CoordinatorLogin from './CoordinatorForm/Login'
 import CoordinatorDashboard from './CoordinatorDashboard/CoordSideNav/CoordSideNav'
 import CoodView from './Pages/AdminDashboard/CoordinatorsManage/CoodView'
 import CoodUpdate from './Pages/AdminDashboard/CoordinatorsManage/CoodUpdate'
+import CreateClass from '../../../Backend/Models/CreateClass'
+import ClassList from './Pages/AdminDashboard/Classes/ClassList'
 function App() {
 
   return (
@@ -79,6 +81,11 @@ function App() {
               <Route path='announcements' element={<ExamAnnouncements />} />
               <Route path='datesheets' element={<ExamDatesheets />} />
               <Route path='results' element={<ExamResults />} />
+            </Route>
+             <Route path='classes'>
+              <Route index element={<Navigate to='classes' replace />} />
+              <Route path='createclass' element={<CreateClass />} />
+              <Route path='listclass' element={<ClassList/>} />
             </Route>
 
             <Route path="attendance" element={<Attendance />} />
