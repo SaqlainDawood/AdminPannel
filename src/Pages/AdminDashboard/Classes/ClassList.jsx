@@ -13,7 +13,7 @@ const ClassList = () => {
       <MDBContainer fluid>
         <MDBNavbarBrand>Class Management</MDBNavbarBrand>
         <MDBInputGroup tag="form" className='d-flex w-auto mb-3'>
-          <MDBBtn className='me-1'>New Class</MDBBtn>
+          <MDBBtn >New Class</MDBBtn>
         </MDBInputGroup>
       </MDBContainer>
     </MDBNavbar>
