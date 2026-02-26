@@ -39,7 +39,7 @@ const Header = () => {
         </button>
         <div className="admin-user">
           {/* <FaUserCircle className="user-avatar" /> */}
-          <img src={adminImg} alt="" />
+          <img src={adminImg} className="user-avatar" alt="" />
           <span className="admin-name">Admin</span>
         </div>
         <button className="logout-btn" onClick={handleLogout}>
