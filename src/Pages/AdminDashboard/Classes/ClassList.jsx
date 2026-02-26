@@ -7,7 +7,6 @@ import {
   MDBIcon,
 } from "mdb-react-ui-kit";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { all } from "axios";
 const ClassList = () => {
   const naviage = useNavigate();
