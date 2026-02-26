@@ -43,11 +43,7 @@ const Header = () => {
           <img src={adminImg} className="user-avatar" alt="" />
           <span className="admin-name">Admin</span>
         </div>
-         <MDBBtn onClick={handleLogout}>Button</MDBBtn>
-        <button className="logout-btn" onClick={handleLogout}>
-          <FaSignOutAlt /> Logout
-        </button>
-
+         <MDBBtn className='me-1' color='danger' onClick={handleLogout}>Logout</MDBBtn>
         {/* Hamburger for mobile */}
         <button
           className="menu-toggle"
