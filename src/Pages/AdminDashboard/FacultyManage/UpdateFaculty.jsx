@@ -80,7 +80,7 @@ const UpdateFaculty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8000/api/faculty/update/${id}`, formData);
+      await AdminAPI.put(`/faculty/update/${id}`, formData);
       toast.success("Faculty updated successfully!");
       navigate("/admin/dashboard/faculty/list");
     } catch (error) {
