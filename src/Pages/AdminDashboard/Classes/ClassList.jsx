@@ -9,7 +9,7 @@ import {
 const ClassList = () => {
   return (
    <>
-   <MDBNavbar light bgColor='light'>
+   <MDBNavbar className='mt-2' light bgColor='light'>
       <MDBContainer fluid>
         <MDBNavbarBrand>Class Management</MDBNavbarBrand>
         <MDBInputGroup tag="form" className='d-flex w-auto mb-3'>
