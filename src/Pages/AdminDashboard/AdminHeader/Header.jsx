@@ -6,6 +6,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import {adminImg} from '../../../assets/Admin/passport.jpeg'
 import "./Header.css";
 import {useNavigate} from 'react-router-dom'
 const Header = () => {
@@ -37,7 +38,8 @@ const Header = () => {
           <span className="badge">3</span>
         </button>
         <div className="admin-user">
-          <FaUserCircle className="user-avatar" />
+          {/* <FaUserCircle className="user-avatar" /> */}
+          <img src={adminImg} alt="" />
           <span className="admin-name">Admin</span>
         </div>
         <button className="logout-btn" onClick={handleLogout}>
