@@ -131,8 +131,8 @@ const CoodUpdate = () => {
           return;
         }
 
-        const res = await axios.get(
-          `http://localhost:8000/api/admin/coordinator/view/${id}`,
+        const res = await AdminAPI.get(
+          `/coordinator/view/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
