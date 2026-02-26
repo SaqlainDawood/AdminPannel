@@ -2,7 +2,9 @@ import React from 'react'
 
 const CreateClass = () => {
   return (
-    <div>CreateClass</div>
+     <>
+     create class
+     </>
   )
 }
 
