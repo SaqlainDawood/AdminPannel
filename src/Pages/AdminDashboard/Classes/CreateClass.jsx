@@ -15,12 +15,20 @@ const CreateClass = () => {
         <div className='d-flex justify-content-between align-items-center mb-4'>
             <h3 className="text-primary fw-bold">
               <MDBIcon fas icon="plus-square" />
-              Assign Class
+              Create New Class  
             </h3>
             <MDBBtn color='secondary'
              className="me-1">
               [Stpet 1-3]
             </MDBBtn>
+        </div>
+        <div className="card mb-4 mt-4">
+           <div className="card-header bg-primary text-white">
+              <h5 className="mb-0">
+                     <i className="fas fa-user me-2"></i>
+                     Class Form..........
+                  </h5>
+           </div>
         </div>
         </MDBCardBody>
 
