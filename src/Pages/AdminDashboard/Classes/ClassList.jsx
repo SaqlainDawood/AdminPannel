@@ -3,7 +3,8 @@ import {
   MDBContainer,
   MDBNavbar,
   MDBNavbarBrand,
-  MDBBtn
+  MDBBtn,
+  MDBInputGroup
 } from 'mdb-react-ui-kit';
 const ClassList = () => {
   return (
