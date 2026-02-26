@@ -45,7 +45,7 @@ const ClassList = () => {
                     <i className="fas fa-search"></i>
                     <input
                       type="text"
-                      placeholder="Search by name, roll number, or email..."
+                      placeholder="Search by name, code, or teacher..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -114,7 +114,7 @@ const ClassList = () => {
                 )}
               </div>
 
-              <div className="card mb-4">
+              <div className="card mb-4 mt-2">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
                      <i className="fas fa-user me-2"></i>
