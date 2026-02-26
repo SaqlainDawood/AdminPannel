@@ -31,7 +31,7 @@ import CoordinatorLogin from './CoordinatorForm/Login'
 import CoordinatorDashboard from './CoordinatorDashboard/CoordSideNav/CoordSideNav'
 import CoodView from './Pages/AdminDashboard/CoordinatorsManage/CoodView'
 import CoodUpdate from './Pages/AdminDashboard/CoordinatorsManage/CoodUpdate'
-import CreateClass from '../../../Backend/Models/CreateClass'
+import CreateClass from './Pages/AdminDashboard/Classes/CreateClass'
 import ClassList from './Pages/AdminDashboard/Classes/ClassList'
 function App() {
 
