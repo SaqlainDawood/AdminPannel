@@ -6,7 +6,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import {adminImg} from '../../../assets/Admin/passport.jpeg'
+import adminImg from '../../../assets/Admin/passport.jpeg'
 import "./Header.css";
 import {useNavigate} from 'react-router-dom'
 const Header = () => {
