@@ -83,7 +83,7 @@ function App() {
               <Route path='results' element={<ExamResults />} />
             </Route>
              <Route path='classes'>
-              <Route index element={<Navigate to='classes' replace />} />
+              <Route index element={<Navigate to='createclass' replace />} />
               <Route path='createclass' element={<CreateClass />} />
               <Route path='listclass' element={<ClassList/>} />
             </Route>
