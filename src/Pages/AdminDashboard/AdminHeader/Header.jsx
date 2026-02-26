@@ -6,6 +6,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { MDBBtn } from 'mdb-react-ui-kit';
 import adminImg from '../../../assets/Admin/passport.jpeg'
 import "./Header.css";
 import {useNavigate} from 'react-router-dom'
@@ -42,6 +43,7 @@ const Header = () => {
           <img src={adminImg} className="user-avatar" alt="" />
           <span className="admin-name">Admin</span>
         </div>
+         <MDBBtn onClick={handleLogout}>Button</MDBBtn>
         <button className="logout-btn" onClick={handleLogout}>
           <FaSignOutAlt /> Logout
         </button>
