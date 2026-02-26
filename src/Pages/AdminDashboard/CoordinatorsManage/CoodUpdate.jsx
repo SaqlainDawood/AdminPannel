@@ -9,7 +9,6 @@ import {
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import AdminAPI from "../../../api";
 const CoodUpdate = () => {
   const { id } = useParams();

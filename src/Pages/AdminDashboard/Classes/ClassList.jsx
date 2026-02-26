@@ -1,22 +1,40 @@
 import React from 'react'
 import {
   MDBContainer,
-  MDBNavbar,
-  MDBNavbarBrand,
+  MDBCard,
+  MDBCardBody,
   MDBBtn,
-  MDBInputGroup
-} from 'mdb-react-ui-kit';
+  MDBIcon,
+  
+} from "mdb-react-ui-kit";
+import { Navigate, useNavigate } from 'react-router-dom';
 const ClassList = () => {
+  const naviage = useNavigate();
   return (
    <>
-   <MDBNavbar className='mt-2' light bgColor='light'>
-      <MDBContainer fluid>
-        <MDBNavbarBrand>Class Management</MDBNavbarBrand>
-        <MDBInputGroup tag="form" className='d-flex w-auto mb-3'>
-          <MDBBtn >New Class</MDBBtn>
-        </MDBInputGroup>
+   <div className="coordinator-update-container">
+      <MDBContainer className="py-4">
+        <MDBCard className='shadow-4'>
+           <MDBCardBody className="">
+            <div className='d-flex justify-content-between align-items-center mb-4'>
+               <h3 className="text-primary fw-bold">
+                <i className="fas fa-user-edit me-2"></i>
+                Class Management
+               </h3>
+              <div>
+               <MDBBtn className='me-1'
+               color='secondary'
+               onClick={()=>naviage('/admin/dashboard/classes/createclass')}
+               >
+                  Create Class
+                  <MDBIcon fas icon="bible" />
+               </MDBBtn>
+              </div>
+            </div>
+           </MDBCardBody>
+        </MDBCard>
       </MDBContainer>
-    </MDBNavbar>
+   </div>
    </>
   )
 }
