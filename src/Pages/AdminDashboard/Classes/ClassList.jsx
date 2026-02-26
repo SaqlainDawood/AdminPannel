@@ -17,7 +17,7 @@ const ClassList = () => {
   const [showFilters, setShowFilters] = useState(false);
   return (
     <>
-      <div className="coordinator-update-container">
+      <div className="">
         <MDBContainer className="py-4">
           <MDBCard className="shadow-4">
             <MDBCardBody className="">
@@ -114,7 +114,7 @@ const ClassList = () => {
                 )}
               </div>
 
-              <div className="card mb-4 mt-2">
+              <div className="card mb-4 mt-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
                      <i className="fas fa-user me-2"></i>
