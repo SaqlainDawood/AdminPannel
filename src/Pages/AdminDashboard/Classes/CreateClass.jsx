@@ -83,7 +83,9 @@ const CreateClass = () => {
                  </div>
                  <div className="col-md-6">
                    <label className="form-label">Department</label>
-                  <select name="department"
+                  <select 
+                    className="form-select"
+                  name="department"
                   value={formData.department}
                  onChange={handleChange}>
                   <option value="">Select Type</option>
@@ -107,7 +109,9 @@ const CreateClass = () => {
                  
                   <div className="col-md-6">
                    <label className="form-label">Semester</label>
-                 <select name="semester"
+                 <select
+                   className="form-select"
+                 name="semester"
                  value={formData.semester}
                  onChange={handleChange} >
                   <option value="1">1st</option>
@@ -123,7 +127,9 @@ const CreateClass = () => {
 
                   <div className="col-md-6">
                    <label className="form-label">Section</label>
-                   <select name="section"
+                   <select
+                     name="section"
+                     className="form-select"
                     value={formData.section} 
                     onChange={handleChange}
                   >
@@ -145,7 +151,9 @@ const CreateClass = () => {
                  
                   <div className="col-md-6">
                    <label className="form-label">Credit Hours</label>
-                  <select name="creditHours"
+                  <select
+                    className="form-select"
+                   name="creditHours"
                   value={formData.creditHours}
                   onChange={handleChange}>
                     <option value="1">1</option>
