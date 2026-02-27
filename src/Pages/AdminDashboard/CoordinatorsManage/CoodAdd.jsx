@@ -308,42 +308,6 @@ const CoodAdd = () => {
         <form onSubmit={handleSubmit}>
           <div className="row g-4">
             <div className="col-12">
-              {/* <div className="form-section-card">
-                <h3 className="section-title">
-                  <i className="fas fa-camera me-2"></i>
-                  <h3>Profile Photo</h3>
-                </h3>
-                  
-                <div className="row g-3">
-                  <div className="col-md-4">
-                    <div className="image-upload-area">
-                      {imagePreview ? (
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="image-preview"
-                        />
-                      ) : (
-                        <div className="upload-placeholder">
-                          <i className="fas fa-user-circle"></i>
-                          <p>Upload Photo</p>
-                        </div>
-                      )}
-                      <input
-                        type="file"
-                        id="profileImage"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="file-input"
-                      />
-                      <label htmlFor="profileImage" className="upload-btn">
-                        <i className="fas fa-cloud-upload-alt me-2"></i>
-                        Choose Photo
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
               {/* Personal Information */}
               <div className="form-section-card">
                 <h3 className="section-title">

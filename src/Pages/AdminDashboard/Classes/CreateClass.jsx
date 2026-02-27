@@ -7,8 +7,14 @@ import {
   MDBIcon,
 } from "mdb-react-ui-kit";
 const CreateClass = () => {
+  const [formData , setFormData] = useState({
+   
+  })
   const handleSubmit = async(e)=>{
     
+  }
+  const handleChange = async(e)=>{
+
   }
   return (
      <>
@@ -25,14 +31,16 @@ const CreateClass = () => {
               [Step 1-3]
             </MDBBtn>
         </div>
-        <div className="card mb-4 mt-4">
+       <form onClick={handleSubmit}>
+         <div className="card mb-4 mt-4">
            <div className="card-header bg-primary text-white">
               <h5 className="mb-0">
-                     <i className="fas fa-user me-2"></i>                
+                     <i className="fas fa-user me-2"></i>    
+                     Assign Class            
                   </h5>
            </div>
-           
         </div>
+       </form>
         </MDBCardBody>
 
       </MDBCard>
