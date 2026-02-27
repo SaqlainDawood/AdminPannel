@@ -83,32 +83,55 @@ const CreateClass = () => {
                  </div>
                  <div className="col-md-6">
                    <label className="form-label">Department</label>
-                   <input type="text"
-                   className='form-control' 
-                   name='department'
-                   value={formData.department}
-                   onChange={handleChange}
-                   required />
+                  <select name="department"
+                  value={formData.department}
+                 onChange={handleChange}>
+                  <option value="">Select Type</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="BBA">BBA</option>
+                  <option value="Agriculture">Agriculture</option>
+                  <option value="English">English Literature</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Physics">Physics</option>
+                  <option value="Maths">Mathematics</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Nutrients">Nutrients</option>
+                  <option value="FoodScience">Food Science</option>
+                  <option value="Urdu">Urdu</option>
+                  <option value="Islamiyat">Islamiyat</option>
+                  <option value="SocialStudies">Pak Studies</option>
+                  <option value="Psychology">Psychology</option>
+                  <option value="Economics">Economics</option>
+                  </select>
                  </div>
                  
                   <div className="col-md-6">
                    <label className="form-label">Semester</label>
-                   <input type="text"
-                   className='form-control' 
-                   name='semester'
-                   value={formData.semester}
-                   onChange={handleChange}
-                   required />
+                 <select name="semester"
+                 value={formData.semester}
+                 onChange={handleChange} >
+                  <option value="1">1st</option>
+                  <option value="2">2nd</option>
+                  <option value="3">3rd</option>
+                  <option value="4">4th</option>
+                  <option value="5">th</option>
+                  <option value="6">6th</option>
+                  <option value="7">7th</option>
+                  <option value="8">8th</option>
+                 </select>
                  </div>
 
                   <div className="col-md-6">
                    <label className="form-label">Section</label>
-                   <input type="text"
-                   className='form-control' 
-                   name='section'
-                   value={formData.section}
-                   onChange={handleChange}
-                   required />
+                   <select name="section"
+                    value={formData.section} 
+                    onChange={handleChange}
+                  >
+                      <option value="A">A</option>
+                      <option value="B">B</option>
+                      <option value="Morning">Morning</option>
+                      <option value="Evening">Evening</option>
+                  </select>
                  </div>
                   <div className="col-md-6">
                    <label className="form-label">Subject</label>
@@ -122,12 +145,14 @@ const CreateClass = () => {
                  
                   <div className="col-md-6">
                    <label className="form-label">Credit Hours</label>
-                   <input type='number'
-                   className='form-control' 
-                   name='creditHours'
-                   value={formData.creditHours}
-                   onChange={handleChange}
-                   required />
+                  <select name="creditHours"
+                  value={formData.creditHours}
+                  onChange={handleChange}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
                  </div>
                   <div className="col-md-6">
                    <label className="form-label">Capacity</label>
