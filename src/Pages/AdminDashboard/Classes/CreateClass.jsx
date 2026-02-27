@@ -1,4 +1,4 @@
-import React from 'react'
+import React ,{useState} from 'react'
 import {
   MDBContainer,
   MDBCard,
@@ -6,6 +6,7 @@ import {
   MDBBtn,
   MDBIcon,
 } from "mdb-react-ui-kit";
+
 const CreateClass = () => {
   const [formData , setFormData] = useState({
    
