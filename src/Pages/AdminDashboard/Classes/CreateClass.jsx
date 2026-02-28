@@ -8,6 +8,7 @@ import {
 } from "mdb-react-ui-kit";
 
 const CreateClass = () => {
+  const [searchTerm , setSearchTerm] = useState();
   const [formData, setFormData] = useState({
     className: "",
     classCode: "",
@@ -44,16 +45,13 @@ const CreateClass = () => {
                 <MDBIcon fas icon="plus-square" />
                 Create New Class
               </h3>
-              <MDBBtn color="secondary" className="me-1">
-                Step [1-3]
-              </MDBBtn>
             </div>
             <form onClick={handleSubmit}>
               <div className="card mb-4 mt-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
                     <i className="fas fa-user me-2"></i>
-                    Assign Class
+                     Assign Class
                   </h5>
                 </div>
                 <div className="card-body">
@@ -191,23 +189,80 @@ const CreateClass = () => {
                     Teacher Assignment
                   </h5>
                 </div>
-                <div className="card-body">
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Teacher Name*</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="teachers"
-                        value={formData.teachers}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Schedule Preview</label>
+                <div className="content-card">
+                <div className="search-filter-section">
+                  <div className="search-box">
+                    <i className="fas fa-search"></i>
+                    <input
+                      type="text"
+                      placeholder="Search by name, code, or teacher..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => setShowFilters(!showFilters)}
+                  >
+                    <i className="fas fa-filter me-2"></i>
+                    Filters
+                    {showFilters ? (
+                      <i className="fas fa-chevron-up ms-2"></i>
+                    ) : (
+                      <i className="fas fa-chevron-down ms-2"></i>
+                    )}
+                  </button>
+                </div>
+                {showFilters && (
+                  <div className="filters-panel">
+                    <div className="row g-3">
+                      <div className="col-md-4">
+                        <label className="form-label">Department</label>
+                        <select
+                          className="form-select"
+                          value={filterDepartment}
+                          onChange={(e) => setFilterDepartment(e.target.value)}
+                        >
+                          {departments.map((dept) => (
+                            <option key={dept} value={dept}>
+                              {dept === "all" ? "All Departments" : dept}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-md-4">
+                        <label className="form-label">Semester</label>
+                        <select
+                          className="form-select"
+                          value={filterSemester}
+                          onChange={(e) => setFilterSemester(e.target.value)}
+                        >
+                          {semesters.map((sem) => (
+                            <option key={sem} value={sem}>
+                              {sem === "all"
+                                ? "All Semesters"
+                                : sem + " Semester"}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-md-4">
+                        <label className="form-label">Status</label>
+                        <select
+                          className="form-select"
+                          value={filterStatus}
+                          onChange={(e) => setFilterStatus(e.target.value)}
+                        >
+                          <option value="all">All Status</option>
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+              </div>
               </div>
               <div className="card mb-4 mt-4">
                 <div className="card-header bg-primary text-white" >
