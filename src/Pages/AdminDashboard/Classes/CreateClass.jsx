@@ -8,7 +8,11 @@ import {
 } from "mdb-react-ui-kit";
 
 const CreateClass = () => {
-  const [searchTerm , setSearchTerm] = useState();
+   const [searchTerm, setSearchTerm] = useState("");
+   const [filterDepartment, setFilterDepartment] = useState("all");
+   const [filterSemester, setFilterSemester] = useState("all");
+   const [filterStatus, setFilterStatus] = useState("all");
+   const [showFilters, setShowFilters] = useState(false);
   const [formData, setFormData] = useState({
     className: "",
     classCode: "",
