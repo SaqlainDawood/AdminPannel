@@ -7,7 +7,7 @@ import {
   MDBIcon,
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
-import toast from 'react-toastify'
+import {toast} from 'react-toastify'
 const CreateClass = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("all");
