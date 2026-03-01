@@ -240,7 +240,7 @@ const CreateClass = () => {
                   </h5>
                 </div>
                 <div className="content-card">
-                  <div className="search-filter-section">
+                  {/* <div className="search-filter-section">
                     <div className="search-box">
                       <i className="fas fa-search"></i>
                       <input
@@ -266,7 +266,7 @@ const CreateClass = () => {
                   {showFilters && (
                     <div className="filters-panel">
                       <div className="row g-3">
-                        <div className="col-md-4">
+                        <div className="col-md-6">
                           <label className="form-label">Department</label>
                           <select
                             className="form-select"
@@ -282,7 +282,7 @@ const CreateClass = () => {
                             ))}
                           </select>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-6">
                           <label className="form-label">Status</label>
                           <select
                             className="form-select"
@@ -292,12 +292,11 @@ const CreateClass = () => {
                             <option value="all">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
-                            <option value="completed">Completed</option>
                           </select>
                         </div>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="card mb-4 mt-4">
@@ -309,73 +308,6 @@ const CreateClass = () => {
                 </div>
                 <div className="card-body">
                   <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="form-label">Day</label>
-                      <select
-                        className="form-select"
-                        name="day"
-                        value={formData.day}
-                        onChange={handleChange}
-                      >
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thrusday">Thrusday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                        <option value="Sunday">Sunday</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Start Time</label>
-                      <select
-                        className="form-select"
-                        name="startTime"
-                        value={formData.startTime}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Start Time</option>
-                        <option value="8">8:00</option>
-                        <option value="9:30">9:30</option>
-                        <option value="11">11:00</option>
-                        <option value="12:30">12:30</option>
-                        <option value="2">2:00</option>
-                        <option value="3:30">3:30</option>
-                        <option value="5">5:00</option>
-                        <option value="6:30">6:30</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">End Time</label>
-                      <select
-                        className="form-select"
-                        name="endTime"
-                        value={formData.endTime}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select End Time</option>
-                        <option value="9:30">9:30</option>
-                        <option value="11">11:00</option>
-                        <option value="12:30">12:30</option>
-                        <option value="2">2:00</option>
-                        <option value="3:30">3:30</option>
-                        <option value="5">5:00</option>
-                        <option value="6:30">6:30</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label">Room</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="room"
-                        value={formData.room}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                   <div className="row g-3">
                     <div className="col-md-6">
                       <label className="form-label">Day</label>
                       <select
