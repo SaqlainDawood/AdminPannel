@@ -283,22 +283,6 @@ const CreateClass = () => {
                           </select>
                         </div>
                         <div className="col-md-4">
-                          <label className="form-label">Semester</label>
-                          <select
-                            className="form-select"
-                            value={filterSemester}
-                            onChange={(e) => setFilterSemester(e.target.value)}
-                          >
-                            {semesters.map((sem) => (
-                              <option key={sem} value={sem}>
-                                {sem === "all"
-                                  ? "All Semesters"
-                                  : sem + " Semester"}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="col-md-4">
                           <label className="form-label">Status</label>
                           <select
                             className="form-select"
