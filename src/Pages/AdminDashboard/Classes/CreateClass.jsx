@@ -61,8 +61,9 @@ const CreateClass = () => {
     }
   };
   const departments = [
-    'all',...new Set(teachers.map(t => t.department).filter(Boolean)),
-  ];
+    'all',...new Set(
+      teachers.map(t => t.department).filter(Boolean)
+    )];
   const filteredTeachers = teachers.filter((teacher) => {
     const fullName = `${teacher.firstName} ${teacher.lastName}`.toLowerCase();
     const employeeID = teacher.employeeID?.toLowerCase() || "";
