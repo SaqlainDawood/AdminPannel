@@ -51,7 +51,13 @@ const CreateClass = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setTeachers(response.data);
+     console.log(response.data);
+      if(Array.isArray(response.data.data)){
+        setTeachers(response.data.data);
+      }
+      else{
+        setTeachers([]);
+      }
     } catch (error) {
       console.error("Error fetching teachers:", error);
     }
@@ -106,7 +112,7 @@ const CreateClass = () => {
                 Create New Class
               </h3>
             </div>
-            <form onClick={handleSubmit}>
+            <form onSubmit={handleSubmit}>
               <div className="card mb-4 mt-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
@@ -166,26 +172,6 @@ const CreateClass = () => {
                         <option value="SocialStudies">Pak Studies</option>
                         <option value="Psychology">Psychology</option>
                         <option value="Economics">Economics</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label className="form-label">Semester</label>
-                      <select
-                        className="form-select"
-                        name="semester"
-                        value={formData.semester}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Semester</option>
-                        <option value="1">1st</option>
-                        <option value="2">2nd</option>
-                        <option value="3">3rd</option>
-                        <option value="4">4th</option>
-                        <option value="5">5th</option>
-                        <option value="6">6th</option>
-                        <option value="7">7th</option>
-                        <option value="8">8th</option>
                       </select>
                     </div>
                     <div className="col-md-6">
