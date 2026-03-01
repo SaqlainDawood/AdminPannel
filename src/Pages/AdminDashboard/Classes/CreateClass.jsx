@@ -54,7 +54,7 @@ const CreateClass = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+      console.log("Full Response Data",response.data);
       if (Array.isArray(response.data.data)) {
         setTeachers(response.data.data);
       } else {
@@ -71,7 +71,7 @@ const CreateClass = () => {
     )];
   
   const filteredTeachers = teachers.filter((teacher) => {
-    const fullName = `${teacher.firstName} ${teacher.lastName}`.toLowerCase();
+    const fullName = teacher.name?.toLowerCase();
     const employeeID = teacher.employeeID?.toLowerCase() || "";
     const email = teacher.user?.email?.toLowerCase() || "";
     const department = teacher.department?.toLowerCase() || "";
@@ -328,7 +328,7 @@ const CreateClass = () => {
                               <td>{teacher.employeeID || 'N/A'}</td>
                               <td>
                                 <div className="teacher-name">
-                                  {teacher.firstName} {teacher.lastName}
+                                  {teacher.name}
                                 </div>
                               </td>
                               <td>{teacher.department || 'N/A'}</td>
