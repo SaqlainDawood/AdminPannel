@@ -73,7 +73,7 @@ const CreateClass = () => {
   const filteredTeachers = teachers.filter((teacher) => {
     const fullName = teacher.name?.toLowerCase();
     const employeeID = teacher.employeeID?.toLowerCase() || "";
-    const email = teacher.user?.email?.toLowerCase() || "";
+    const email = teacher.email.toLowerCase() || "";
     const department = teacher.department?.toLowerCase() || "";
     const designation = teacher.designation?.toLowerCase() || "";
     const specialization = teacher.specialization?.toLowerCase() || "";
@@ -333,7 +333,7 @@ const CreateClass = () => {
                               </td>
                               <td>{teacher.department || 'N/A'}</td>
                               <td>{teacher.designation || 'N/A'}</td>
-                              <td>{teacher?.user?.email || 'N/A'}</td>
+                              <td>{teacher.email || 'N/A'}</td>
                               <td>
                                 <span className={`status-badge ${teacher.status?.toLowerCase() || 'inactive'}`}>
                                   {teacher.status || 'Inactive'}
