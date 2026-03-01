@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MDBContainer,
   MDBCard,
@@ -8,13 +8,14 @@ import {
 } from "mdb-react-ui-kit";
 import { Navigate, useNavigate } from "react-router-dom";
 import { all } from "axios";
+import AdminAPI from "../../../api";
 const ClassList = () => {
   const naviage = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("all");
-  const [filterSemester, setFilterSemester] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  
   return (
     <>
       <div className="">
