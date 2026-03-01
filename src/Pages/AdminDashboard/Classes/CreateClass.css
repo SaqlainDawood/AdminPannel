@@ -255,3 +255,129 @@
 .teachers-table-section::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+/* Teacher Table Styles */
+.teacher-table {
+  margin-bottom: 0;
+}
+
+.teacher-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.teacher-table td {
+  vertical-align: middle;
+  padding: 1rem 0.75rem;
+}
+
+.teacher-table tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+/* Search Wrapper */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.search-input {
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+.clear-search {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.clear-search:hover {
+  color: #dc3545;
+}
+
+/* Selected Teacher Info */
+.selected-teacher-info {
+  border-left: 4px solid #0d6efd;
+}
+
+/* Schedule Modal Styles */
+.schedule-container {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.teacher-info-card {
+  border: 1px solid #dee2e6;
+}
+
+.schedule-table {
+  font-size: 0.95rem;
+}
+
+.schedule-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.total-classes {
+  text-align: right;
+  font-size: 1.1rem;
+}
+
+.no-classes {
+  border: 2px dashed #dee2e6;
+}
+
+.no-classes i {
+  opacity: 0.5;
+}
+
+/* Badge Styles */
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+}
+
+/* Button Styles */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+}
+
+.btn-info {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .teacher-table td {
+    font-size: 0.9rem;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
