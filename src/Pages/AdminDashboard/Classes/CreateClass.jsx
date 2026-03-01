@@ -26,10 +26,6 @@ const CreateClass = () => {
     academicYear: "",
     subject: "",
     creditHours: "",
-    teachers:{
-      teacher:'',
-      role:'',
-    },
     assignedDate: "",
     students: "",
     enrollmentDate: "",
