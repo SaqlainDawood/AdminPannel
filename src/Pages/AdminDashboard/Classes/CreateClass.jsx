@@ -333,7 +333,7 @@ const CreateClass = () => {
                               </td>
                               <td>{teacher.department || 'N/A'}</td>
                               <td>{teacher.designation || 'N/A'}</td>
-                              <td>{teacher.user?.email || 'N/A'}</td>
+                              <td>{teacher?.user?.email || 'N/A'}</td>
                               <td>
                                 <span className={`status-badge ${teacher.status?.toLowerCase() || 'inactive'}`}>
                                   {teacher.status || 'Inactive'}
