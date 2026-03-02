@@ -100,7 +100,7 @@ const CreateClass = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+      console.log("Faculty Schedule",response.data);
       setTeacherSchedule(response.data);
     } catch (error) {
       console.error("Error fetching teacher schedule:", error);
