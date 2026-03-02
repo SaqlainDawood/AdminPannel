@@ -51,7 +51,7 @@ const CreateClass = () => {
   }, []);
 
   useEffect(() => {
-    // Filter teachers when department changes
+    
     if (filterDepartment === "all") {
       setFilteredTeachers(teachers);
     } else {
@@ -95,7 +95,7 @@ const CreateClass = () => {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
       // Replace with your actual API endpoint for fetching teacher's classes
-      const response = await AdminAPI(`/faculty/${teacherId}/schedule`, {
+      const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
