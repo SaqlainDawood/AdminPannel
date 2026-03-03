@@ -18,8 +18,8 @@ import {
   MDBBadge,
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
-import { toast } from 'react-toastify';
-import './CreateClass.css';
+import { toast } from "react-toastify";
+import "./CreateClass.css";
 
 const CreateClass = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,7 +39,7 @@ const CreateClass = () => {
     section: "",
     subject: "",
     creditHours: "",
-    semester:"",
+    semester: "",
     capacity: "",
     day: "",
     startTime: "",
@@ -52,12 +52,11 @@ const CreateClass = () => {
   }, []);
 
   useEffect(() => {
-    
     if (filterDepartment === "all") {
       setFilteredTeachers(teachers);
     } else {
       const filtered = teachers.filter(
-        teacher => teacher.department === filterDepartment
+        (teacher) => teacher.department === filterDepartment,
       );
       setFilteredTeachers(filtered);
     }
@@ -72,7 +71,7 @@ const CreateClass = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       if (response.data && Array.isArray(response.data.data)) {
         setTeachers(response.data.data);
         setFilteredTeachers(response.data.data);
@@ -91,52 +90,45 @@ const CreateClass = () => {
     }
   };
 
-  const fetchTeacherSchedule = async (teacherId) => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      // Replace with your actual API endpoint for fetching teacher's classes
-      const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("Faculty Schedule",response.data);
-      setTeacherSchedule(response.data);
-    } catch (error) {
-      console.error("Error fetching teacher schedule:", error);
-      toast.error("Failed to fetch teacher schedule");
-      // Mock data for demonstration
-      setTeacherSchedule({
-        teacherName: selectedTeacher?.name,
-        department: selectedTeacher?.department,
-        assignedClasses: [
-          {
-            classCode: "BSCS-1A",
-            day: "Monday",
-            startTime: "9:00",
-            endTime: "10:30",
-            subject: "Programming Fundamentals",
-          },
-          {
-            classCode: "BSCS-2B",
-            day: "Tuesday",
-            startTime: "11:00",
-            endTime: "12:30",
-            subject: "Data Structures",
-          },
-        ],
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchTeacherSchedule = async (teacherId) => {
+  try {
+    setLoading(true); // Show spinner
+    const token = localStorage.getItem("adminToken");
+    const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-  const handleViewSchedule = async (teacher) => {
-    setSelectedTeacher(teacher);
-    setShowScheduleModal(true);
-    await fetchTeacherSchedule(teacher._id);
-  };
+    // Ensure assignedClasses is always an array
+    const scheduleData = {
+      teacherName: response.data.teacherName || selectedTeacher?.name,
+      department: response.data.department || selectedTeacher?.department,
+      assignedClasses: Array.isArray(response.data.assignedClasses)
+        ? response.data.assignedClasses
+        : [],
+    };
+
+    setTeacherSchedule(scheduleData);
+  } catch (error) {
+    console.error("Error fetching teacher schedule:", error);
+    toast.error("Failed to fetch teacher schedule");
+
+    // In case of error, show N/A
+    setTeacherSchedule({
+      teacherName: selectedTeacher?.name,
+      department: selectedTeacher?.department,
+      assignedClasses: [], // Empty array triggers N/A
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
+ const handleViewSchedule = (teacher) => {
+  setSelectedTeacher(teacher); // Select teacher
+  setTeacherSchedule(null); // Reset previous schedule
+  setShowScheduleModal(true); // Show modal immediately
+  fetchTeacherSchedule(teacher._id); // Fetch schedule asynchronously
+};
 
   const handleAssignTeacher = (teacher) => {
     setSelectedTeacher(teacher);
@@ -151,33 +143,52 @@ const CreateClass = () => {
     }
     try {
       const token = localStorage.getItem("adminToken");
-      if(!token){
+      if (!token) {
         return toast.info("There is no token exist");
       }
       const payload = {
         ...formData,
-
-      }
-    } catch (error) {
-      
-    }
-    // Add your submit logic here
-    console.log("Form submitted with:", { formData, selectedTeacher });
-    toast.success("Class created successfully!");
+        teachers: [
+          {
+            teacher: selectedTeacher._id,
+            role: selectedTeacher.designation || "Lecturer",
+          },
+        ],
+        students: [],
+        schedule: [
+          {
+            day: formData.day,
+            startTime: formData.startTime,
+            endTime: formData.endTime,
+            room: formData.room,
+          },
+        ],
+      };
+      const response = await AdminAPI("/classes/create", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: payload,
+      });
+      toast.success("Class created successfully!");
+    } catch (error) {}
+    console.error(error);
+    toast.error("Failed to create class");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   // Get unique departments from teachers
-  const departments = ['all', ...new Set(
-    teachers.map(t => t.department).filter(Boolean)
-  )];
+  const departments = [
+    "all",
+    ...new Set(teachers.map((t) => t.department).filter(Boolean)),
+  ];
 
   return (
     <>
@@ -236,9 +247,13 @@ const CreateClass = () => {
                         required
                       >
                         <option value="">Select Department</option>
-                        {departments.filter(d => d !== 'all').map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
+                        {departments
+                          .filter((d) => d !== "all")
+                          .map((dept) => (
+                            <option key={dept} value={dept}>
+                              {dept}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div className="col-md-6">
@@ -297,9 +312,9 @@ const CreateClass = () => {
                         required
                       />
                     </div>
-                     <div className="col-md-6">
+                    <div className="col-md-6">
                       <label className="form-label">Select Semester</label>
-                     <select
+                      <select
                         className="form-select"
                         name="semester"
                         value={formData.semester}
@@ -325,25 +340,33 @@ const CreateClass = () => {
                     Teacher Assignment
                   </h5>
                 </div>
-                
+
                 <div className="card-body">
                   {/* Department Filter Dropdown */}
                   <div className="row mb-4">
                     <div className="col-md-4">
-                      <label className="form-label fw-bold">Filter by Department</label>
+                      <label className="form-label fw-bold">
+                        Filter by Department
+                      </label>
                       <select
                         className="form-select"
                         value={filterDepartment}
                         onChange={(e) => setFilterDepartment(e.target.value)}
                       >
                         <option value="all">All Departments</option>
-                        {departments.filter(d => d !== 'all').map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
+                        {departments
+                          .filter((d) => d !== "all")
+                          .map((dept) => (
+                            <option key={dept} value={dept}>
+                              {dept}
+                            </option>
+                          ))}
                       </select>
                     </div>
                     <div className="col-md-8">
-                      <label className="form-label fw-bold">Search Teacher</label>
+                      <label className="form-label fw-bold">
+                        Search Teacher
+                      </label>
                       <div className="search-wrapper">
                         <i className="fas fa-search search-icon"></i>
                         <input
@@ -356,7 +379,7 @@ const CreateClass = () => {
                         {searchTerm && (
                           <button
                             className="clear-search"
-                            onClick={() => setSearchTerm('')}
+                            onClick={() => setSearchTerm("")}
                             type="button"
                           >
                             <i className="fas fa-times"></i>
@@ -382,22 +405,37 @@ const CreateClass = () => {
                         {loading ? (
                           <tr>
                             <td colSpan="5" className="text-center py-4">
-                              <div className="spinner-border text-primary" role="status">
-                                <span className="visually-hidden">Loading...</span>
+                              <div
+                                className="spinner-border text-primary"
+                                role="status"
+                              >
+                                <span className="visually-hidden">
+                                  Loading...
+                                </span>
                               </div>
                             </td>
                           </tr>
                         ) : filteredTeachers.length > 0 ? (
                           filteredTeachers
-                            .filter(teacher => {
+                            .filter((teacher) => {
                               if (!searchTerm) return true;
                               const searchLower = searchTerm.toLowerCase();
                               return (
-                                teacher.name?.toLowerCase().includes(searchLower) ||
-                                teacher.employeeID?.toLowerCase().includes(searchLower) ||
-                                teacher.email?.toLowerCase().includes(searchLower) ||
-                                teacher.department?.toLowerCase().includes(searchLower) ||
-                                teacher.designation?.toLowerCase().includes(searchLower)
+                                teacher.name
+                                  ?.toLowerCase()
+                                  .includes(searchLower) ||
+                                teacher.employeeID
+                                  ?.toLowerCase()
+                                  .includes(searchLower) ||
+                                teacher.email
+                                  ?.toLowerCase()
+                                  .includes(searchLower) ||
+                                teacher.department
+                                  ?.toLowerCase()
+                                  .includes(searchLower) ||
+                                teacher.designation
+                                  ?.toLowerCase()
+                                  .includes(searchLower)
                               );
                             })
                             .map((teacher) => (
@@ -409,21 +447,29 @@ const CreateClass = () => {
                                         src={teacher.image}
                                         alt={teacher.name}
                                         className="rounded-circle me-2"
-                                        style={{ width: '35px', height: '35px', objectFit: 'cover' }}
+                                        style={{
+                                          width: "35px",
+                                          height: "35px",
+                                          objectFit: "cover",
+                                        }}
                                       />
                                     )}
                                     <div>
                                       <strong>{teacher.name}</strong>
                                       <br />
-                                      <small className="text-muted">{teacher.employeeID}</small>
+                                      <small className="text-muted">
+                                        {teacher.employeeID}
+                                      </small>
                                     </div>
                                   </div>
                                 </td>
                                 <td>{teacher.department}</td>
                                 <td>{teacher.designation}</td>
                                 <td>
-                                  <span className={`badge ${teacher.status === 'Active' ? 'bg-success' : 'bg-warning'}`}>
-                                    {teacher.status || 'Active'}
+                                  <span
+                                    className={`badge ${teacher.status === "Active" ? "bg-success" : "bg-warning"}`}
+                                  >
+                                    {teacher.status || "Active"}
                                   </span>
                                 </td>
                                 <td>
@@ -447,8 +493,15 @@ const CreateClass = () => {
                         ) : (
                           <tr>
                             <td colSpan="5" className="text-center py-4">
-                              <MDBIcon fas icon="search" size="2x" className="text-muted mb-3" />
-                              <p className="text-muted">No teachers found in this department</p>
+                              <MDBIcon
+                                fas
+                                icon="search"
+                                size="2x"
+                                className="text-muted mb-3"
+                              />
+                              <p className="text-muted">
+                                No teachers found in this department
+                              </p>
                             </td>
                           </tr>
                         )}
@@ -460,10 +513,17 @@ const CreateClass = () => {
                   {selectedTeacher && (
                     <div className="selected-teacher-info mt-3 p-3 bg-light rounded">
                       <div className="d-flex align-items-center">
-                        <MDBIcon fas icon="check-circle" className="text-success me-2" size="lg" />
+                        <MDBIcon
+                          fas
+                          icon="check-circle"
+                          className="text-success me-2"
+                          size="lg"
+                        />
                         <span className="fw-bold">Selected Teacher:</span>
                         <span className="ms-2">{selectedTeacher.name}</span>
-                        <span className="badge bg-primary ms-2">{selectedTeacher.department}</span>
+                        <span className="badge bg-primary ms-2">
+                          {selectedTeacher.department}
+                        </span>
                         <button
                           type="button"
                           className="btn btn-sm btn-link text-danger ms-auto"
@@ -574,7 +634,11 @@ const CreateClass = () => {
       </MDBContainer>
 
       {/* Schedule View Modal */}
-      <MDBModal show={showScheduleModal} setShow={setShowScheduleModal} size="lg">
+      <MDBModal
+        show={showScheduleModal}
+        setShow={setShowScheduleModal}
+        size="lg"
+      >
         <MDBModalDialog size="lg">
           <MDBModalContent>
             <MDBModalHeader className="bg-primary text-white">
@@ -590,26 +654,31 @@ const CreateClass = () => {
             </MDBModalHeader>
 
             <MDBModalBody>
-              {selectedTeacher && (
-                <div className="schedule-container">
-                  {/* Teacher Info */}
-                  <div className="teacher-info-card mb-4 p-3 bg-light rounded">
-                    <h5 className="mb-2">{selectedTeacher.name}</h5>
-                    <p className="mb-1 text-muted">
-                      <MDBIcon fas icon="building" className="me-2" />
-                      Department: {selectedTeacher.department}
-                    </p>
-                    <p className="mb-0 text-muted">
-                      <MDBIcon fas icon="id-badge" className="me-2" />
-                      Employee ID: {selectedTeacher.employeeID}
-                    </p>
+              {loading ? (
+                <div className="text-center p-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
                   </div>
+                </div>
+              ) : (
+                selectedTeacher && (
+                  <>
+                    {/* Teacher Info */}
+                    <div className="teacher-info-card mb-4 p-3 bg-light rounded">
+                      <h5 className="mb-2">{selectedTeacher.name}</h5>
+                      <p className="mb-1 text-muted">
+                        <MDBIcon fas icon="building" className="me-2" />
+                        Department: {selectedTeacher.department}
+                      </p>
+                      <p className="mb-0 text-muted">
+                        <MDBIcon fas icon="id-badge" className="me-2" />
+                        Employee ID: {selectedTeacher.employeeID}
+                      </p>
+                    </div>
 
-                  {/* Assigned Classes */}
-                  <h6 className="fw-bold mb-3">Assigned Classes:</h6>
-                  
-                  {teacherSchedule?.assignedClasses && teacherSchedule.assignedClasses.length > 0 ? (
-                    <>
+                    {/* Assigned Classes */}
+                    <h6 className="fw-bold mb-3">Assigned Classes:</h6>
+                    {teacherSchedule?.assignedClasses?.length > 0 ? (
                       <div className="table-responsive">
                         <table className="table table-bordered schedule-table">
                           <thead className="table-light">
@@ -621,38 +690,43 @@ const CreateClass = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {teacherSchedule.assignedClasses.map((cls, index) => (
-                              <tr key={index}>
-                                <td>
-                                  <strong>{cls.classCode}</strong>
-                                </td>
-                                <td>{cls.day}</td>
-                                <td>{cls.startTime} - {cls.endTime}</td>
-                                <td>{cls.subject}</td>
-                              </tr>
-                            ))}
+                            {teacherSchedule.assignedClasses.map(
+                              (cls, index) => (
+                                <tr key={index}>
+                                  <td>
+                                    <strong>{cls.classCode}</strong>
+                                  </td>
+                                  <td>{cls.day}</td>
+                                  <td>
+                                    {cls.startTime} - {cls.endTime}
+                                  </td>
+                                  <td>{cls.subject}</td>
+                                </tr>
+                              ),
+                            )}
                           </tbody>
                         </table>
+                        <div className="total-classes mt-3 p-2 bg-primary text-white rounded">
+                          <strong>
+                            Total Classes:{" "}
+                            {teacherSchedule.assignedClasses.length}
+                          </strong>
+                        </div>
                       </div>
-                      
-                      {/* Divider */}
-                      <div className="text-center my-3">
-                        <span className="border-top d-block"></span>
+                    ) : (
+                      <div className="no-classes p-4 text-center bg-light rounded">
+                        <MDBIcon
+                          far
+                          icon="frown"
+                          size="3x"
+                          className="text-muted mb-3"
+                        />
+                        <h6 className="text-muted">Assigned Classes: N/A</h6>
+                        <p className="text-muted mb-0">Total Classes: 0</p>
                       </div>
-                      
-                      {/* Total Classes */}
-                      <div className="total-classes mt-3 p-2 bg-primary text-white rounded">
-                        <strong>Total Classes: {teacherSchedule.assignedClasses.length}</strong>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="no-classes p-4 text-center bg-light rounded">
-                      <MDBIcon far icon="frown" size="3x" className="text-muted mb-3" />
-                      <h6 className="text-muted">Assigned Classes: N/A</h6>
-                      <p className="text-muted mb-0">Total Classes: 0</p>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </>
+                )
               )}
             </MDBModalBody>
 
