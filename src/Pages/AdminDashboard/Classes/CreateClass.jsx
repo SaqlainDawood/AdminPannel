@@ -134,49 +134,7 @@ const CreateClass = () => {
     setSelectedTeacher(teacher);
     toast.success(`${teacher.name} selected for assignment`);
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedTeacher) {
-      toast.info("Please select a teacher for this class");
-      return;
-    }
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        return toast.info("There is no token exist");
-      }
-      const payload = {
-        ...formData,
-        teachers: [
-          {
-            teacher: selectedTeacher._id,
-            role: selectedTeacher.designation || "Lecturer",
-          },
-        ],
-        students: [],
-        schedule: [
-          {
-            day: formData.day,
-            startTime: formData.startTime,
-            endTime: formData.endTime,
-            room: formData.room,
-          },
-        ],
-      };
-      const response = await AdminAPI("/classes/create", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: payload,
-      });
-      toast.success("Class created successfully!");
-    } catch (error) {}
-    console.error(error);
-    toast.error("Failed to create class");
-  };
-
-  const handleChange = (e) => {
+ const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -189,6 +147,127 @@ const CreateClass = () => {
     "all",
     ...new Set(teachers.map((t) => t.department).filter(Boolean)),
   ];
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Validate required selections
+  if (!selectedTeacher) {
+    toast.info("Please select a teacher for this class");
+    return;
+  }
+
+  // Validate schedule fields
+  if (!formData.day || !formData.startTime || !formData.endTime || !formData.room) {
+    toast.info("Please complete all schedule fields");
+    return;
+  }
+
+  try {
+    setLoading(true); // Add loading state if you have one
+    const token = localStorage.getItem("adminToken");
+    
+    if (!token) {
+      toast.error("Authentication token not found. Please login again.");
+      return;
+    }
+
+    // Prepare the payload
+    const payload = {
+      className: formData.className,
+      classCode: formData.classCode,
+      department: formData.department,
+      semester: parseInt(formData.semester), // Ensure number
+      section: formData.section,
+      subject: formData.subject,
+      creditHours: parseInt(formData.creditHours), // Ensure number
+      capacity: parseInt(formData.capacity) || 50, // Default to 50 if not provided
+      teachers: [
+        {
+          teacher: selectedTeacher._id,
+          role: selectedTeacher.designation || "Lecturer",
+        },
+      ],
+      students: [], // Empty array for new class
+      schedule: [
+        {
+          day: formData.day,
+          startTime: formData.startTime,
+          endTime: formData.endTime,
+          room: formData.room,
+        },
+      ],
+    };
+
+    // Make the API call
+    const response = await AdminAPI({
+      method: 'POST', // Specify the method
+      url: '/classes/create',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      data: payload, // Axios uses 'data' for POST body
+    });
+
+    // Check response status
+    if (response.data && response.data.success) {
+      toast.success("Class created successfully!");
+      
+      // Reset form after successful submission
+      setFormData({
+        className: "",
+        classCode: "",
+        department: "",
+        section: "",
+        subject: "",
+        creditHours: "",
+        semester: "",
+        capacity: "",
+        day: "",
+        startTime: "",
+        endTime: "",
+        room: "",
+      });
+      setSelectedTeacher(null);
+      
+      // Optional: Redirect or refresh list
+      // navigate('/classes') or fetchClasses()
+    } else {
+      throw new Error(response.data.message || "Failed to create class");
+    }
+    
+  } catch (error) {
+    console.error("Error creating class:", error);
+    
+    // Handle different types of errors
+    if (error.response) {
+      // Server responded with error
+      const message = error.response.data?.message || "Server error occurred";
+      toast.error(message);
+      
+      // Handle specific error cases
+      if (error.response.status === 401) {
+        toast.error("Session expired. Please login again.");
+        // Handle logout here
+      } else if (error.response.status === 400) {
+        // Validation errors
+        if (error.response.data.errors) {
+          error.response.data.errors.forEach(err => toast.error(err));
+        }
+      }
+    } else if (error.request) {
+      // Request made but no response
+      toast.error("No response from server. Please check your connection.");
+    } else {
+      // Something else happened
+      toast.error(error.message || "Failed to create class");
+    }
+  } finally {
+    setLoading(false);
+  }
+};
+
+ 
 
   return (
     <>
