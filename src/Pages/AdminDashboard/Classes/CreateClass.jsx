@@ -96,37 +96,44 @@ const fetchTeacherSchedule = async (teacherId) => {
   try {
     setLoading(true);
     const token = localStorage.getItem("adminToken");
+    
+    console.log("Fetching schedule for teacher:", teacherId); // Debug log
+    
     const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("Schedule API Response:", response);
+    console.log("Full response:", response);
+    console.log("Response data:", response.data);
 
-    // Check if the response has the expected structure
     if (response.data && response.data.success) {
-      // The data is directly in response.data, not in response.data.data
-      const scheduleData = response.data;
-      
-      // Use selectedTeacher info as fallback since backend doesn't send teacherName/department
       setTeacherSchedule({
-        teacherName: selectedTeacher?.name || "Unknown Teacher",
-        department: selectedTeacher?.department || "Unknown Department",
-        assignedClasses: Array.isArray(scheduleData.assignedClasses) 
-          ? scheduleData.assignedClasses 
-          : [],
+        teacherName: response.data.teacherName || selectedTeacher?.name,
+        department: response.data.department || selectedTeacher?.department,
+        assignedClasses: response.data.assignedClasses || [],
       });
     } else {
-      console.error("Unexpected response structure:", response.data);
-      toast.error("Invalid response format from server");
-      setTeacherSchedule({
-        teacherName: selectedTeacher?.name,
-        department: selectedTeacher?.department,
-        assignedClasses: [],
-      });
+      toast.error("Server returned unsuccessful response");
     }
   } catch (error) {
-    console.error("Error fetching teacher schedule:", error);
-    toast.error("Failed to fetch teacher schedule");
+    console.error("Full error object:", error);
+    
+    // More detailed error logging
+    if (error.response) {
+      // The server responded with an error status
+      console.log("Error response data:", error.response.data);
+      console.log("Error response status:", error.response.status);
+      toast.error(`Server error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`);
+    } else if (error.request) {
+      // The request was made but no response received
+      console.log("No response received:", error.request);
+      toast.error("No response from server. Check your network.");
+    } else {
+      // Something else happened
+      console.log("Error message:", error.message);
+      toast.error(`Error: ${error.message}`);
+    }
+    
     setTeacherSchedule({
       teacherName: selectedTeacher?.name,
       department: selectedTeacher?.department,
