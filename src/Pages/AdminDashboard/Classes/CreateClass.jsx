@@ -90,7 +90,7 @@ const CreateClass = () => {
     }
   };
 
- const fetchTeacherSchedule = async (teacherId) => {
+const fetchTeacherSchedule = async (teacherId) => {
   try {
     setLoading(true); // Show spinner
     const token = localStorage.getItem("adminToken");
@@ -98,25 +98,38 @@ const CreateClass = () => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    // Ensure assignedClasses is always an array
-    const scheduleData = {
-      teacherName: response.data.teacherName || selectedTeacher?.name,
-      department: response.data.department || selectedTeacher?.department,
-      assignedClasses: Array.isArray(response.data.assignedClasses)
-        ? response.data.assignedClasses
-        : [],
-    };
+    console.log("Schedule API Response:", response); // Add this for debugging
 
-    setTeacherSchedule(scheduleData);
+    // Check if the response has the expected structure
+    if (response.data && response.data.success) {
+      // The actual data is in response.data.data based on your backend controller
+      const scheduleData = response.data.data;
+      
+      setTeacherSchedule({
+        teacherName: scheduleData.teacherName || selectedTeacher?.name,
+        department: scheduleData.department || selectedTeacher?.department,
+        assignedClasses: Array.isArray(scheduleData.assignedClasses) 
+          ? scheduleData.assignedClasses 
+          : [],
+      });
+    } else {
+      // Handle case where response structure is different
+      console.error("Unexpected response structure:", response.data);
+      toast.error("Invalid response format from server");
+      setTeacherSchedule({
+        teacherName: selectedTeacher?.name,
+        department: selectedTeacher?.department,
+        assignedClasses: [],
+      });
+    }
   } catch (error) {
     console.error("Error fetching teacher schedule:", error);
     toast.error("Failed to fetch teacher schedule");
 
-    // In case of error, show N/A
     setTeacherSchedule({
       teacherName: selectedTeacher?.name,
       department: selectedTeacher?.department,
-      assignedClasses: [], // Empty array triggers N/A
+      assignedClasses: [],
     });
   } finally {
     setLoading(false);
