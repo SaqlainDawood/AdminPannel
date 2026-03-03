@@ -39,6 +39,7 @@ const CreateClass = () => {
     section: "",
     subject: "",
     creditHours: "",
+    semester:"",
     capacity: "",
     day: "",
     startTime: "",
@@ -147,6 +148,18 @@ const CreateClass = () => {
     if (!selectedTeacher) {
       toast.info("Please select a teacher for this class");
       return;
+    }
+    try {
+      const token = localStorage.getItem("adminToken");
+      if(!token){
+        return toast.info("There is no token exist");
+      }
+      const payload = {
+        ...formData,
+
+      }
+    } catch (error) {
+      
     }
     // Add your submit logic here
     console.log("Form submitted with:", { formData, selectedTeacher });
@@ -283,6 +296,22 @@ const CreateClass = () => {
                         onChange={handleChange}
                         required
                       />
+                    </div>
+                     <div className="col-md-6">
+                      <label className="form-label">Select Semester</label>
+                     <select
+                        className="form-select"
+                        name="semester"
+                        value={formData.semester}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Select Semester</option>
+                        <option value="1">1st</option>
+                        <option value="2">2nd</option>
+                        <option value="3">3rd</option>
+                        <option value="4">4th</option>
+                      </select>
                     </div>
                   </div>
                 </div>
