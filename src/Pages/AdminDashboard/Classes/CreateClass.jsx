@@ -97,43 +97,31 @@ const fetchTeacherSchedule = async (teacherId) => {
     setLoading(true);
     const token = localStorage.getItem("adminToken");
     
-    console.log("Fetching schedule for teacher:", teacherId); // Debug log
-    
     const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("Full response:", response);
-    console.log("Response data:", response.data);
-
     if (response.data && response.data.success) {
       setTeacherSchedule({
-        teacherName: response.data.teacherName || selectedTeacher?.name,
+        teacherName: selectedTeacher?.name,
         department: response.data.department || selectedTeacher?.department,
         assignedClasses: response.data.assignedClasses || [],
       });
+      
+      // Optional: Show success message
+      if (response.data.assignedClasses?.length > 0) {
+        toast.success(`Found ${response.data.assignedClasses.length} classes`);
+      }
     } else {
-      toast.error("Server returned unsuccessful response");
+      setTeacherSchedule({
+        teacherName: selectedTeacher?.name,
+        department: selectedTeacher?.department,
+        assignedClasses: [],
+      });
     }
   } catch (error) {
-    console.error("Full error object:", error);
-    
-    // More detailed error logging
-    if (error.response) {
-      // The server responded with an error status
-      console.log("Error response data:", error.response.data);
-      console.log("Error response status:", error.response.status);
-      toast.error(`Server error: ${error.response.status} - ${error.response.data?.message || 'Unknown error'}`);
-    } else if (error.request) {
-      // The request was made but no response received
-      console.log("No response received:", error.request);
-      toast.error("No response from server. Check your network.");
-    } else {
-      // Something else happened
-      console.log("Error message:", error.message);
-      toast.error(`Error: ${error.message}`);
-    }
-    
+    console.error("Error:", error);
+    toast.error("Failed to fetch schedule");
     setTeacherSchedule({
       teacherName: selectedTeacher?.name,
       department: selectedTeacher?.department,
