@@ -129,11 +129,21 @@ const CreateClass = () => {
   setShowScheduleModal(true); // Show modal immediately
   fetchTeacherSchedule(teacher._id); // Fetch schedule asynchronously
 };
+const roleMapping = {
+  "Assistant Professor": "Assistant",
+  "Associate Professor": "Associate",
+  "Visiting Professor": "Visiting",
+  "Permanent Faculty": "Permanent",
+  "Lecturer": "Lecturer",
+  "Lab Attendant": "Lab_Attendant",
+  "Professor": "Professor"
+};
 
-  const handleAssignTeacher = (teacher) => {
-    setSelectedTeacher(teacher);
-    toast.success(`${teacher.name} selected for assignment`);
-  };
+ const handleAssignTeacher = (teacher) => {
+  const role = roleMapping[teacher.designation] || "Lecturer";
+  setSelectedTeacher({...teacher, mappedRole: role});
+  toast.success(`${teacher.name} selected for assignment`);
+};
  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -184,7 +194,7 @@ const CreateClass = () => {
       teachers: [
         {
           teacher: selectedTeacher._id,
-          role: selectedTeacher.designation || "Lecturer",
+          role: selectedTeacher.mappedRole || "Lecturer",
         },
       ],
       students: [], // Empty array for new class
