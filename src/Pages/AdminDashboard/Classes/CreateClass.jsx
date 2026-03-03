@@ -71,7 +71,9 @@ const CreateClass = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+        console.log("All Teachers Data",response.data);
+        console.log("ALl Faculty Data ",response.data.data);
+        
       if (response.data && Array.isArray(response.data.data)) {
         setTeachers(response.data.data);
         setFilteredTeachers(response.data.data);
