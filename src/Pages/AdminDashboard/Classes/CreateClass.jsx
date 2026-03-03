@@ -73,7 +73,7 @@ const CreateClass = () => {
       });
         console.log("All Teachers Data",response.data);
         console.log("ALl Faculty Data ",response.data.data);
-        
+
       if (response.data && Array.isArray(response.data.data)) {
         setTeachers(response.data.data);
         setFilteredTeachers(response.data.data);
@@ -94,28 +94,28 @@ const CreateClass = () => {
 
 const fetchTeacherSchedule = async (teacherId) => {
   try {
-    setLoading(true); // Show spinner
+    setLoading(true);
     const token = localStorage.getItem("adminToken");
     const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("Schedule API Response:", response); // Add this for debugging
+    console.log("Schedule API Response:", response);
 
     // Check if the response has the expected structure
     if (response.data && response.data.success) {
-      // The actual data is in response.data.data based on your backend controller
-      const scheduleData = response.data.data;
+      // The data is directly in response.data, not in response.data.data
+      const scheduleData = response.data;
       
+      // Use selectedTeacher info as fallback since backend doesn't send teacherName/department
       setTeacherSchedule({
-        teacherName: scheduleData.teacherName || selectedTeacher?.name,
-        department: scheduleData.department || selectedTeacher?.department,
+        teacherName: selectedTeacher?.name || "Unknown Teacher",
+        department: selectedTeacher?.department || "Unknown Department",
         assignedClasses: Array.isArray(scheduleData.assignedClasses) 
           ? scheduleData.assignedClasses 
           : [],
       });
     } else {
-      // Handle case where response structure is different
       console.error("Unexpected response structure:", response.data);
       toast.error("Invalid response format from server");
       setTeacherSchedule({
@@ -127,7 +127,6 @@ const fetchTeacherSchedule = async (teacherId) => {
   } catch (error) {
     console.error("Error fetching teacher schedule:", error);
     toast.error("Failed to fetch teacher schedule");
-
     setTeacherSchedule({
       teacherName: selectedTeacher?.name,
       department: selectedTeacher?.department,
