@@ -84,7 +84,7 @@
   color: #dc3545;
 }
 
-/* ===== LUXURY MODAL STYLES - WIDER VERSION ===== */
+/* ===== LUXURY MODAL STYLES - FIXED WIDER VERSION ===== */
 
 /* Modal Overlay with Blur Effect */
 .modal-overlay {
@@ -102,9 +102,9 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Modal Dialog - WIDER */
+/* Modal Dialog - MUCH WIDER */
 .modal-dialog {
-  max-width: 1300px; /* Increased from 900px */
+  max-width: 1400px !important; /* Forcefully wider */
   width: 95%;
   margin: 1.75rem auto;
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -113,11 +113,11 @@
 /* For ultra-wide screens */
 @media (min-width: 1800px) {
   .modal-dialog {
-    max-width: 1500px;
+    max-width: 1600px !important;
   }
 }
 
-/* Modal Content with Glassmorphism Effect */
+/* Modal Content */
 .modal-content {
   background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
   border: none;
@@ -129,7 +129,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  max-height: 85vh; /* Slightly increased */
+  max-height: 90vh;
 }
 
 /* Decorative Top Bar */
@@ -147,7 +147,7 @@
 /* Modal Header */
 .modal-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1.5rem 2.5rem; /* Increased horizontal padding */
+  padding: 1.5rem 2rem;
   border: none;
   position: relative;
   overflow: hidden;
@@ -167,7 +167,7 @@
 }
 
 .modal-title {
-  font-size: 1.6rem; /* Increased */
+  font-size: 1.6rem;
   font-weight: 600;
   color: white;
   display: flex;
@@ -178,9 +178,9 @@
 }
 
 .modal-title i {
-  font-size: 2rem; /* Increased */
+  font-size: 2rem;
   background: rgba(255, 255, 255, 0.2);
-  padding: 12px; /* Increased */
+  padding: 12px;
   border-radius: 14px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -188,7 +188,7 @@
 /* Close Button */
 .btn-close-white {
   background: rgba(255, 255, 255, 0.2);
-  padding: 14px; /* Increased */
+  padding: 14px;
   border-radius: 12px;
   transition: all 0.3s ease;
   opacity: 1;
@@ -203,9 +203,9 @@
   transform: rotate(90deg);
 }
 
-/* Modal Body - MORE SPACIOUS */
+/* Modal Body - SPACIOUS BUT NOT CONGESTED */
 .modal-body {
-  padding: 2.5rem; /* Increased from 2rem */
+  padding: 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
   flex: 1;
   overflow-y: auto;
@@ -214,7 +214,7 @@
 
 /* Custom Scrollbar */
 .modal-body::-webkit-scrollbar {
-  width: 10px; /* Slightly wider */
+  width: 8px;
 }
 
 .modal-body::-webkit-scrollbar-track {
@@ -227,41 +227,23 @@
   border-radius: 10px;
 }
 
-.modal-body::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-/* Teacher Info Card - MORE SPACIOUS */
+/* Teacher Info Card - Balanced */
 .teacher-info-card {
   background: linear-gradient(135deg, #f6f9fc 0%, #edf2f9 100%);
-  border-radius: 24px; /* Increased */
-  padding: 2.5rem; /* Increased from 1.8rem */
-  margin-bottom: 2.5rem; /* Increased */
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
   border: 1px solid rgba(102, 126, 234, 0.2);
-  box-shadow: 
-    0 10px 30px -10px rgba(102, 126, 234, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  box-shadow: 0 10px 30px -10px rgba(102, 126, 234, 0.2);
   position: relative;
   overflow: hidden;
 }
 
-.teacher-info-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 200px; /* Increased */
-  height: 200px; /* Increased */
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-  border-radius: 50%;
-  transform: translate(50%, -50%);
-}
-
 .teacher-info-card h5 {
-  font-size: 2.2rem; /* Increased from 1.8rem */
+  font-size: 2rem;
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 1.5rem; /* Increased */
+  margin-bottom: 1.5rem;
   position: relative;
   display: inline-block;
 }
@@ -269,92 +251,88 @@
 .teacher-info-card h5::after {
   content: '';
   position: absolute;
-  bottom: -8px; /* Adjusted */
+  bottom: -8px;
   left: 0;
-  width: 60px; /* Increased */
-  height: 4px; /* Increased */
+  width: 60px;
+  height: 4px;
   background: linear-gradient(90deg, #667eea, #764ba2);
   border-radius: 2px;
 }
 
-/* Info Grid - MORE SPACIOUS */
+/* Info Grid - SPREAD OUT */
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Increased from 250px */
-  gap: 1.8rem; /* Increased from 1.2rem */
-  margin-top: 1.8rem; /* Increased */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-/* Info Items - MORE SPACIOUS */
+/* Info Items - Clean and Spacious */
 .info-item {
   display: flex;
   align-items: center;
-  gap: 18px; /* Increased from 12px */
-  padding: 1.2rem 1.8rem; /* Increased from 0.8rem 1.2rem */
+  gap: 15px;
+  padding: 1rem 1.5rem;
   background: white;
-  border-radius: 16px; /* Increased */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
-}
-
-.info-item:hover {
-  transform: translateY(-3px); /* More noticeable */
-  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.2); /* Enhanced */
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
 }
 
 .info-item i {
-  font-size: 1.4rem; /* Increased */
-  width: 40px; /* Increased */
-  height: 40px; /* Increased */
+  font-size: 1.3rem;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-  border-radius: 12px; /* Increased */
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 10px;
   color: #667eea;
 }
 
 .info-item span {
   color: #4a5568;
-  font-size: 1.1rem; /* Increased */
+  font-size: 1rem;
 }
 
 .info-item strong {
   color: #2d3748;
   font-weight: 600;
   margin-left: 5px;
-  font-size: 1.1rem; /* Increased */
 }
 
 /* Section Title */
 .section-title {
-  font-size: 1.5rem; /* Increased from 1.3rem */
+  font-size: 1.4rem;
   font-weight: 600;
   color: #2d3748;
-  margin: 2rem 0 1.2rem; /* Increased margins */
+  margin: 1.5rem 0 1rem;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .section-title i {
   color: #667eea;
-  font-size: 1.6rem; /* Increased */
+  font-size: 1.5rem;
 }
 
-/* Schedule Table - MORE SPACIOUS */
+/* Schedule Table - WIDE AND CLEAN */
 .table-responsive {
-  border-radius: 20px; /* Increased */
-  overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  overflow-x: auto;
+  overflow-y: visible;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(102, 126, 234, 0.1);
   background: white;
+  margin-bottom: 1rem;
 }
 
 .schedule-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
+  min-width: 1000px; /* Ensures table is wide enough */
 }
 
 .schedule-table thead th {
@@ -362,146 +340,103 @@
   color: white;
   font-weight: 500;
   text-transform: uppercase;
-  font-size: 0.95rem; /* Increased */
+  font-size: 0.9rem;
   letter-spacing: 0.5px;
-  padding: 1.4rem 1.2rem; /* Increased padding */
-  border: none;
-}
-
-.schedule-table thead th:first-child {
-  border-top-left-radius: 18px; /* Increased */
-}
-
-.schedule-table thead th:last-child {
-  border-top-right-radius: 18px; /* Increased */
+  padding: 1rem 1.5rem;
+  white-space: nowrap;
 }
 
 .schedule-table tbody tr {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .schedule-table tbody tr:hover {
   background: linear-gradient(135deg, #f8faff 0%, #f0f3ff 100%);
-  transform: scale(1.005);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
 }
 
 .schedule-table td {
-  padding: 1.4rem 1.2rem; /* Increased from 1.2rem 1rem */
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   color: #4a5568;
-  font-size: 1rem; /* Increased */
-}
-
-.schedule-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.schedule-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 18px; /* Increased */
-}
-
-.schedule-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 18px; /* Increased */
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 .class-code-badge {
-  background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
   color: #667eea;
-  padding: 0.5rem 1.2rem; /* Increased */
+  padding: 0.4rem 1rem;
   border-radius: 30px;
   font-weight: 600;
-  font-size: 0.95rem; /* Increased */
+  font-size: 0.9rem;
   display: inline-block;
+  white-space: nowrap;
 }
 
 /* Total Classes Card */
 .total-classes {
-  margin-top: 2rem; /* Increased */
-  padding: 1.4rem 2.5rem; /* Increased */
+  margin-top: 1.5rem;
+  padding: 1rem 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50px;
   text-align: center;
   color: white;
-  font-size: 1.3rem; /* Increased */
+  font-size: 1.2rem;
   font-weight: 600;
   box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
-  position: relative;
-  overflow: hidden;
-}
-
-.total-classes::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
-  animation: rotate 15s linear infinite;
 }
 
 .total-classes i {
-  margin-right: 12px; /* Increased */
-  font-size: 1.5rem; /* Increased */
+  margin-right: 10px;
+  font-size: 1.3rem;
 }
 
-/* No Classes State - MORE SPACIOUS */
+/* No Classes State */
 .no-classes {
   background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
-  border-radius: 28px; /* Increased */
-  padding: 4rem 3rem; /* Increased */
+  border-radius: 24px;
+  padding: 3rem 2rem;
   text-align: center;
   border: 2px dashed rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-}
-
-.no-classes:hover {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
 }
 
 .no-classes i {
-  font-size: 5rem; /* Increased from 4rem */
+  font-size: 4rem;
   background: linear-gradient(135deg, #667eea, #764ba2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 1.8rem; /* Increased */
-  opacity: 0.7;
+  margin-bottom: 1rem;
 }
 
 .no-classes h6 {
-  font-size: 2rem; /* Increased from 1.5rem */
+  font-size: 1.5rem;
   color: #2d3748;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .no-classes p {
   color: #718096;
-  font-size: 1.2rem; /* Increased from 1.1rem */
+  font-size: 1rem;
 }
 
-/* Modal Footer - MORE SPACIOUS */
+/* Modal Footer */
 .modal-footer {
-  padding: 1.8rem 2.5rem; /* Increased padding */
+  padding: 1.5rem 2rem;
   border-top: 1px solid rgba(102, 126, 234, 0.1);
   background: #f8faff;
   flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .modal-footer .btn {
-  padding: 1rem 3rem; /* Increased padding */
+  padding: 0.8rem 2rem;
   border-radius: 50px;
   font-weight: 500;
-  font-size: 1.1rem; /* Increased */
-  letter-spacing: 0.5px;
+  font-size: 1rem;
   transition: all 0.3s ease;
   border: none;
-  position: relative;
-  overflow: hidden;
   cursor: pointer;
 }
 
@@ -512,8 +447,7 @@
 
 .modal-footer .btn-secondary:hover {
   background: #cbd5e0;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .modal-footer .btn-primary {
@@ -523,18 +457,14 @@
 }
 
 .modal-footer .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideIn {
@@ -549,12 +479,8 @@
 }
 
 @keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Loading Spinner */
@@ -563,18 +489,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5rem 3rem; /* Increased */
+  padding: 4rem 2rem;
 }
 
 .luxury-spinner {
-  width: 70px; /* Increased */
-  height: 70px; /* Increased */
-  border: 5px solid rgba(102, 126, 234, 0.1); /* Thicker border */
-  border-top: 5px solid #667eea;
-  border-right: 5px solid #764ba2;
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(102, 126, 234, 0.1);
+  border-top: 4px solid #667eea;
+  border-right: 4px solid #764ba2;
   border-radius: 50%;
   animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-  margin-bottom: 2rem; /* Increased */
+  margin-bottom: 1.5rem;
 }
 
 @keyframes spin {
@@ -582,19 +508,71 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
+/* ===== TEACHER TABLE - FIXED RESPONSIVE ===== */
+.teacher-table {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.teacher-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+  padding: 1rem 0.75rem;
+}
+
+.teacher-table td {
+  vertical-align: middle;
+  padding: 1rem 0.75rem;
+  white-space: nowrap;
+}
+
+.teacher-table tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+/* Table Responsive Wrapper - CRITICAL FOR SCROLLING */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+
+/* Ensure minimum width for table to enable horizontal scroll */
+.teacher-table {
+  min-width: 800px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .modal-dialog {
+    max-width: 95%;
+  }
+}
+
+@media (max-width: 992px) {
+  .teacher-table {
+    min-width: 700px;
+  }
+}
+
 @media (max-width: 768px) {
   .modal-dialog {
-    width: 95%;
+    width: 98%;
     margin: 1rem auto;
   }
   
   .modal-header {
-    padding: 1.2rem 1.5rem;
+    padding: 1rem 1.5rem;
   }
   
   .modal-title {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
   
   .modal-body {
@@ -606,7 +584,7 @@
   }
   
   .teacher-info-card h5 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
   
   .info-grid {
@@ -615,22 +593,26 @@
   }
   
   .info-item {
-    padding: 1rem 1.2rem;
+    padding: 0.8rem 1.2rem;
+  }
+  
+  .schedule-table {
+    min-width: 800px; /* Smaller min-width for mobile */
   }
   
   .schedule-table thead th {
+    padding: 0.8rem 1rem;
     font-size: 0.8rem;
-    padding: 1rem 0.5rem;
   }
   
   .schedule-table td {
-    padding: 1rem 0.5rem;
+    padding: 0.8rem 1rem;
     font-size: 0.85rem;
   }
   
   .total-classes {
     font-size: 1rem;
-    padding: 1rem;
+    padding: 0.8rem 1.5rem;
   }
   
   .no-classes {
@@ -638,15 +620,11 @@
   }
   
   .no-classes i {
-    font-size: 3.5rem;
+    font-size: 3rem;
   }
   
   .no-classes h6 {
-    font-size: 1.4rem;
-  }
-  
-  .no-classes p {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   
   .modal-footer {
@@ -657,185 +635,35 @@
   .modal-footer .btn {
     width: 100%;
     padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+  }
+  
+  /* Teacher table responsive */
+  .teacher-table {
+    min-width: 600px;
+  }
+  
+  .teacher-table th,
+  .teacher-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
   }
 }
 
-/* Teachers Table Section - Bottom (unchanged) */
-.teachers-table-section {
-  padding: 0 0.5rem;
-  overflow-x: auto;
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-}
-
-.teachers-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-.teachers-table thead {
-  background-color: #f8f9fa;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.teachers-table th {
-  padding: 1rem 0.75rem;
-  font-weight: 600;
-  color: #495057;
-  text-align: left;
-  border-bottom: 2px solid #dee2e6;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.teachers-table td {
-  padding: 1rem 0.75rem;
-  border-bottom: 1px solid #e9ecef;
-  color: #212529;
-  font-size: 0.95rem;
-}
-
-.teachers-table tbody tr {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.teachers-table tbody tr:hover {
-  background-color: #f8f9fa;
-}
-
-.teachers-table tbody tr.selected-row {
-  background-color: #e7f1ff;
-  border-left: 3px solid #0d6efd;
-}
-
-/* Teacher Name styling */
-.teacher-name {
-  font-weight: 500;
-  color: #0d6efd;
-}
-
-/* Status Badge */
-.status-badge {
-  display: inline-block;
-  padding: 0.35rem 0.75rem;
-  border-radius: 50px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.status-badge.active {
-  background-color: #d1e7dd;
-  color: #0f5132;
-}
-
-.status-badge.inactive {
-  background-color: #f8d7da;
-  color: #842029;
-}
-
-.status-badge.on-leave {
-  background-color: #fff3cd;
-  color: #997404;
-}
-
-/* Radio button styling */
-.teachers-table input[type="radio"] {
-  width: 1.2rem;
-  height: 1.2rem;
-  cursor: pointer;
-  accent-color: #0d6efd;
-}
-
-/* No results styling */
-.no-results {
-  text-align: center;
-  padding: 3rem 1rem !important;
-  color: #6c757d;
-}
-
-.no-results i {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.no-results p {
-  margin: 0;
-  font-size: 1rem;
-}
-
-/* Selected Teacher Info */
-.selected-teacher-info {
-  margin: 1rem 1.5rem 1.5rem;
-  padding: 1rem;
-  background-color: #f0f9ff;
-  border: 1px solid #b8daff;
-  border-radius: 6px;
-}
-
-.selected-teacher-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: #0d6efd;
-  font-weight: 500;
-}
-
-.selected-teacher-badge i {
-  font-size: 1.2rem;
-  color: #198754;
-}
-
-/* Teacher Table Styles */
-.teacher-table {
-  margin-bottom: 0;
-}
-
-.teacher-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.teacher-table td {
-  vertical-align: middle;
-  padding: 1rem 0.75rem;
-}
-
-.teacher-table tbody tr:hover {
-  background-color: #f8f9fa;
-  cursor: pointer;
-}
-
-/* Scrollbar styling */
-.teachers-table-section::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.teachers-table-section::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.teachers-table-section::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.teachers-table-section::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+@media (max-width: 576px) {
+  .teacher-table {
+    min-width: 500px;
+  }
+  
+  .teacher-table th,
+  .teacher-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* Badge Styles */
@@ -859,4 +687,13 @@
 .btn-info:hover {
   background-color: #138496;
   border-color: #117a8b;
+}
+
+/* Selected Teacher Info */
+.selected-teacher-info {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f0f9ff;
+  border: 1px solid #b8daff;
+  border-radius: 6px;
 }
