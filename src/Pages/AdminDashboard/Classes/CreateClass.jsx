@@ -735,115 +735,96 @@ const roleMapping = {
       </MDBContainer>
 
       {/* Schedule View Modal */}
-      <MDBModal
-        show={showScheduleModal}
-        setShow={setShowScheduleModal}
-        size="lg"
-        tabIndex="-1"
-      >
-        <MDBModalDialog size="lg" centered>
-          <MDBModalContent>
-            <MDBModalHeader className="bg-primary text-white">
-              <MDBModalTitle>
-                <MDBIcon far icon="calendar-alt" className="me-2" />
-                Teacher Schedule
-              </MDBModalTitle>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                onClick={() => setShowScheduleModal(false)}
-              ></button>
-            </MDBModalHeader>
-
-            <MDBModalBody>
-              {loading ? (
-                <div className="text-center p-4">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+      {/* Replace your MDBModal with this temporarily */}
+{showScheduleModal && (
+  <div className="modal-overlay">
+    <div className="modal-dialog" style={{maxWidth: '800px', width: '90%'}}>
+      <div className="modal-content">
+        <div className="modal-header bg-primary text-white">
+          <h5 className="modal-title">
+            <i className="far fa-calendar-alt me-2"></i>
+            Teacher Schedule
+          </h5>
+          <button 
+            type="button" 
+            className="btn-close btn-close-white" 
+            onClick={() => setShowScheduleModal(false)}
+          ></button>
+        </div>
+        <div className="modal-body">
+          {/* Your existing modal content here */}
+          {loading ? (
+            <div className="text-center p-4">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : (
+            selectedTeacher && (
+              <>
+                <div className="teacher-info-card">
+                  <h5>{selectedTeacher.name}</h5>
+                  <p className="mb-1 text-muted">
+                    <i className="fas fa-building me-2"></i>
+                    Department: {selectedTeacher.department}
+                  </p>
+                  <p className="mb-0 text-muted">
+                    <i className="fas fa-id-badge me-2"></i>
+                    Employee ID: {selectedTeacher.employeeID}
+                  </p>
                 </div>
-              ) : (
-                selectedTeacher && (
-                  <>
-                    {/* Teacher Info */}
-                    <div className="teacher-info-card mb-4 p-3 bg-light rounded">
-                      <h5 className="mb-2">{selectedTeacher.name}</h5>
-                      <p className="mb-1 text-muted">
-                        <MDBIcon fas icon="building" className="me-2" />
-                        Department: {selectedTeacher.department}
-                      </p>
-                      <p className="mb-0 text-muted">
-                        <MDBIcon fas icon="id-badge" className="me-2" />
-                        Employee ID: {selectedTeacher.employeeID}
-                      </p>
+
+                <h6 className="fw-bold mb-3">Assigned Classes:</h6>
+                {teacherSchedule?.assignedClasses?.length > 0 ? (
+                  <div className="table-responsive">
+                    <table className="table table-bordered schedule-table">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Class Code</th>
+                          <th>Day</th>
+                          <th>Time</th>
+                          <th>Subject</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {teacherSchedule.assignedClasses.map((cls, index) => (
+                          <tr key={index}>
+                            <td><strong>{cls.classCode}</strong></td>
+                            <td>{cls.day}</td>
+                            <td>{cls.startTime} - {cls.endTime}</td>
+                            <td>{cls.subject}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="total-classes bg-primary text-white rounded">
+                      <strong>Total Classes: {teacherSchedule.assignedClasses.length}</strong>
                     </div>
-
-                    {/* Assigned Classes */}
-                    <h6 className="fw-bold mb-3">Assigned Classes:</h6>
-                    {teacherSchedule?.assignedClasses?.length > 0 ? (
-                      <div className="table-responsive">
-                        <table className="table table-bordered schedule-table">
-                          <thead className="table-light">
-                            <tr>
-                              <th>Class Code</th>
-                              <th>Day</th>
-                              <th>Time</th>
-                              <th>Subject</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {teacherSchedule.assignedClasses.map(
-                              (cls, index) => (
-                                <tr key={index}>
-                                  <td>
-                                    <strong>{cls.classCode}</strong>
-                                  </td>
-                                  <td>{cls.day}</td>
-                                  <td>
-                                    {cls.startTime} - {cls.endTime}
-                                  </td>
-                                  <td>{cls.subject}</td>
-                                </tr>
-                              ),
-                            )}
-                          </tbody>
-                        </table>
-                        <div className="total-classes mt-3 p-2 bg-primary text-white rounded">
-                          <strong>
-                            Total Classes:{" "}
-                            {teacherSchedule.assignedClasses.length}
-                          </strong>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="no-classes p-4 text-center bg-light rounded">
-                        <MDBIcon
-                          far
-                          icon="frown"
-                          size="3x"
-                          className="text-muted mb-3"
-                        />
-                        <h6 className="text-muted">Assigned Classes: N/A</h6>
-                        <p className="text-muted mb-0">Total Classes: 0</p>
-                      </div>
-                    )}
-                  </>
-                )
-              )}
-            </MDBModalBody>
-
-            <MDBModalFooter>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setShowScheduleModal(false)}
-              >
-                Close
-              </button>
-            </MDBModalFooter>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
+                  </div>
+                ) : (
+                  <div className="no-classes">
+                    <i className="far fa-frown fa-3x text-muted mb-3"></i>
+                    <h6 className="text-muted">Assigned Classes: N/A</h6>
+                    <p className="text-muted mb-0">Total Classes: 0</p>
+                  </div>
+                )}
+              </>
+            )
+          )}
+        </div>
+        <div className="modal-footer">
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={() => setShowScheduleModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 };
