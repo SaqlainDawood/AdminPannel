@@ -736,82 +736,110 @@ const roleMapping = {
 
       {/* Schedule View Modal */}
       {/* Replace your MDBModal with this temporarily */}
+{/* Luxury Schedule View Modal */}
 {showScheduleModal && (
   <div className="modal-overlay">
-    <div className="modal-dialog" style={{maxWidth: '800px', width: '90%'}}>
+    <div className="modal-dialog">
       <div className="modal-content">
-        <div className="modal-header bg-primary text-white">
+        {/* Modal Header with Gradient */}
+        <div className="modal-header">
           <h5 className="modal-title">
-            <i className="far fa-calendar-alt me-2"></i>
+            <i className="far fa-calendar-alt"></i>
             Teacher Schedule
           </h5>
           <button 
             type="button" 
             className="btn-close btn-close-white" 
             onClick={() => setShowScheduleModal(false)}
+            aria-label="Close"
           ></button>
         </div>
+
+        {/* Modal Body */}
         <div className="modal-body">
-          {/* Your existing modal content here */}
           {loading ? (
-            <div className="text-center p-4">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+            <div className="spinner-container">
+              <div className="luxury-spinner"></div>
+              <p className="text-muted">Loading schedule...</p>
             </div>
           ) : (
             selectedTeacher && (
               <>
+                {/* Teacher Info Card */}
                 <div className="teacher-info-card">
                   <h5>{selectedTeacher.name}</h5>
-                  <p className="mb-1 text-muted">
-                    <i className="fas fa-building me-2"></i>
-                    Department: {selectedTeacher.department}
-                  </p>
-                  <p className="mb-0 text-muted">
-                    <i className="fas fa-id-badge me-2"></i>
-                    Employee ID: {selectedTeacher.employeeID}
-                  </p>
-                </div>
-
-                <h6 className="fw-bold mb-3">Assigned Classes:</h6>
-                {teacherSchedule?.assignedClasses?.length > 0 ? (
-                  <div className="table-responsive">
-                    <table className="table table-bordered schedule-table">
-                      <thead className="table-light">
-                        <tr>
-                          <th>Class Code</th>
-                          <th>Day</th>
-                          <th>Time</th>
-                          <th>Subject</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {teacherSchedule.assignedClasses.map((cls, index) => (
-                          <tr key={index}>
-                            <td><strong>{cls.classCode}</strong></td>
-                            <td>{cls.day}</td>
-                            <td>{cls.startTime} - {cls.endTime}</td>
-                            <td>{cls.subject}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <div className="total-classes bg-primary text-white rounded">
-                      <strong>Total Classes: {teacherSchedule.assignedClasses.length}</strong>
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <i className="fas fa-building"></i>
+                      <span>Department: <strong>{selectedTeacher.department}</strong></span>
+                    </div>
+                    <div className="info-item">
+                      <i className="fas fa-id-badge"></i>
+                      <span>Employee ID: <strong>{selectedTeacher.employeeID}</strong></span>
+                    </div>
+                    <div className="info-item">
+                      <i className="fas fa-envelope"></i>
+                      <span>Email: <strong>{selectedTeacher.email}</strong></span>
+                    </div>
+                    <div className="info-item">
+                      <i className="fas fa-phone"></i>
+                      <span>Phone: <strong>{selectedTeacher.phone || 'N/A'}</strong></span>
                     </div>
                   </div>
+                </div>
+
+                {/* Classes Section */}
+                <h6 className="section-title">
+                  <i className="fas fa-book-open"></i>
+                  Assigned Classes
+                </h6>
+
+                {teacherSchedule?.assignedClasses?.length > 0 ? (
+                  <>
+                    <div className="table-responsive">
+                      <table className="schedule-table">
+                        <thead>
+                          <tr>
+                            <th>Class Code</th>
+                            <th>Day</th>
+                            <th>Time</th>
+                            <th>Subject</th>
+                            <th>Room</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teacherSchedule.assignedClasses.map((cls, index) => (
+                            <tr key={index}>
+                              <td>
+                                <span className="class-code-badge">{cls.classCode}</span>
+                              </td>
+                              <td>{cls.day}</td>
+                              <td>{cls.startTime} - {cls.endTime}</td>
+                              <td>{cls.subject}</td>
+                              <td>{cls.room || 'N/A'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="total-classes">
+                      <i className="fas fa-chart-bar"></i>
+                      Total Classes: {teacherSchedule.assignedClasses.length}
+                    </div>
+                  </>
                 ) : (
                   <div className="no-classes">
-                    <i className="far fa-frown fa-3x text-muted mb-3"></i>
-                    <h6 className="text-muted">Assigned Classes: N/A</h6>
-                    <p className="text-muted mb-0">Total Classes: 0</p>
+                    <i className="far fa-calendar-times"></i>
+                    <h6>No Classes Assigned</h6>
+                    <p>This teacher currently has no scheduled classes</p>
                   </div>
                 )}
               </>
             )
           )}
         </div>
+
+        {/* Modal Footer */}
         <div className="modal-footer">
           <button 
             type="button" 
@@ -820,6 +848,19 @@ const roleMapping = {
           >
             Close
           </button>
+          {teacherSchedule?.assignedClasses?.length > 0 && (
+            <button 
+              type="button" 
+              className="btn btn-primary"
+              onClick={() => {
+                // You can add print or export functionality here
+                window.print();
+              }}
+            >
+              <i className="fas fa-print me-2"></i>
+              Print Schedule
+            </button>
+          )}
         </div>
       </div>
     </div>
