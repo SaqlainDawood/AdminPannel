@@ -735,8 +735,6 @@ const roleMapping = {
       </MDBContainer>
 
       {/* Schedule View Modal */}
-      {/* Replace your MDBModal with this temporarily */}
-{/* Luxury Schedule View Modal */}
 {showScheduleModal && (
   <div className="modal-overlay">
     <div className="modal-dialog">
