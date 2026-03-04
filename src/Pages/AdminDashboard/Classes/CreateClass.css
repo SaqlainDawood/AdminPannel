@@ -84,7 +84,7 @@
   color: #dc3545;
 }
 
-/* ===== LUXURY MODAL STYLES ===== */
+/* ===== LUXURY MODAL STYLES - FIXED ===== */
 
 /* Modal Overlay with Blur Effect */
 .modal-overlay {
@@ -110,7 +110,7 @@
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Modal Content with Glassmorphism Effect */
+/* Modal Content with Glassmorphism Effect - FIXED for scrolling */
 .modal-content {
   background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
   border: none;
@@ -120,6 +120,9 @@
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh; /* Limit modal height */
 }
 
 /* Decorative Top Bar */
@@ -131,15 +134,17 @@
   right: 0;
   height: 6px;
   background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #6b8cff 100%);
+  z-index: 10;
 }
 
-/* Modal Header */
+/* Modal Header - Fixed at top */
 .modal-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 1.5rem 2rem;
   border: none;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 /* Animated Background Pattern */
@@ -182,6 +187,8 @@
   opacity: 1;
   position: relative;
   z-index: 1;
+  border: none;
+  cursor: pointer;
 }
 
 .btn-close-white:hover {
@@ -189,10 +196,32 @@
   transform: rotate(90deg);
 }
 
-/* Modal Body */
+/* Modal Body - FIXED: Scrollable area */
 .modal-body {
   padding: 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
+  flex: 1; /* Takes remaining space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  min-height: 0; /* Important for flex child */
+}
+
+/* Custom Scrollbar for Modal Body */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
 /* Teacher Info Card - Luxury Design */
@@ -366,11 +395,6 @@
   border-bottom-right-radius: 16px;
 }
 
-.schedule-table td strong {
-  color: #2d3748;
-  font-weight: 600;
-}
-
 .class-code-badge {
   background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
   color: #667eea;
@@ -447,11 +471,15 @@
   font-size: 1.1rem;
 }
 
-/* Modal Footer */
+/* Modal Footer - FIXED: Always visible at bottom */
 .modal-footer {
   padding: 1.5rem 2rem;
   border-top: 1px solid rgba(102, 126, 234, 0.1);
   background: #f8faff;
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 
 .modal-footer .btn {
@@ -463,6 +491,7 @@
   border: none;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .modal-footer .btn-secondary {
@@ -583,8 +612,16 @@
     font-size: 1rem;
     padding: 1rem;
   }
+  
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    flex-direction: column;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
 }
-
 
 /* Teachers Table Section - Bottom */
 .teachers-table-section {
@@ -721,42 +758,6 @@
   color: #198754;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .department-select {
-    max-width: 100%;
-  }
-  
-  .teachers-table-section {
-    max-height: 350px;
-  }
-  
-  .teachers-table th,
-  .teachers-table td {
-    padding: 0.75rem 0.5rem;
-    font-size: 0.85rem;
-  }
-}
-
-/* Scrollbar styling */
-.teachers-table-section::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.teachers-table-section::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.teachers-table-section::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.teachers-table-section::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
 /* Teacher Table Styles */
 .teacher-table {
   margin-bottom: 0;
@@ -779,74 +780,24 @@
   cursor: pointer;
 }
 
-/* Search Wrapper */
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
+/* Scrollbar styling */
+.teachers-table-section::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  color: #6c757d;
-  font-size: 0.9rem;
+.teachers-table-section::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-.search-input {
-  padding-left: 2.5rem !important;
-  padding-right: 2.5rem !important;
+.teachers-table-section::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 
-.clear-search {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  color: #6c757d;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-}
-
-.clear-search:hover {
-  color: #dc3545;
-}
-
-/* Selected Teacher Info */
-.selected-teacher-info {
-  border-left: 4px solid #0d6efd;
-}
-
-/* Schedule Modal Styles */
-.schedule-container {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.teacher-info-card {
-  border: 1px solid #dee2e6;
-}
-
-.schedule-table {
-  font-size: 0.95rem;
-}
-
-.schedule-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-}
-
-.total-classes {
-  text-align: right;
-  font-size: 1.1rem;
-}
-
-.no-classes {
-  border: 2px dashed #dee2e6;
-}
-
-.no-classes i {
-  opacity: 0.5;
+.teachers-table-section::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 /* Badge Styles */
@@ -870,16 +821,4 @@
 .btn-info:hover {
   background-color: #138496;
   border-color: #117a8b;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .teacher-table td {
-    font-size: 0.9rem;
-  }
-  
-  .btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-  }
 }
