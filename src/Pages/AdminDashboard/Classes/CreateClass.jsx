@@ -101,6 +101,8 @@ const fetchTeacherSchedule = async (teacherId) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    console.log("Schedule response:", response.data); // Debug log
+
     if (response.data && response.data.success) {
       setTeacherSchedule({
         teacherName: selectedTeacher?.name,
@@ -108,7 +110,6 @@ const fetchTeacherSchedule = async (teacherId) => {
         assignedClasses: response.data.assignedClasses || [],
       });
       
-      // Optional: Show success message
       if (response.data.assignedClasses?.length > 0) {
         toast.success(`Found ${response.data.assignedClasses.length} classes`);
       }
@@ -132,11 +133,13 @@ const fetchTeacherSchedule = async (teacherId) => {
   }
 };
 
- const handleViewSchedule = (teacher) => {
-  setSelectedTeacher(teacher); // Select teacher
-  setTeacherSchedule(null); // Reset previous schedule
-  setShowScheduleModal(true); // Show modal immediately
-  fetchTeacherSchedule(teacher._id); // Fetch schedule asynchronously
+const handleViewSchedule = (teacher) => {
+  console.log("Opening modal for teacher:", teacher);
+  setSelectedTeacher(teacher);
+  setTeacherSchedule(null);
+  setShowScheduleModal(true); // This should open the modal
+  console.log("showScheduleModal set to true");
+  fetchTeacherSchedule(teacher._id);
 };
 const roleMapping = {
   "Assistant Professor": "Assistant",
@@ -736,8 +739,9 @@ const roleMapping = {
         show={showScheduleModal}
         setShow={setShowScheduleModal}
         size="lg"
+        tabIndex="-1"
       >
-        <MDBModalDialog size="lg">
+        <MDBModalDialog size="lg" centered>
           <MDBModalContent>
             <MDBModalHeader className="bg-primary text-white">
               <MDBModalTitle>
