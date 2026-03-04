@@ -84,7 +84,7 @@
   color: #dc3545;
 }
 
-/* ===== LUXURY MODAL STYLES - FIXED ===== */
+/* ===== LUXURY MODAL STYLES - WIDER VERSION ===== */
 
 /* Modal Overlay with Blur Effect */
 .modal-overlay {
@@ -102,15 +102,22 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Modal Dialog */
+/* Modal Dialog - WIDER */
 .modal-dialog {
-  max-width: 900px;
+  max-width: 1300px; /* Increased from 900px */
   width: 95%;
   margin: 1.75rem auto;
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Modal Content with Glassmorphism Effect - FIXED for scrolling */
+/* For ultra-wide screens */
+@media (min-width: 1800px) {
+  .modal-dialog {
+    max-width: 1500px;
+  }
+}
+
+/* Modal Content with Glassmorphism Effect */
 .modal-content {
   background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
   border: none;
@@ -122,7 +129,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  max-height: 80vh; /* Limit modal height */
+  max-height: 85vh; /* Slightly increased */
 }
 
 /* Decorative Top Bar */
@@ -137,14 +144,14 @@
   z-index: 10;
 }
 
-/* Modal Header - Fixed at top */
+/* Modal Header */
 .modal-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 1.5rem 2rem;
+  padding: 1.5rem 2.5rem; /* Increased horizontal padding */
   border: none;
   position: relative;
   overflow: hidden;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 /* Animated Background Pattern */
@@ -160,7 +167,7 @@
 }
 
 .modal-title {
-  font-size: 1.5rem;
+  font-size: 1.6rem; /* Increased */
   font-weight: 600;
   color: white;
   display: flex;
@@ -171,9 +178,9 @@
 }
 
 .modal-title i {
-  font-size: 1.8rem;
+  font-size: 2rem; /* Increased */
   background: rgba(255, 255, 255, 0.2);
-  padding: 10px;
+  padding: 12px; /* Increased */
   border-radius: 14px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
@@ -181,7 +188,7 @@
 /* Close Button */
 .btn-close-white {
   background: rgba(255, 255, 255, 0.2);
-  padding: 12px;
+  padding: 14px; /* Increased */
   border-radius: 12px;
   transition: all 0.3s ease;
   opacity: 1;
@@ -196,18 +203,18 @@
   transform: rotate(90deg);
 }
 
-/* Modal Body - FIXED: Scrollable area */
+/* Modal Body - MORE SPACIOUS */
 .modal-body {
-  padding: 2rem;
+  padding: 2.5rem; /* Increased from 2rem */
   background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
-  flex: 1; /* Takes remaining space */
-  overflow-y: auto; /* Enable vertical scrolling */
-  min-height: 0; /* Important for flex child */
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
-/* Custom Scrollbar for Modal Body */
+/* Custom Scrollbar */
 .modal-body::-webkit-scrollbar {
-  width: 8px;
+  width: 10px; /* Slightly wider */
 }
 
 .modal-body::-webkit-scrollbar-track {
@@ -224,12 +231,12 @@
   background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
-/* Teacher Info Card - Luxury Design */
+/* Teacher Info Card - MORE SPACIOUS */
 .teacher-info-card {
   background: linear-gradient(135deg, #f6f9fc 0%, #edf2f9 100%);
-  border-radius: 20px;
-  padding: 1.8rem;
-  margin-bottom: 2rem;
+  border-radius: 24px; /* Increased */
+  padding: 2.5rem; /* Increased from 1.8rem */
+  margin-bottom: 2.5rem; /* Increased */
   border: 1px solid rgba(102, 126, 234, 0.2);
   box-shadow: 
     0 10px 30px -10px rgba(102, 126, 234, 0.2),
@@ -243,18 +250,18 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 150px;
-  height: 150px;
+  width: 200px; /* Increased */
+  height: 200px; /* Increased */
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
   border-radius: 50%;
   transform: translate(50%, -50%);
 }
 
 .teacher-info-card h5 {
-  font-size: 1.8rem;
+  font-size: 2.2rem; /* Increased from 1.8rem */
   font-weight: 700;
   color: #2d3748;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem; /* Increased */
   position: relative;
   display: inline-block;
 }
@@ -262,79 +269,82 @@
 .teacher-info-card h5::after {
   content: '';
   position: absolute;
-  bottom: -5px;
+  bottom: -8px; /* Adjusted */
   left: 0;
-  width: 50px;
-  height: 3px;
+  width: 60px; /* Increased */
+  height: 4px; /* Increased */
   background: linear-gradient(90deg, #667eea, #764ba2);
   border-radius: 2px;
 }
 
+/* Info Grid - MORE SPACIOUS */
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.2rem;
-  margin-top: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Increased from 250px */
+  gap: 1.8rem; /* Increased from 1.2rem */
+  margin-top: 1.8rem; /* Increased */
 }
 
+/* Info Items - MORE SPACIOUS */
 .info-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0.8rem 1.2rem;
+  gap: 18px; /* Increased from 12px */
+  padding: 1.2rem 1.8rem; /* Increased from 0.8rem 1.2rem */
   background: white;
-  border-radius: 14px;
+  border-radius: 16px; /* Increased */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
 }
 
 .info-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+  transform: translateY(-3px); /* More noticeable */
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.2); /* Enhanced */
 }
 
 .info-item i {
-  font-size: 1.2rem;
-  width: 30px;
-  height: 30px;
+  font-size: 1.4rem; /* Increased */
+  width: 40px; /* Increased */
+  height: 40px; /* Increased */
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-  border-radius: 10px;
+  border-radius: 12px; /* Increased */
   color: #667eea;
 }
 
 .info-item span {
   color: #4a5568;
-  font-size: 1rem;
+  font-size: 1.1rem; /* Increased */
 }
 
 .info-item strong {
   color: #2d3748;
   font-weight: 600;
   margin-left: 5px;
+  font-size: 1.1rem; /* Increased */
 }
 
 /* Section Title */
 .section-title {
-  font-size: 1.3rem;
+  font-size: 1.5rem; /* Increased from 1.3rem */
   font-weight: 600;
   color: #2d3748;
-  margin: 1.5rem 0 1rem;
+  margin: 2rem 0 1.2rem; /* Increased margins */
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .section-title i {
   color: #667eea;
-  font-size: 1.4rem;
+  font-size: 1.6rem; /* Increased */
 }
 
-/* Schedule Table - Luxury Design */
+/* Schedule Table - MORE SPACIOUS */
 .table-responsive {
-  border-radius: 18px;
+  border-radius: 20px; /* Increased */
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(102, 126, 234, 0.1);
@@ -352,18 +362,18 @@
   color: white;
   font-weight: 500;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: 0.95rem; /* Increased */
   letter-spacing: 0.5px;
-  padding: 1.2rem 1rem;
+  padding: 1.4rem 1.2rem; /* Increased padding */
   border: none;
 }
 
 .schedule-table thead th:first-child {
-  border-top-left-radius: 16px;
+  border-top-left-radius: 18px; /* Increased */
 }
 
 .schedule-table thead th:last-child {
-  border-top-right-radius: 16px;
+  border-top-right-radius: 18px; /* Increased */
 }
 
 .schedule-table tbody tr {
@@ -372,15 +382,15 @@
 
 .schedule-table tbody tr:hover {
   background: linear-gradient(135deg, #f8faff 0%, #f0f3ff 100%);
-  transform: scale(1.01);
+  transform: scale(1.005);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
 }
 
 .schedule-table td {
-  padding: 1.2rem 1rem;
+  padding: 1.4rem 1.2rem; /* Increased from 1.2rem 1rem */
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   color: #4a5568;
-  font-size: 0.95rem;
+  font-size: 1rem; /* Increased */
 }
 
 .schedule-table tbody tr:last-child td {
@@ -388,32 +398,32 @@
 }
 
 .schedule-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 16px;
+  border-bottom-left-radius: 18px; /* Increased */
 }
 
 .schedule-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 16px;
+  border-bottom-right-radius: 18px; /* Increased */
 }
 
 .class-code-badge {
   background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
   color: #667eea;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1.2rem; /* Increased */
   border-radius: 30px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem; /* Increased */
   display: inline-block;
 }
 
 /* Total Classes Card */
 .total-classes {
-  margin-top: 1.5rem;
-  padding: 1.2rem 2rem;
+  margin-top: 2rem; /* Increased */
+  padding: 1.4rem 2.5rem; /* Increased */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50px;
   text-align: center;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.3rem; /* Increased */
   font-weight: 600;
   box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
   position: relative;
@@ -432,15 +442,15 @@
 }
 
 .total-classes i {
-  margin-right: 10px;
-  font-size: 1.4rem;
+  margin-right: 12px; /* Increased */
+  font-size: 1.5rem; /* Increased */
 }
 
-/* No Classes State */
+/* No Classes State - MORE SPACIOUS */
 .no-classes {
   background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
-  border-radius: 24px;
-  padding: 3rem 2rem;
+  border-radius: 28px; /* Increased */
+  padding: 4rem 3rem; /* Increased */
   text-align: center;
   border: 2px dashed rgba(102, 126, 234, 0.3);
   transition: all 0.3s ease;
@@ -452,40 +462,41 @@
 }
 
 .no-classes i {
-  font-size: 4rem;
+  font-size: 5rem; /* Increased from 4rem */
   background: linear-gradient(135deg, #667eea, #764ba2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem; /* Increased */
   opacity: 0.7;
 }
 
 .no-classes h6 {
-  font-size: 1.5rem;
+  font-size: 2rem; /* Increased from 1.5rem */
   color: #2d3748;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .no-classes p {
   color: #718096;
-  font-size: 1.1rem;
+  font-size: 1.2rem; /* Increased from 1.1rem */
 }
 
-/* Modal Footer - FIXED: Always visible at bottom */
+/* Modal Footer - MORE SPACIOUS */
 .modal-footer {
-  padding: 1.5rem 2rem;
+  padding: 1.8rem 2.5rem; /* Increased padding */
   border-top: 1px solid rgba(102, 126, 234, 0.1);
   background: #f8faff;
-  flex-shrink: 0; /* Prevent footer from shrinking */
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .modal-footer .btn {
-  padding: 0.8rem 2rem;
+  padding: 1rem 3rem; /* Increased padding */
   border-radius: 50px;
   font-weight: 500;
+  font-size: 1.1rem; /* Increased */
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
   border: none;
@@ -501,8 +512,8 @@
 
 .modal-footer .btn-secondary:hover {
   background: #cbd5e0;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-footer .btn-primary {
@@ -512,8 +523,8 @@
 }
 
 .modal-footer .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
 }
 
 /* Animations */
@@ -552,18 +563,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 5rem 3rem; /* Increased */
 }
 
 .luxury-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(102, 126, 234, 0.1);
-  border-top: 4px solid #667eea;
-  border-right: 4px solid #764ba2;
+  width: 70px; /* Increased */
+  height: 70px; /* Increased */
+  border: 5px solid rgba(102, 126, 234, 0.1); /* Thicker border */
+  border-top: 5px solid #667eea;
+  border-right: 5px solid #764ba2;
   border-radius: 50%;
   animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem; /* Increased */
 }
 
 @keyframes spin {
@@ -583,23 +594,32 @@
   }
   
   .modal-title {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .modal-body {
     padding: 1.5rem;
   }
   
+  .teacher-info-card {
+    padding: 1.5rem;
+  }
+  
   .teacher-info-card h5 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
   
   .info-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .info-item {
+    padding: 1rem 1.2rem;
   }
   
   .schedule-table thead th {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     padding: 1rem 0.5rem;
   }
   
@@ -613,6 +633,22 @@
     padding: 1rem;
   }
   
+  .no-classes {
+    padding: 2rem 1.5rem;
+  }
+  
+  .no-classes i {
+    font-size: 3.5rem;
+  }
+  
+  .no-classes h6 {
+    font-size: 1.4rem;
+  }
+  
+  .no-classes p {
+    font-size: 1rem;
+  }
+  
   .modal-footer {
     padding: 1rem 1.5rem;
     flex-direction: column;
@@ -620,10 +656,12 @@
   
   .modal-footer .btn {
     width: 100%;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
 }
 
-/* Teachers Table Section - Bottom */
+/* Teachers Table Section - Bottom (unchanged) */
 .teachers-table-section {
   padding: 0 0.5rem;
   overflow-x: auto;

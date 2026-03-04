@@ -104,7 +104,6 @@ const fetchTeacherSchedule = async (teacherId) => {
     console.log("Schedule response:", response.data);
 
     if (response.data && response.data.success) {
-      // Store complete teacher information
       setTeacherSchedule({
         teacherName: selectedTeacher?.name,
         department: response.data.department || selectedTeacher?.department,
@@ -167,7 +166,6 @@ const handleChange = (e) => {
   }));
 };
 
-// Get unique departments from teachers
 const departments = [
   "all",
   ...new Set(teachers.map((t) => t.department).filter(Boolean)),
@@ -429,7 +427,6 @@ return (
               </div>
 
               <div className="card-body">
-                {/* Department Filter Dropdown */}
                 <div className="row mb-4">
                   <div className="col-md-4">
                     <label className="form-label fw-bold">
@@ -476,7 +473,6 @@ return (
                   </div>
                 </div>
 
-                {/* Teachers Table */}
                 <div className="table-responsive">
                   <table className="table table-hover teacher-table">
                     <thead className="table-light">
@@ -596,7 +592,6 @@ return (
                   </table>
                 </div>
 
-                {/* Selected Teacher Display */}
                 {selectedTeacher && (
                   <div className="selected-teacher-info mt-3 p-3 bg-light rounded">
                     <div className="d-flex align-items-center">
@@ -708,7 +703,6 @@ return (
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="d-flex justify-content-end">
               <button type="submit" className="btn btn-primary px-5 py-2">
                 <MDBIcon fas icon="save" className="me-2" />
@@ -720,7 +714,7 @@ return (
       </MDBCard>
     </MDBContainer>
 
-    {/* Schedule View Modal - FIXED VERSION */}
+    {/* Schedule View Modal - WIDER VERSION */}
     {showScheduleModal && (
       <div className="modal-overlay">
         <div className="modal-dialog">
@@ -882,7 +876,7 @@ return (
               )}
             </div>
 
-            {/* Modal Footer - Fixed at Bottom */}
+            {/* Modal Footer */}
             <div className="modal-footer">
               <button 
                 type="button" 
