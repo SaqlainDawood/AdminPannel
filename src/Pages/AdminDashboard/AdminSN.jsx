@@ -83,7 +83,7 @@ const navigate = useNavigate();
     {
       id: 'classes',
       title: 'Assign Classes',
-      icon: 'fa-file-alt',
+        icon: 'fa-tasks',
       path: '/admin/dashboard/classes',
       submenu: [
         { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
