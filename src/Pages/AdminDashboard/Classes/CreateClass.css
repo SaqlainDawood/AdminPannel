@@ -697,3 +697,86 @@
   border: 1px solid #b8daff;
   border-radius: 6px;
 }
+/* Schedule Table Styles */
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Badge Styles */
+.badge-info {
+  background-color: #17a2b8;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+/* Conflict Alert */
+.alert-danger {
+  border-left: 4px solid #dc3545;
+  background-color: #fff5f5;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Disabled Button State */
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success Button */
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  border: none;
+  padding: 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Remove Button */
+.btn-danger {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+/* Empty State */
+.bg-light {
+  background-color: #f8f9fa !important;
+  border: 2px dashed #dee2e6;
+}
+
+/* Modal Styles (keep your existing modal styles) */
