@@ -16,7 +16,7 @@ import {
   MDBTableHead,
   MDBTableBody,
   MDBBadge,
-  MDBAlert,
+  // MDBAlert removed
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
@@ -398,6 +398,35 @@ const CreateClass = () => {
     }
   };
 
+  // Custom Alert Component using Bootstrap classes
+  const ConflictAlert = ({ conflicts, onClose }) => {
+    if (conflicts.length === 0) return null;
+    
+    return (
+      <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <div className="d-flex align-items-center mb-2">
+          <MDBIcon fas icon="exclamation-triangle" size="lg" className="me-2" />
+          <h5 className="mb-0">Schedule Conflicts Detected!</h5>
+        </div>
+        <ul className="mb-0">
+          {conflicts.map((conflict, index) => (
+            <li key={index}>
+              <strong>{conflict.day}</strong> at {conflict.startTime}-{conflict.endTime}:{' '}
+              <span className="fw-bold">{conflict.className || conflict.classCode}</span>{' '}
+              already scheduled in <span className="badge bg-secondary">{conflict.room}</span>
+            </li>
+          ))}
+        </ul>
+        <button 
+          type="button" 
+          className="btn-close" 
+          onClick={onClose}
+          aria-label="Close"
+        ></button>
+      </div>
+    );
+  };
+
   return (
     <>
       <MDBContainer className="py-4">
@@ -410,26 +439,14 @@ const CreateClass = () => {
               </h3>
             </div>
 
-            {/* Conflict Alert */}
-            {scheduleConflicts.length > 0 && (
-              <MDBAlert color="danger" className="mb-4" dismissible onClose={() => setScheduleConflicts([])}>
-                <h5>
-                  <MDBIcon fas icon="exclamation-triangle" className="me-2" />
-                  Schedule Conflicts Detected!
-                </h5>
-                <ul className="mb-0">
-                  {scheduleConflicts.map((conflict, index) => (
-                    <li key={index}>
-                      {conflict.day} at {conflict.startTime}-{conflict.endTime}:{' '}
-                      <strong>{conflict.className || conflict.classCode}</strong> already scheduled in {conflict.room}
-                    </li>
-                  ))}
-                </ul>
-              </MDBAlert>
-            )}
+            {/* Conflict Alert - Using custom component */}
+            <ConflictAlert 
+              conflicts={scheduleConflicts} 
+              onClose={() => setScheduleConflicts([])} 
+            />
 
             <form onSubmit={handleSubmit}>
-              {/* Class Information Card (same as before) */}
+              {/* Class Information Card */}
               <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
@@ -558,7 +575,7 @@ const CreateClass = () => {
                 </div>
               </div>
 
-              {/* Teacher Assignment Card (same as before) */}
+              {/* Teacher Assignment Card */}
               <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
@@ -763,7 +780,7 @@ const CreateClass = () => {
                 </div>
               </div>
 
-              {/* UPDATED: Schedule & Timings Card with Table */}
+              {/* Schedule & Timings Card with Table */}
               <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
                   <h5 className="mb-0">
@@ -917,15 +934,15 @@ const CreateClass = () => {
         </MDBCard>
       </MDBContainer>
 
-      {/* Schedule View Modal (same as before) */}
+      {/* Schedule View Modal */}
       {showScheduleModal && (
         <div className="modal-overlay">
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-lg">
             <div className="modal-content">
-              <div className="modal-header">
+              <div className="modal-header bg-primary text-white">
                 <h5 className="modal-title">
-                  <i className="far fa-calendar-alt"></i>
-                  Teacher Schedule
+                  <i className="far fa-calendar-alt me-2"></i>
+                  Teacher Schedule - {selectedTeacher?.name}
                 </h5>
                 <button 
                   type="button" 
@@ -937,141 +954,49 @@ const CreateClass = () => {
 
               <div className="modal-body">
                 {loading ? (
-                  <div className="spinner-container">
-                    <div className="luxury-spinner"></div>
-                    <p className="text-muted">Loading schedule...</p>
+                  <div className="text-center py-4">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <p className="mt-2">Loading schedule...</p>
                   </div>
                 ) : (
-                  selectedTeacher && (
-                    <>
-                      <div className="teacher-info-card">
-                        {selectedTeacher.image && (
-                          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                            <img 
-                              src={selectedTeacher.image} 
-                              alt={selectedTeacher.name}
-                              style={{
-                                width: '100px',
-                                height: '100px',
-                                borderRadius: '50%',
-                                objectFit: 'cover',
-                                border: '3px solid #667eea',
-                                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
-                              }}
-                            />
-                          </div>
-                        )}
-                        <h5>{selectedTeacher.name}</h5>
-                        <div className="info-grid">
-                          <div className="info-item">
-                            <i className="fas fa-building"></i>
-                            <span>Department: <strong>{selectedTeacher.department}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-id-badge"></i>
-                            <span>Employee ID: <strong>{selectedTeacher.employeeID}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-envelope"></i>
-                            <span>Email: <strong>{selectedTeacher.email}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-phone"></i>
-                            <span>Phone: <strong>{selectedTeacher.phone || 'N/A'}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-user-tie"></i>
-                            <span>Designation: <strong>{selectedTeacher.designation || 'N/A'}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-graduation-cap"></i>
-                            <span>Qualification: <strong>{selectedTeacher.qualification || 'N/A'}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-flask"></i>
-                            <span>Specialization: <strong>{selectedTeacher.specialization || 'N/A'}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-briefcase"></i>
-                            <span>Experience: <strong>{selectedTeacher.experience || 'N/A'}</strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-calendar-alt"></i>
-                            <span>Joining Date: <strong>
-                              {selectedTeacher.joiningDate ? new Date(selectedTeacher.joiningDate).toLocaleDateString() : 'N/A'}
-                            </strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-money-bill"></i>
-                            <span>Salary: <strong>
-                              {selectedTeacher.salary ? `$${selectedTeacher.salary.toLocaleString()}` : 'N/A'}
-                            </strong></span>
-                          </div>
-                          <div className="info-item">
-                            <i className="fas fa-circle"></i>
-                            <span>Status: 
-                              <strong style={{ 
-                                color: selectedTeacher.status === 'Active' ? '#28a745' : '#ffc107',
-                                marginLeft: '5px'
-                              }}>
-                                {selectedTeacher.status || 'N/A'}
-                              </strong>
-                            </span>
-                          </div>
-                        </div>
+                  <>
+                    {teacherSchedule?.assignedClasses?.length > 0 ? (
+                      <div className="table-responsive">
+                        <table className="table table-bordered table-hover">
+                          <thead className="table-light">
+                            <tr>
+                              <th>Class Code</th>
+                              <th>Class Name</th>
+                              <th>Day</th>
+                              <th>Time</th>
+                              <th>Room</th>
+                              <th>Section</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {teacherSchedule.assignedClasses.map((cls, index) => (
+                              <tr key={index}>
+                                <td><span className="badge bg-primary">{cls.classCode}</span></td>
+                                <td>{cls.className || cls.classCode}</td>
+                                <td><span className="badge bg-info">{cls.day}</span></td>
+                                <td>{cls.startTime} - {cls.endTime}</td>
+                                <td><span className="badge bg-secondary">{cls.room || 'N/A'}</span></td>
+                                <td>{cls.section || 'N/A'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-
-                      <h6 className="section-title">
-                        <i className="fas fa-book-open"></i>
-                        Assigned Classes
-                      </h6>
-
-                      {teacherSchedule?.assignedClasses?.length > 0 ? (
-                        <>
-                          <div className="table-responsive">
-                            <table className="schedule-table">
-                              <thead>
-                                <tr>
-                                  <th>Class Code</th>
-                                  <th>Class Name</th>
-                                  <th>Day</th>
-                                  <th>Time</th>
-                                  <th>Subject</th>
-                                  <th>Room</th>
-                                  <th>Section</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {teacherSchedule.assignedClasses.map((cls, index) => (
-                                  <tr key={index}>
-                                    <td>
-                                      <span className="class-code-badge">{cls.classCode}</span>
-                                    </td>
-                                    <td>{cls.className || cls.classCode}</td>
-                                    <td>{cls.day}</td>
-                                    <td>{cls.startTime} - {cls.endTime}</td>
-                                    <td>{cls.subject}</td>
-                                    <td>{cls.room || 'N/A'}</td>
-                                    <td>{cls.section || 'N/A'}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                          <div className="total-classes">
-                            <i className="fas fa-chart-bar"></i>
-                            Total Classes: {teacherSchedule.assignedClasses.length}
-                          </div>
-                        </>
-                      ) : (
-                        <div className="no-classes">
-                          <i className="far fa-calendar-times"></i>
-                          <h6>No Classes Assigned</h6>
-                          <p>This teacher currently has no scheduled classes</p>
-                        </div>
-                      )}
-                    </>
-                  )
+                    ) : (
+                      <div className="text-center py-5">
+                        <i className="far fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5>No Classes Assigned</h5>
+                        <p className="text-muted">This teacher currently has no scheduled classes</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
