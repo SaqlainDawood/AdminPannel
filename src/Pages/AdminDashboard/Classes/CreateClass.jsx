@@ -4,7 +4,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBBtn,
-  MDBAlert,
   MDBIcon,
   MDBModal,
   MDBModalDialog,
