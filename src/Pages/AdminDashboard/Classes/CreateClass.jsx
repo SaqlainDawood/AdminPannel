@@ -780,135 +780,171 @@ const CreateClass = () => {
                 </div>
               </div>
 
-              {/* Schedule & Timings Card with Table */}
-              <div className="card mb-4">
-                <div className="card-header bg-primary text-white">
-                  <h5 className="mb-0">
-                    <MDBIcon far icon="calendar-check" className="me-2" />
-                    Schedule & Timings
-                  </h5>
-                </div>
-                <div className="card-body">
-                  {/* Schedule Entry Form */}
-                  <div className="row g-3 mb-4">
-                    <div className="col-md-3">
-                      <label className="form-label">Day</label>
-                      <select
-                        className="form-select"
-                        name="day"
-                        value={currentSchedule.day}
-                        onChange={handleScheduleChange}
-                      >
-                        <option value="">Select Day</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                      </select>
-                    </div>
-                    <div className="col-md-2">
-                      <label className="form-label">Start Time</label>
-                      <select
-                        className="form-select"
-                        name="startTime"
-                        value={currentSchedule.startTime}
-                        onChange={handleScheduleChange}
-                      >
-                        <option value="">Select</option>
-                        {Object.entries(timeSlots).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-2">
-                      <label className="form-label">End Time</label>
-                      <select
-                        className="form-select"
-                        name="endTime"
-                        value={currentSchedule.endTime}
-                        onChange={handleScheduleChange}
-                      >
-                        <option value="">Select</option>
-                        {Object.entries(timeSlots).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-3">
-                      <label className="form-label">Room</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="e.g., Room 401"
-                        name="room"
-                        value={currentSchedule.room}
-                        onChange={handleScheduleChange}
-                      />
-                    </div>
-                    <div className="col-md-2 d-flex align-items-end">
-                      <button
-                        type="button"
-                        className="btn btn-success w-100"
-                        onClick={handleAddSchedule}
-                      >
-                        <MDBIcon fas icon="plus" className="me-2" />
-                        Add
-                      </button>
-                    </div>
-                  </div>
+             {/* Schedule & Timings Card with Table */}
+<div className="card mb-4">
+  <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+    <h5 className="mb-0">
+      <MDBIcon far icon="calendar-check" className="me-2" />
+      Schedule & Timings
+    </h5>
+    {scheduleEntries.length > 0 && (
+      <span className="badge bg-light text-primary">
+        {scheduleEntries.length} Schedule{scheduleEntries.length > 1 ? 's' : ''} Added
+      </span>
+    )}
+  </div>
+  <div className="card-body">
+    {/* Schedule Entry Form */}
+    <div className="row g-3 mb-4">
+      <div className="col-md-3">
+        <label className="form-label">Day</label>
+        <select
+          className="form-select"
+          name="day"
+          value={currentSchedule.day}
+          onChange={handleScheduleChange}
+        >
+          <option value="">Select Day</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+      </div>
+      <div className="col-md-2">
+        <label className="form-label">Start Time</label>
+        <select
+          className="form-select"
+          name="startTime"
+          value={currentSchedule.startTime}
+          onChange={handleScheduleChange}
+        >
+          <option value="">Select</option>
+          {Object.entries(timeSlots).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+      </div>
+      <div className="col-md-2">
+        <label className="form-label">End Time</label>
+        <select
+          className="form-select"
+          name="endTime"
+          value={currentSchedule.endTime}
+          onChange={handleScheduleChange}
+        >
+          <option value="">Select</option>
+          {Object.entries(timeSlots).map(([value, label]) => (
+            <option key={value} value={value}>{label}</option>
+          ))}
+        </select>
+      </div>
+      <div className="col-md-3">
+        <label className="form-label">Room</label>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="e.g., Room 401"
+          name="room"
+          value={currentSchedule.room}
+          onChange={handleScheduleChange}
+        />
+      </div>
+      <div className="col-md-2 d-flex align-items-end">
+        <button
+          type="button"
+          className="btn btn-success w-100"
+          onClick={handleAddSchedule}
+          disabled={!selectedTeacher}
+        >
+          <MDBIcon fas icon="plus" className="me-2" />
+          Add Schedule
+        </button>
+      </div>
+    </div>
 
-                  {/* Schedule Table */}
-                  {scheduleEntries.length > 0 ? (
-                    <div className="table-responsive">
-                      <table className="table table-bordered table-hover">
-                        <thead className="table-light">
-                          <tr>
-                            <th>Day</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Room</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {scheduleEntries.map((entry, index) => (
-                            <tr key={index}>
-                              <td>
-                                <MDBBadge color="info" pill>
-                                  {entry.day}
-                                </MDBBadge>
-                              </td>
-                              <td>{timeSlots[entry.startTime] || entry.startTime}</td>
-                              <td>{timeSlots[entry.endTime] || entry.endTime}</td>
-                              <td>
-                                <MDBBadge color="secondary" pill>
-                                  {entry.room}
-                                </MDBBadge>
-                              </td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-sm btn-danger"
-                                  onClick={() => handleRemoveSchedule(index)}
-                                >
-                                  <MDBIcon fas icon="trash" />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 bg-light rounded">
-                      <MDBIcon far icon="calendar-alt" size="3x" className="text-muted mb-3" />
-                      <p className="text-muted">No schedule added yet. Please add schedule entries above.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+    {/* Help text for multiple schedules */}
+    {selectedTeacher && (
+      <div className="alert alert-info py-2 mb-3">
+        <MDBIcon fas icon="info-circle" className="me-2" />
+        You can add multiple schedules for this teacher. Each schedule will appear in the table below.
+      </div>
+    )}
+
+    {/* Schedule Table */}
+    {scheduleEntries.length > 0 ? (
+      <>
+        <div className="table-responsive">
+          <table className="table table-bordered table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>#</th>
+                <th>Day</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Room</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scheduleEntries.map((entry, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <MDBBadge color="info" pill>
+                      {entry.day}
+                    </MDBBadge>
+                  </td>
+                  <td>{timeSlots[entry.startTime] || entry.startTime}</td>
+                  <td>{timeSlots[entry.endTime] || entry.endTime}</td>
+                  <td>
+                    <MDBBadge color="secondary" pill>
+                      {entry.room}
+                    </MDBBadge>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleRemoveSchedule(index)}
+                    >
+                      <MDBIcon fas icon="trash" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="d-flex justify-content-between align-items-center mt-3">
+          <div>
+            <strong>Total Schedules:</strong> {scheduleEntries.length}
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => {
+              if (window.confirm('Clear all schedules?')) {
+                setScheduleEntries([]);
+              }
+            }}
+          >
+            <MDBIcon fas icon="trash-alt" className="me-2" />
+            Clear All
+          </button>
+        </div>
+      </>
+    ) : (
+      <div className="text-center py-4 bg-light rounded">
+        <MDBIcon far icon="calendar-alt" size="3x" className="text-muted mb-3" />
+        <p className="text-muted mb-0">No schedule added yet.</p>
+        <p className="text-muted small">Fill the form above and click "Add Schedule" to add multiple schedules for this teacher.</p>
+      </div>
+    )}
+  </div>
+</div>
 
               <div className="d-flex justify-content-end">
                 <button 
