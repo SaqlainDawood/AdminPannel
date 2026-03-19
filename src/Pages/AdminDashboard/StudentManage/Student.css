@@ -16,7 +16,7 @@
 }
 
 .page-title {
-  color: white;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
