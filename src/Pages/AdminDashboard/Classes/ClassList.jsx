@@ -15,7 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
-import "./ClassList.css";
+// import "./ClassList.css";
 
 const ClassList = () => {
   const navigate = useNavigate();
