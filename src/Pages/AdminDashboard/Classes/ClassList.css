@@ -2,7 +2,7 @@
 
 /* ===== VARIABLES ===== */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --success-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
   --danger-gradient: linear-gradient(135deg, #f43b47 0%, #453a94 100%);
@@ -41,7 +41,7 @@
 .page-title {
   font-size: 2.2rem;
   font-weight: 700;
-  background: var(--primary-gradient);
+  background: white;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
