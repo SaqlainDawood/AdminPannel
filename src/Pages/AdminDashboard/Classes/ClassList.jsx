@@ -427,7 +427,7 @@ const ClassList = () => {
                                         {cls.teachers[0]?.name?.charAt(0) || 'T'}
                                       </div>
                                       <div className="teacher-details">
-                                        <div className="teacher-name">{cls.teachers[0]?.name || 'N/A'}</div>
+                                        <div className="teacher-name">{cls.teachers[0]?.firstName || 'N/A'}</div>
                                         <div className="teacher-role">{cls.teachers[0]?.role || 'Teacher'}</div>
                                       </div>
                                       {cls.teachers.length > 1 && (
