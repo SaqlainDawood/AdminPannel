@@ -22,18 +22,18 @@ const ClassList = () => {
   const [classes, setClasses] = useState([]);
   const [filteredClasses, setFilteredClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDepartment, setFilterDepartment] = useState("all");
   const [filterSemester, setFilterSemester] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(8);
-  
+
   // Department and semester options
   const [departments, setDepartments] = useState(["all"]);
   const semesters = ["all", 1, 2, 3, 4, 5, 6, 7, 8];
@@ -52,7 +52,7 @@ const ClassList = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("adminToken");
-      
+
       const response = await AdminAPI.get("/classes/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -63,11 +63,14 @@ const ClassList = () => {
         const classData = response.data.data || [];
         setClasses(classData);
         setFilteredClasses(classData);
-        
+
         // Extract unique departments for filter
-        const depts = ["all", ...new Set(classData.map(c => c.department).filter(Boolean))];
+        const depts = [
+          "all",
+          ...new Set(classData.map((c) => c.department).filter(Boolean)),
+        ];
         setDepartments(depts);
-        
+
         toast.success(`Loaded ${classData.length} classes`);
       }
     } catch (error) {
@@ -89,7 +92,7 @@ const ClassList = () => {
           cls.className?.toLowerCase().includes(term) ||
           cls.classCode?.toLowerCase().includes(term) ||
           cls.subject?.toLowerCase().includes(term) ||
-          cls.teachers?.some(t => t.name?.toLowerCase().includes(term))
+          cls.teachers?.some((t) => t.name?.toLowerCase().includes(term)),
       );
     }
 
@@ -100,7 +103,9 @@ const ClassList = () => {
 
     // Apply semester filter
     if (filterSemester !== "all") {
-      filtered = filtered.filter((cls) => cls.semester === parseInt(filterSemester));
+      filtered = filtered.filter(
+        (cls) => cls.semester === parseInt(filterSemester),
+      );
     }
 
     // Apply status filter
@@ -141,7 +146,7 @@ const ClassList = () => {
         await AdminAPI.delete(`/classes/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
+
         toast.success("Class deactivated successfully");
         fetchClasses(); // Refresh the list
       } catch (error) {
@@ -166,7 +171,16 @@ const ClassList = () => {
 
   // Get semester badge color
   const getSemesterBadge = (semester) => {
-    const colors = ["info", "primary", "warning", "success", "danger", "dark", "info", "primary"];
+    const colors = [
+      "info",
+      "primary",
+      "warning",
+      "success",
+      "danger",
+      "dark",
+      "info",
+      "primary",
+    ];
     return colors[semester - 1] || "secondary";
   };
 
@@ -189,7 +203,9 @@ const ClassList = () => {
                 </div>
                 <MDBBtn
                   className="create-btn"
-                  onClick={() => navigate("/admin/dashboard/classes/createclass")}
+                  onClick={() =>
+                    navigate("/admin/dashboard/classes/createclass")
+                  }
                 >
                   <MDBIcon fas icon="plus" className="me-2" />
                   Create New Class
@@ -222,18 +238,23 @@ const ClassList = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="filter-actions">
                   <button
-                    className={`filter-toggle-btn ${showFilters ? 'active' : ''}`}
+                    className={`filter-toggle-btn ${showFilters ? "active" : ""}`}
                     onClick={() => setShowFilters(!showFilters)}
                   >
                     <i className="fas fa-filter me-2"></i>
                     Filters
-                    <i className={`fas fa-chevron-${showFilters ? 'up' : 'down'} ms-2`}></i>
+                    <i
+                      className={`fas fa-chevron-${showFilters ? "up" : "down"} ms-2`}
+                    ></i>
                   </button>
-                  
-                  {(searchTerm || filterDepartment !== "all" || filterSemester !== "all" || filterStatus !== "all") && (
+
+                  {(searchTerm ||
+                    filterDepartment !== "all" ||
+                    filterSemester !== "all" ||
+                    filterStatus !== "all") && (
                     <button
                       className="clear-filters-btn"
                       onClick={clearFilters}
@@ -266,7 +287,7 @@ const ClassList = () => {
                         ))}
                       </select>
                     </div>
-                    
+
                     <div className="col-md-4">
                       <label className="filter-label">
                         <i className="fas fa-layer-group me-2"></i>
@@ -279,12 +300,14 @@ const ClassList = () => {
                       >
                         {semesters.map((sem) => (
                           <option key={sem} value={sem}>
-                            {sem === "all" ? "All Semesters" : `${sem}${getOrdinalSuffix(sem)} Semester`}
+                            {sem === "all"
+                              ? "All Semesters"
+                              : `${sem}${getOrdinalSuffix(sem)} Semester`}
                           </option>
                         ))}
                       </select>
                     </div>
-                    
+
                     <div className="col-md-4">
                       <label className="filter-label">
                         <i className="fas fa-circle me-2"></i>
@@ -308,7 +331,8 @@ const ClassList = () => {
               {/* Results Count */}
               <div className="results-count">
                 <i className="fas fa-list-ul me-2"></i>
-                Showing {currentItems.length} of {filteredClasses.length} classes
+                Showing {currentItems.length} of {filteredClasses.length}{" "}
+                classes
               </div>
             </MDBCardBody>
           </MDBCard>
@@ -362,103 +386,152 @@ const ClassList = () => {
                                   {indexOfFirstItem + index + 1}
                                 </span>
                               </td>
-                              
+
                               <td>
                                 <div className="class-info">
-                                  <div className="class-name">{cls.className}</div>
-                                  <div className="class-code">{cls.classCode}</div>
-                                  <div className="class-subject">{cls.subject}</div>
+                                  <div className="class-name">
+                                    {cls.className}
+                                  </div>
+                                  <div className="class-code">
+                                    {cls.classCode}
+                                  </div>
+                                  <div className="class-subject">
+                                    {cls.subject}
+                                  </div>
                                 </div>
                               </td>
-                              
+
                               <td>
-                                <MDBBadge color="info" pill className="department-badge">
+                                <MDBBadge
+                                  color="info"
+                                  pill
+                                  className="department-badge"
+                                >
                                   {cls.department}
                                 </MDBBadge>
                               </td>
-                              
+
                               <td>
-                                <MDBBadge color={getSemesterBadge(cls.semester)} pill className="semester-badge">
+                                <MDBBadge
+                                  color={getSemesterBadge(cls.semester)}
+                                  pill
+                                  className="semester-badge"
+                                >
                                   {cls.semester}
                                 </MDBBadge>
                               </td>
-                              
+
                               <td>
-                                <span className="section-badge">{cls.section || 'A'}</span>
+                                <span className="section-badge">
+                                  {cls.section || "A"}
+                                </span>
                               </td>
-                              
+
                               <td>
                                 <div className="schedule-info">
                                   {cls.schedule && cls.schedule.length > 0 ? (
                                     <>
                                       <MDBTooltip
                                         tag="span"
-                                        title={cls.schedule.map(s => 
-                                          `${s.day} ${s.startTime}-${s.endTime} (${s.room})`
-                                        ).join(', ')}
+                                        title={cls.schedule
+                                          .map(
+                                            (s) =>
+                                              `${s.day} ${s.startTime}-${s.endTime} (${s.room})`,
+                                          )
+                                          .join(", ")}
                                       >
                                         <span className="schedule-count">
                                           <i className="far fa-calendar-alt me-1"></i>
-                                          {cls.schedule.length} slot{cls.schedule.length > 1 ? 's' : ''}
+                                          {cls.schedule.length} slot
+                                          {cls.schedule.length > 1 ? "s" : ""}
                                         </span>
                                       </MDBTooltip>
                                       <div className="schedule-preview">
-                                        {cls.schedule.slice(0, 1).map((s, i) => (
-                                          <span key={i} className="schedule-item">
-                                            {s.day}, {s.startTime}
-                                          </span>
-                                        ))}
+                                        {cls.schedule
+                                          .slice(0, 1)
+                                          .map((s, i) => (
+                                            <span
+                                              key={i}
+                                              className="schedule-item"
+                                            >
+                                              {s.day}, {s.startTime}
+                                            </span>
+                                          ))}
                                         {cls.schedule.length > 1 && (
-                                          <span className="more-schedule">+{cls.schedule.length - 1}</span>
+                                          <span className="more-schedule">
+                                            +{cls.schedule.length - 1}
+                                          </span>
                                         )}
                                       </div>
                                     </>
                                   ) : (
-                                    <span className="text-muted">No schedule</span>
+                                    <span className="text-muted">
+                                      No schedule
+                                    </span>
                                   )}
                                 </div>
                               </td>
-                              
+
                               <td>
                                 <div className="teacher-info">
                                   {cls.teachers && cls.teachers.length > 0 ? (
                                     <>
                                       <div className="teacher-avatar">
-                                        {cls.teachers[0]?.name?.charAt(0) || 'T'}
+                                        {cls.teachers[0]?.name?.charAt(0) ||
+                                          "T"}
                                       </div>
                                       <div className="teacher-details">
-                                        <div className="teacher-name">{cls.teachers[0]?.firstName || 'N/A'}</div>
-                                        <div className="teacher-role">{cls.teachers[0]?.role || 'Teacher'}</div>
+                                        <div className="teacher-name">
+                                          {cls.teachers[0]?.teacher
+                                            ? `${cls.teachers[0].teacher.firstName} ${cls.teachers[0].teacher.lastName}`
+                                            : "N/A"}
+                                        </div>
+                                        <div className="teacher-role">
+                                          {cls.teachers[0]?.role || "Teacher"}
+                                        </div>
                                       </div>
                                       {cls.teachers.length > 1 && (
                                         <MDBTooltip
                                           tag="span"
-                                          title={cls.teachers.slice(1).map(t => t.name).join(', ')}
+                                          title={cls.teachers
+                                            .slice(1)
+                                            .map((t) => t.name)
+                                            .join(", ")}
                                         >
-                                          <span className="more-teachers">+{cls.teachers.length - 1}</span>
+                                          <span className="more-teachers">
+                                            +{cls.teachers.length - 1}
+                                          </span>
                                         </MDBTooltip>
                                       )}
                                     </>
                                   ) : (
-                                    <span className="text-muted">No teacher</span>
+                                    <span className="text-muted">
+                                      No teacher
+                                    </span>
                                   )}
                                 </div>
                               </td>
-                              
+
                               <td>
                                 <div className="students-count">
                                   <i className="fas fa-user-graduate me-1"></i>
                                   <span>{cls.enrolledCount || 0}</span>
-                                  <span className="capacity">/{cls.capacity || 50}</span>
+                                  <span className="capacity">
+                                    /{cls.capacity || 50}
+                                  </span>
                                 </div>
                               </td>
-                              
+
                               <td>
-                                <MDBBadge color={getStatusBadge(cls.isActive)} pill className="status-badge">
-                                  {cls.isActive ? 'Active' : 'Inactive'}
+                                <MDBBadge
+                                  color={getStatusBadge(cls.isActive)}
+                                  pill
+                                  className="status-badge"
+                                >
+                                  {cls.isActive ? "Active" : "Inactive"}
                                 </MDBBadge>
                               </td>
-                              
+
                               <td>
                                 <div className="action-buttons">
                                   <MDBTooltip tag="span" title="View Details">
@@ -469,7 +542,7 @@ const ClassList = () => {
                                       <i className="fas fa-eye"></i>
                                     </button>
                                   </MDBTooltip>
-                                  
+
                                   <MDBTooltip tag="span" title="Edit Class">
                                     <button
                                       className="action-btn edit-btn"
@@ -478,13 +551,20 @@ const ClassList = () => {
                                       <i className="fas fa-edit"></i>
                                     </button>
                                   </MDBTooltip>
-                                  
-                                  <MDBTooltip tag="span" title={cls.isActive ? 'Deactivate' : 'Activate'}>
+
+                                  <MDBTooltip
+                                    tag="span"
+                                    title={
+                                      cls.isActive ? "Deactivate" : "Activate"
+                                    }
+                                  >
                                     <button
-                                      className={`action-btn ${cls.isActive ? 'delete-btn' : 'restore-btn'}`}
+                                      className={`action-btn ${cls.isActive ? "delete-btn" : "restore-btn"}`}
                                       onClick={() => handleDeleteClass(cls._id)}
                                     >
-                                      <i className={`fas fa-${cls.isActive ? 'trash' : 'undo'}`}></i>
+                                      <i
+                                        className={`fas fa-${cls.isActive ? "trash" : "undo"}`}
+                                      ></i>
                                     </button>
                                   </MDBTooltip>
                                 </div>
@@ -498,19 +578,32 @@ const ClassList = () => {
                                 <i className="fas fa-chalkboard-teacher fa-3x mb-3 text-muted"></i>
                                 <h5>No Classes Found</h5>
                                 <p className="text-muted">
-                                  {searchTerm || filterDepartment !== "all" || filterSemester !== "all" || filterStatus !== "all"
+                                  {searchTerm ||
+                                  filterDepartment !== "all" ||
+                                  filterSemester !== "all" ||
+                                  filterStatus !== "all"
                                     ? "No classes match your search criteria. Try adjusting your filters."
                                     : "Start by creating your first class"}
                                 </p>
-                                {(searchTerm || filterDepartment !== "all" || filterSemester !== "all" || filterStatus !== "all") ? (
-                                  <button className="btn btn-outline-primary" onClick={clearFilters}>
+                                {searchTerm ||
+                                filterDepartment !== "all" ||
+                                filterSemester !== "all" ||
+                                filterStatus !== "all" ? (
+                                  <button
+                                    className="btn btn-outline-primary"
+                                    onClick={clearFilters}
+                                  >
                                     <i className="fas fa-times me-2"></i>
                                     Clear Filters
                                   </button>
                                 ) : (
                                   <button
                                     className="btn btn-primary"
-                                    onClick={() => navigate("/admin/dashboard/classes/createclass")}
+                                    onClick={() =>
+                                      navigate(
+                                        "/admin/dashboard/classes/createclass",
+                                      )
+                                    }
                                   >
                                     <i className="fas fa-plus me-2"></i>
                                     Create Class
@@ -538,16 +631,21 @@ const ClassList = () => {
                             </span>
                           </MDBPaginationLink>
                         </MDBPaginationItem>
-                        
+
                         {[...Array(totalPages)].map((_, i) => (
-                          <MDBPaginationItem key={i + 1} active={currentPage === i + 1}>
+                          <MDBPaginationItem
+                            key={i + 1}
+                            active={currentPage === i + 1}
+                          >
                             <MDBPaginationLink onClick={() => paginate(i + 1)}>
                               {i + 1}
                             </MDBPaginationLink>
                           </MDBPaginationItem>
                         ))}
-                        
-                        <MDBPaginationItem disabled={currentPage === totalPages}>
+
+                        <MDBPaginationItem
+                          disabled={currentPage === totalPages}
+                        >
                           <MDBPaginationLink
                             onClick={() => paginate(currentPage + 1)}
                             aria-label="Next"
@@ -558,9 +656,11 @@ const ClassList = () => {
                           </MDBPaginationLink>
                         </MDBPaginationItem>
                       </MDBPagination>
-                      
+
                       <div className="pagination-info">
-                        Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredClasses.length)} of {filteredClasses.length} entries
+                        Showing {indexOfFirstItem + 1} to{" "}
+                        {Math.min(indexOfLastItem, filteredClasses.length)} of{" "}
+                        {filteredClasses.length} entries
                       </div>
                     </div>
                   )}
