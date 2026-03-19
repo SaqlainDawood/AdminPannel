@@ -15,8 +15,8 @@
   gap: 1rem;
 }
 
-.page-title {
-  color: rgba(255, 255, 255, 0.8);
+.student-list-container .page-title {
+    color: white !important;
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 0.5rem;

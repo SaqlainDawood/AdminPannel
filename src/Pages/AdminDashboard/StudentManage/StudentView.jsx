@@ -38,10 +38,6 @@ const StudentView = () => {
             }
           }
         );
-
-     
-        
-        // FIXED: Set the actual student data from response
         if (res.data.success && res.data.student) {
           setStudent(res.data.student);
         } else {
