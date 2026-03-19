@@ -41,14 +41,14 @@
 .page-title {
   font-size: 2.2rem;
   font-weight: 700;
-  background: white;
+  background: var(--success-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
 
 .create-btn {
-  background: var(--primary-gradient);
+  background: var(--success-gradient);
   border: none;
   padding: 12px 24px;
   border-radius: 50px;
@@ -157,7 +157,7 @@
 }
 
 .filter-toggle-btn.active {
-  background: var(--primary-gradient);
+  background: var(--success-gradient);
   border-color: transparent;
   color: white;
 }
@@ -452,7 +452,7 @@
 .teacher-avatar {
   width: 32px;
   height: 32px;
-  background: var(--primary-gradient);
+  background: var(--success-gradient);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -619,7 +619,7 @@
 }
 
 .custom-pagination .page-item.active .page-link {
-  background: var(--primary-gradient);
+  background: var(--success-gradient);
   color: white;
   box-shadow: 0 10px 20px -5px rgba(102, 126, 234, 0.4);
 }
@@ -630,7 +630,7 @@
 }
 
 .custom-pagination .page-item.active .page-link:hover {
-  background: var(--primary-gradient);
+  background: var(--success-gradient);
   transform: translateY(-2px);
 }
 
