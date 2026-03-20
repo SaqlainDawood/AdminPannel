@@ -132,7 +132,7 @@ const ClassList = () => {
   };
 
   const handleViewClass = (id) => {
-    navigate(`/admin/dashboard/classes/${id}`);
+    navigate(`/admin/dashboard/classes/view/${id}`);
   };
 
   const handleEditClass = (id) => {
