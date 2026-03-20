@@ -19,7 +19,7 @@ import {
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
-// import "./ClassDetails.css";
+import "./ClassDetails.css";
 
 const ClassDetails = () => {
   const { id } = useParams();

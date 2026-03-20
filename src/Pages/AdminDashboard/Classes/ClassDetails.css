@@ -1,0 +1,240 @@
+/* ClassDetails.css */
+
+.class-details-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Stat Cards */
+.stat-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card .card-body {
+  padding: 1.5rem;
+}
+
+.stat-card h5 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+  color: #2c3e50;
+}
+
+/* Details Table */
+.details-table {
+  margin-bottom: 0;
+}
+
+.details-table th {
+  width: 40%;
+  font-weight: 600;
+  color: #495057;
+  border-top: none;
+  padding-left: 0;
+}
+
+.details-table td {
+  width: 60%;
+  color: #212529;
+  border-top: none;
+  padding-right: 0;
+}
+
+.details-table tr:not(:last-child) th,
+.details-table tr:not(:last-child) td {
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* Tabs Styling */
+.nav-tabs {
+  border-bottom: 2px solid #dee2e6;
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  margin-right: 0.5rem;
+  border-radius: 5px 5px 0 0;
+  transition: all 0.2s;
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd;
+  background-color: #e7f1ff;
+  border-bottom: 3px solid #0d6efd;
+}
+
+/* Table Styling */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  color: #495057;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  padding: 1rem 0.5rem;
+}
+
+/* Badge Styling */
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+  
+  .nav-tabs .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .details-table th,
+  .details-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Loading State */
+.loading-container {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+}
+
+.empty-state i {
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+/* Teacher Avatar */
+.teacher-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0d6efd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: 0.75rem;
+}
+
+/* Schedule Preview */
+.schedule-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.schedule-item {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* Action Buttons */
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.view-btn {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.view-btn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.edit-btn {
+  background-color: #fff3cd;
+  color: #ffc107;
+}
+
+.edit-btn:hover {
+  background-color: #ffc107;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.restore-btn {
+  background-color: #d1e7dd;
+  color: #198754;
+}
+
+.restore-btn:hover {
+  background-color: #198754;
+  color: white;
+}
