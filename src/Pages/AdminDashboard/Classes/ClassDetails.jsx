@@ -310,7 +310,7 @@ const ClassDetails = () => {
                               {teacherAssign.role || "Teacher"}
                             </MDBBadge>
                           </td>
-                          <td>{teacherAssign.teacher?.user?.email || "N/A"}</td>
+                          <td>{teacherAssign.teacher?.users?.email || "N/A"}</td>
                           <td>{teacherAssign.teacher?.employeeID || "N/A"}</td>
                           <td>
                             {teacherAssign.assignedDate
