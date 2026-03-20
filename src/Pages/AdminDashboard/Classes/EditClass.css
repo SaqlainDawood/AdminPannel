@@ -1,0 +1,299 @@
+/* EditClass.css */
+
+.edit-class-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.75rem;
+}
+
+/* Form Styling */
+.form-label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-control, .form-select {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  transition: all 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+/* Teachers Grid */
+.teachers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+}
+
+.teacher-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.teacher-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-color: #0d6efd;
+}
+
+.teacher-card.selected {
+  background-color: #e7f1ff;
+  border-color: #0d6efd;
+}
+
+.teacher-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.teacher-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.teacher-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.teacher-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teacher-meta {
+  font-size: 0.85rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teacher-meta .dot {
+  color: #adb5bd;
+}
+
+.selected-icon {
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Selected Teachers List */
+.selected-teachers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.selected-teacher-item {
+  display: flex;
+  align-items: center;
+  background-color: #e7f1ff;
+  border: 1px solid #0d6efd;
+  border-radius: 50px;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  gap: 0.5rem;
+}
+
+.selected-teacher-item .teacher-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.selected-teacher-item .teacher-name {
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  color: #0d6efd;
+}
+
+.selected-teacher-item .role-select {
+  width: auto;
+  min-width: 100px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border-color: #0d6efd;
+  background-color: white;
+}
+
+.selected-teacher-item .btn-close {
+  font-size: 0.75rem;
+  padding: 0.5rem;
+}
+
+/* Schedule Section */
+.schedule-row {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+}
+
+.schedule-row:hover {
+  background-color: #fff;
+  border-color: #0d6efd;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .teachers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .selected-teacher-item {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .selected-teacher-item .teacher-info {
+    flex-wrap: wrap;
+  }
+  
+  .schedule-row {
+    padding: 0.75rem;
+  }
+}
+
+/* Loading State */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Alert Styling */
+.alert {
+  border-radius: 8px;
+  border: none;
+}
+
+/* Button Styling */
+.btn {
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+.btn-outline-danger {
+  border-radius: 50px;
+  padding: 0.4rem 1rem;
+}
+
+/* Form Switch */
+.form-switch {
+  padding-left: 2.5rem;
+}
+
+.form-switch .form-check-input {
+  width: 3rem;
+  height: 1.5rem;
+  margin-left: -2.5rem;
+  cursor: pointer;
+}
+
+.form-switch .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Scrollbar Styling */
+.teachers-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.teachers-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.teachers-grid::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.teachers-grid::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

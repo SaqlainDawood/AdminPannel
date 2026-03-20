@@ -34,6 +34,7 @@ import CoodUpdate from './Pages/AdminDashboard/CoordinatorsManage/CoodUpdate'
 import CreateClass from './Pages/AdminDashboard/Classes/CreateClass'
 import ClassList from './Pages/AdminDashboard/Classes/ClassList'
 import ClassDetails from './Pages/AdminDashboard/Classes/ClassDetails'
+import EditClass from './Pages/AdminDashboard/Classes/EditClass'
 function App() {
 
   return (
@@ -53,7 +54,7 @@ function App() {
               <Route path='list' element={<StudentList />} />
               <Route path='approvals' element={<StudentApprovals />} />
               <Route path='assign' element={<StudentAssign />} />
-              <Route path = 'view/:id' element={<StudentView/>}/>
+              <Route path='view/:id' element={<StudentView/>}/>
               <Route path='update/:id' element={<StudentUpdate/>}/>
             </Route>
 
@@ -88,6 +89,7 @@ function App() {
               <Route path='createclass' element={<CreateClass />} />
               <Route path='listclass' element={<ClassList/>} />
               <Route path='view/:id' element={<ClassDetails/>}/>
+              <Route path='edit/:id' element={<EditClass/>}/>
             </Route>
 
             <Route path="attendance" element={<Attendance />} />
