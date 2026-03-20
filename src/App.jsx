@@ -33,7 +33,7 @@ import CoodView from './Pages/AdminDashboard/CoordinatorsManage/CoodView'
 import CoodUpdate from './Pages/AdminDashboard/CoordinatorsManage/CoodUpdate'
 import CreateClass from './Pages/AdminDashboard/Classes/CreateClass'
 import ClassList from './Pages/AdminDashboard/Classes/ClassList'
-import SingleClass from './Pages/AdminDashboard/Classes/SingleClass'
+import ClassDetails from './Pages/AdminDashboard/Classes/ClassDetails'
 function App() {
 
   return (
@@ -87,7 +87,7 @@ function App() {
               <Route index element={<Navigate to='createclass' replace />} />
               <Route path='createclass' element={<CreateClass />} />
               <Route path='listclass' element={<ClassList/>} />
-              <Route path='view/:id' element={<SingleClass/>}/>
+              <Route path='view/:id' element={<ClassDetails/>}/>
             </Route>
 
             <Route path="attendance" element={<Attendance />} />
