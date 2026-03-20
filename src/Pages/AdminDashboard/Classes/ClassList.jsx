@@ -193,7 +193,7 @@ const ClassList = () => {
             <MDBCardBody>
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h2 className="page-title">
+                  <h2 className="text-primary fw-bold">
                     <i className="fas fa-chalkboard-teacher me-3 text-primary"></i>
                     Class Management
                   </h2>
