@@ -7,7 +7,6 @@ import {
   MDBBtn,
   MDBIcon,
   MDBSpinner,
-  MDBAlert,
   MDBBadge,
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
@@ -465,9 +464,10 @@ const EditClass = () => {
                   ))}
                 </div>
               ) : (
-                <MDBAlert color="warning" className="py-2">
-                  No teachers selected. Please select at least one teacher.
-                </MDBAlert>
+               <div className="alert alert-warning d-flex align-items-center py-2" role="alert">
+  <MDBIcon fas icon="exclamation-triangle" className="me-2" />
+  <div>No teachers selected. Please select at least one teacher.</div>
+</div>
               )}
             </div>
 
