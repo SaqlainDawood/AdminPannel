@@ -310,7 +310,7 @@ const ClassDetails = () => {
                               {teacherAssign.role || "Teacher"}
                             </MDBBadge>
                           </td>
-                          <td>{teacherAssign.teacher?.email || "N/A"}</td>
+                          <td>{teacherAssign.teacher?.user?.email || "N/A"}</td>
                           <td>{teacherAssign.teacher?.employeeID || "N/A"}</td>
                           <td>
                             {teacherAssign.assignedDate
@@ -379,8 +379,8 @@ const ClassDetails = () => {
                     <tbody>
                       {classData.students.map((studentAssign, index) => (
                         <tr key={index}>
-                          <td>{studentAssign.student?.rollNo || "N/A"}</td>
-                          <td>{studentAssign.student?.name || "N/A"}</td>
+                          <td>{studentAssign.students?.rollNo || "N/A"}</td>
+                          <td>{studentAssign.students?.name || "N/A"}</td>
                           <td>
                             <MDBBadge color="success" pill>
                               {studentAssign.status || "enrolled"}
