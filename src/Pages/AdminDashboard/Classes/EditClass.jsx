@@ -215,7 +215,7 @@ const EditClass = () => {
         schedule: formData.schedule
       };
 
-      const response = await AdminAPI.put(`/classes/${id}`, payload, {
+      const response = await AdminAPI.put(`/classes/update/${id}`, payload, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
