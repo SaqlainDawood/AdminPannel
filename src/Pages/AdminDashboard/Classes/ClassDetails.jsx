@@ -65,7 +65,9 @@ const ClassDetails = () => {
   const getTeacherName = (teacherAssignment) => {
     if (!teacherAssignment || !teacherAssignment.teacher) return "Not Assigned";
     const teacher = teacherAssignment.teacher;
-    return `${teacher.firstName || ""} ${teacher.lastName || ""}`.trim() || "Unknown";
+    return (
+      `${teacher.firstName || ""} ${teacher.lastName || ""}`.trim() || "Unknown"
+    );
   };
 
   if (loading) {
@@ -84,9 +86,16 @@ const ClassDetails = () => {
       <MDBContainer className="py-5 text-center">
         <MDBCard>
           <MDBCardBody className="py-5">
-            <MDBIcon fas icon="exclamation-triangle" size="3x" className="text-warning mb-3" />
+            <MDBIcon
+              fas
+              icon="exclamation-triangle"
+              size="3x"
+              className="text-warning mb-3"
+            />
             <h4>Class Not Found</h4>
-            <p className="text-muted">The class you're looking for doesn't exist or has been removed.</p>
+            <p className="text-muted">
+              The class you're looking for doesn't exist or has been removed.
+            </p>
             <MDBBtn onClick={handleBack} className="mt-3">
               <MDBIcon fas icon="arrow-left" className="me-2" />
               Back to Classes
@@ -102,13 +111,19 @@ const ClassDetails = () => {
       {/* Header with navigation */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="d-flex align-items-center">
-          <MDBBtn color="link" className="text-dark p-0 me-3" onClick={handleBack}>
+          <MDBBtn
+            color="link"
+            className="text-dark p-0 me-3"
+            onClick={handleBack}
+          >
             <MDBIcon fas icon="arrow-left" size="lg" />
           </MDBBtn>
           <div>
             <h3 className="mb-1">{classData.className}</h3>
             <p className="text-muted mb-0">
-              <MDBBadge color="info" className="me-2">{classData.classCode}</MDBBadge>
+              <MDBBadge color="info" className="me-2">
+                {classData.classCode}
+              </MDBBadge>
               <MDBBadge color="secondary">{classData.department}</MDBBadge>
             </p>
           </div>
@@ -130,17 +145,29 @@ const ClassDetails = () => {
         <div className="col-md-3">
           <MDBCard className="shadow-3 stat-card">
             <MDBCardBody className="text-center">
-              <MDBIcon fas icon="users" size="2x" className="text-primary mb-3" />
+              <MDBIcon
+                fas
+                icon="users"
+                size="2x"
+                className="text-primary mb-3"
+              />
               <h5>Enrolled Students</h5>
               <h3 className="fw-bold">{classData.enrolledCount || 0}</h3>
-              <small className="text-muted">Capacity: {classData.capacity || 50}</small>
+              <small className="text-muted">
+                Capacity: {classData.capacity || 50}
+              </small>
             </MDBCardBody>
           </MDBCard>
         </div>
         <div className="col-md-3">
           <MDBCard className="shadow-3 stat-card">
             <MDBCardBody className="text-center">
-              <MDBIcon fas icon="chalkboard-teacher" size="2x" className="text-success mb-3" />
+              <MDBIcon
+                fas
+                icon="chalkboard-teacher"
+                size="2x"
+                className="text-success mb-3"
+              />
               <h5>Teachers</h5>
               <h3 className="fw-bold">{classData.teachers?.length || 0}</h3>
               <small className="text-muted">Assigned</small>
@@ -150,7 +177,12 @@ const ClassDetails = () => {
         <div className="col-md-3">
           <MDBCard className="shadow-3 stat-card">
             <MDBCardBody className="text-center">
-              <MDBIcon far icon="clock" size="2x" className="text-warning mb-3" />
+              <MDBIcon
+                far
+                icon="clock"
+                size="2x"
+                className="text-warning mb-3"
+              />
               <h5>Schedule Slots</h5>
               <h3 className="fw-bold">{classData.schedule?.length || 0}</h3>
               <small className="text-muted">Per Week</small>
@@ -160,10 +192,17 @@ const ClassDetails = () => {
         <div className="col-md-3">
           <MDBCard className="shadow-3 stat-card">
             <MDBCardBody className="text-center">
-              <MDBIcon fas icon="calendar-alt" size="2x" className="text-info mb-3" />
+              <MDBIcon
+                fas
+                icon="calendar-alt"
+                size="2x"
+                className="text-info mb-3"
+              />
               <h5>Academic Year</h5>
               <h6 className="fw-bold">{classData.academicYear || "N/A"}</h6>
-              <small className="text-muted">Semester {classData.semester}</small>
+              <small className="text-muted">
+                Semester {classData.semester}
+              </small>
             </MDBCardBody>
           </MDBCard>
         </div>
@@ -264,12 +303,17 @@ const ClassDetails = () => {
                       </tr>
                       <tr>
                         <th>Available Seats:</th>
-                        <td>{(classData.capacity || 50) - (classData.enrolledCount || 0)}</td>
+                        <td>
+                          {(classData.capacity || 50) -
+                            (classData.enrolledCount || 0)}
+                        </td>
                       </tr>
                       <tr>
                         <th>Status:</th>
                         <td>
-                          <MDBBadge color={classData.isActive ? "success" : "secondary"}>
+                          <MDBBadge
+                            color={classData.isActive ? "success" : "secondary"}
+                          >
                             {classData.isActive ? "Active" : "Inactive"}
                           </MDBBadge>
                         </td>
@@ -310,11 +354,13 @@ const ClassDetails = () => {
                               {teacherAssign.role || "Teacher"}
                             </MDBBadge>
                           </td>
-                          <td>{teacherAssign.teacher?.users?.email || "N/A"}</td>
+                          <td>{teacherAssign.teacher?.user?.email || "N/A"}</td>
                           <td>{teacherAssign.teacher?.employeeID || "N/A"}</td>
                           <td>
                             {teacherAssign.assignedDate
-                              ? new Date(teacherAssign.assignedDate).toLocaleDateString()
+                              ? new Date(
+                                  teacherAssign.assignedDate,
+                                ).toLocaleDateString()
                               : "N/A"}
                           </td>
                         </tr>
@@ -323,7 +369,9 @@ const ClassDetails = () => {
                   </table>
                 </div>
               ) : (
-                <p className="text-muted">No teachers assigned to this class.</p>
+                <p className="text-muted">
+                  No teachers assigned to this class.
+                </p>
               )}
             </MDBTabsPane>
 
@@ -358,7 +406,9 @@ const ClassDetails = () => {
                   </table>
                 </div>
               ) : (
-                <p className="text-muted">No schedule defined for this class.</p>
+                <p className="text-muted">
+                  No schedule defined for this class.
+                </p>
               )}
             </MDBTabsPane>
 
@@ -379,8 +429,11 @@ const ClassDetails = () => {
                     <tbody>
                       {classData.students.map((studentAssign, index) => (
                         <tr key={index}>
-                          <td>{studentAssign.students?.rollNo || "N/A"}</td>
-                          <td>{studentAssign.students?.name || "N/A"}</td>
+                          <td>{studentAssign.student?.rollNo || "N/A"}</td>
+                          <td>
+                            {`${studentAssign.student?.firstName || ""} ${studentAssign.student?.lastName || ""}`.trim() ||
+                              "N/A"}
+                          </td>
                           <td>
                             <MDBBadge color="success" pill>
                               {studentAssign.status || "enrolled"}
@@ -388,7 +441,9 @@ const ClassDetails = () => {
                           </td>
                           <td>
                             {studentAssign.enrollmentDate
-                              ? new Date(studentAssign.enrollmentDate).toLocaleDateString()
+                              ? new Date(
+                                  studentAssign.enrollmentDate,
+                                ).toLocaleDateString()
                               : "N/A"}
                           </td>
                         </tr>
@@ -397,7 +452,9 @@ const ClassDetails = () => {
                   </table>
                 </div>
               ) : (
-                <p className="text-muted">No students enrolled in this class.</p>
+                <p className="text-muted">
+                  No students enrolled in this class.
+                </p>
               )}
             </MDBTabsPane>
           </MDBTabsContent>
