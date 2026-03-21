@@ -143,7 +143,7 @@ const ClassList = () => {
     if (window.confirm("Are you sure you want to deactivate this class?")) {
       try {
         const token = localStorage.getItem("adminToken");
-        await AdminAPI.delete(`/classes/${id}`, {
+        await AdminAPI.delete(`/classes/${id}/delete`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
