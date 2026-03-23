@@ -98,7 +98,7 @@ function App() {
 
             {/* <Route path="attendance" element={<Attendance />} /> */}
             <Route path='attendance'>
-              <Route index='attendance' element={<Overview/>}/>
+              <Route index='overview' element={<Overview/>}/>
               <Route path='department' element={<ByDept/>}/>
               <Route path='course' element={<ByCourse/>}/>
               <Route path='student' element={<ByStudent/>}/>

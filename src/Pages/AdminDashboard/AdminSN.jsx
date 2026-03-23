@@ -94,7 +94,14 @@ const navigate = useNavigate();
       id: 'attendance',
       title: 'Attendance',
       icon: 'fa-clipboard-check',
-      path: '/admin/dashboard/attendance'
+      path: '/admin/dashboard/attendance',
+       submenu: [
+        { id: 'overview', title: 'Overview', icon: 'fa-bullhorn', path: '/admin/dashboard/attendance/overview' },
+        { id: 'department', title: 'Department', icon: 'fa-calendar-alt', path:'/admin/dashboard/attendance/department' },
+        { id: 'course', title: 'Course', icon: 'fa-bullhorn', path: '/admin/dashboard/attendance/course' },
+        { id: 'student', title: 'Students Attendance', icon: 'fa-calendar-alt', path:'/admin/dashboard/attendance/student' },
+      
+      ]
     },
     {
       id: 'books',
