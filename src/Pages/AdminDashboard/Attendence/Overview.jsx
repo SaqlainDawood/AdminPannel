@@ -12,7 +12,12 @@ const AttendanceOverview = () => {
   const fetchOverview = async () => {
     try {
       const response = await axios.get('/api/admin/attendance/overview');
-      setData(response.data.data);
+       console.log('API Response:', response.data);
+       if (response.data && response.data.success) {
+        setData(response.data.data);
+      } else {
+        setError(response.data?.message || 'Failed to load data');
+      }
     } catch (error) {
       console.error('Error fetching overview:', error);
     } finally {
@@ -20,7 +25,33 @@ const AttendanceOverview = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) 
+     return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+    if (error) {
+    return (
+      <div className="p-6 bg-red-50 border border-red-200 rounded-lg m-6">
+        <h3 className="text-red-800 font-semibold mb-2">Error Loading Data</h3>
+        <p className="text-red-600">{error}</p>
+        <button 
+          onClick={fetchOverview}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+ if (!data) {
+    return (
+      <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg m-6">
+        <p className="text-yellow-800">No attendance data available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="attendance-overview">
@@ -29,7 +60,6 @@ const AttendanceOverview = () => {
         <h1>Attendance Management</h1>
         <p>Monitor attendance across the university</p>
       </div>
-
       {/* Stats Cards */}
       <div className="stats-grid">
         <div className="stat-card">
@@ -83,7 +113,7 @@ const AttendanceOverview = () => {
                 <td>
                   <button 
                     className="btn-link"
-                    onClick={() => window.location.href = `/admin/attendance/department/${dept.departmentId}`}
+                    onClick={() => window.location.href = `/admin/attendance/department/${encodeURIComponent(dept.departmentName)}`}
                   >
                     View Details →
                   </button>
@@ -121,7 +151,7 @@ const AttendanceOverview = () => {
                 <td>
                   <button 
                     className="btn-link"
-                    onClick={() => window.location.href = `/admin/attendance/course/${course.courseId}`}
+                  onClick={() => window.location.href = `/admin/attendance/class/${course.classId}`}
                   >
                     View Details →
                   </button>
