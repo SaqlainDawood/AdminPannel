@@ -94,13 +94,12 @@ function App() {
               <Route path='view/:id' element={<ClassDetails/>}/>
               <Route path='edit/:id' element={<EditClass/>}/>
             </Route>
-
-            {/* <Route path="attendance" element={<Attendance />} /> */}
             <Route path='attendance'>
-              <Route index='overview' element={<AttendanceOverview/>}/>
-              <Route path='department/:departmentName' element={<DepartmentAttendance/>}/>
-              <Route path='class/:classId' element={<ClassAttendance/>}/>
-              <Route path='student/:studentId' element={<StudentAttendance/>}/>
+              <Route index element={<AttendanceOverview />} />
+              <Route path='overview' element={<AttendanceOverview />} />
+              <Route path='department/:departmentName' element={<DepartmentAttendance />} />
+              <Route path='class/:classId' element={<ClassAttendance />} />
+              <Route path='student/:studentId' element={<StudentAttendance />} />
             </Route>
             <Route path="books" element={<Books />} />
             <Route path="profile" element={<AdminProfile />} />

@@ -91,18 +91,37 @@ const navigate = useNavigate();
       ]
     },
     {
-      id: 'attendance',
-      title: 'Attendance',
-      icon: 'fa-clipboard-check',
-      path: '/admin/dashboard/attendance',
-       submenu: [
-        { id: 'overview', title: 'Overview', icon: 'fa-bullhorn', path: '/admin/dashboard/attendance/overview' },
-        { id: 'department', title: 'Department', icon: 'fa-calendar-alt', path:'/admin/dashboard/attendance/department' },
-        { id: 'course', title: 'Course', icon: 'fa-bullhorn', path: '/admin/dashboard/attendance/course' },
-        { id: 'student', title: 'Students Attendance', icon: 'fa-calendar-alt', path:'/admin/dashboard/attendance/student' },
-      
-      ]
+  id: 'attendance',
+  title: 'Attendance',
+  icon: 'fa-clipboard-check',
+  path: '/admin/dashboard/attendance',
+  submenu: [
+    { 
+      id: 'overview', 
+      title: 'Overview', 
+      icon: 'fa-chart-line', 
+      path: '/admin/dashboard/attendance/overview' 
     },
+    { 
+      id: 'department', 
+      title: 'Department Attendance', 
+      icon: 'fa-building', 
+      path: '/admin/dashboard/attendance/department'  
+    },
+    { 
+      id: 'course', 
+      title: 'Course Attendance', 
+      icon: 'fa-book', 
+      path: '/admin/dashboard/attendance/class' 
+    },
+    { 
+      id: 'student', 
+      title: 'Student Attendance', 
+      icon: 'fa-user-graduate', 
+      path: '/admin/dashboard/attendance/student' 
+    },
+  ]
+},
     {
       id: 'books',
       title: 'Books & Notes',
