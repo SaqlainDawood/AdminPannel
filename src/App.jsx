@@ -35,10 +35,10 @@ import CreateClass from './Pages/AdminDashboard/Classes/CreateClass'
 import ClassList from './Pages/AdminDashboard/Classes/ClassList'
 import ClassDetails from './Pages/AdminDashboard/Classes/ClassDetails'
 import EditClass from './Pages/AdminDashboard/Classes/EditClass'
-import ByDept from './Pages/AdminDashboard/Attendence/ByDept'
-import ByCourse from './Pages/AdminDashboard/Attendence/ByCourse'
-import ByStudent from './Pages/AdminDashboard/Attendence/ByStudent'
-import AttendanceOverview from './Pages/AdminDashboard/Attendence/Overview'
+import AttendanceOverview from './Pages/AdminDashboard/Attendence/Overview';
+import ClassAttendance from './Pages/AdminDashboard/Attendence/ByCourse'
+import StudentAttendance from './Pages/AdminDashboard/Attendence/ByStudent'
+import DepartmentAttendance from './Pages/AdminDashboard/Attendence/ByDept'
 function App() {
 
   return (
@@ -99,9 +99,9 @@ function App() {
             {/* <Route path="attendance" element={<Attendance />} /> */}
             <Route path='attendance'>
               <Route index='overview' element={<AttendanceOverview/>}/>
-              <Route path='department' element={<ByDept/>}/>
-              <Route path='course' element={<ByCourse/>}/>
-              <Route path='student' element={<ByStudent/>}/>
+              <Route path='/department/:departmentName' element={<DepartmentAttendance/>}/>
+              <Route path='/class/:classId' element={<ClassAttendance/>}/>
+              <Route path='student/:studentId' element={<StudentAttendance/>}/>
 
             </Route>
             <Route path="books" element={<Books />} />
