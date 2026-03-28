@@ -35,10 +35,10 @@ import CreateClass from './Pages/AdminDashboard/Classes/CreateClass'
 import ClassList from './Pages/AdminDashboard/Classes/ClassList'
 import ClassDetails from './Pages/AdminDashboard/Classes/ClassDetails'
 import EditClass from './Pages/AdminDashboard/Classes/EditClass'
-import Overview from './Pages/AdminDashboard/Attendence/Overview'
 import ByDept from './Pages/AdminDashboard/Attendence/ByDept'
 import ByCourse from './Pages/AdminDashboard/Attendence/ByCourse'
 import ByStudent from './Pages/AdminDashboard/Attendence/ByStudent'
+import AttendanceOverview from './Pages/AdminDashboard/Attendence/Overview'
 function App() {
 
   return (
@@ -98,7 +98,7 @@ function App() {
 
             {/* <Route path="attendance" element={<Attendance />} /> */}
             <Route path='attendance'>
-              <Route index='overview' element={<Overview/>}/>
+              <Route index='overview' element={<AttendanceOverview/>}/>
               <Route path='department' element={<ByDept/>}/>
               <Route path='course' element={<ByCourse/>}/>
               <Route path='student' element={<ByStudent/>}/>
