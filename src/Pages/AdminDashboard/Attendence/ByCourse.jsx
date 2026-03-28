@@ -4,7 +4,7 @@ import { attendanceApi } from '../Attendence/components/services/attendanceApi';
 import StatsCard from '../Attendence/components/attendance/StatsCard';
 import StatusBadge from '../Attendence/components/attendance/StatsCard';
 import LoadingSpinner from '../Attendence/components/attendance/StatsCard';
-
+import './AttendancePages.css'
 const ClassAttendance = () => {
   const { classId } = useParams();
   const navigate = useNavigate();
@@ -12,7 +12,6 @@ const ClassAttendance = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scheduleExpanded, setScheduleExpanded] = useState(false);
-
   useEffect(() => {
     fetchData();
   }, [classId]);

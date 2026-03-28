@@ -4,7 +4,7 @@ import { attendanceApi } from '../Attendence/components/services/attendanceApi';
 import StatsCard from '../Attendence/components/attendance/StatsCard';
 import StatusBadge from '../Attendence/components/attendance/StatsCard';
 import LoadingSpinner from '../Attendence/components/attendance/StatsCard';
-
+import './AttendancePages.css'
 const StudentAttendance = () => {
   const { studentId } = useParams();
   const navigate = useNavigate();
