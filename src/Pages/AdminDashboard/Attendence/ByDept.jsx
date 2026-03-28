@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { attendanceApi } from '../../../services/attendanceApi';
-import StatsCard from '../../../components/admin/attendance/StatsCard';
-import StatusBadge from '../../../components/admin/attendance/StatusBadge';
-import LoadingSpinner from '../../../components/admin/attendance/LoadingSpinner';
+import { attendanceApi } from '../Attendence/components/services/attendanceApi';
+import StatsCard from '../Attendence/components/attendance/StatsCard';
+import StatusBadge from '../Attendence/components/attendance/StatsCard';
+import LoadingSpinner from '../Attendence/components/attendance/StatsCard';
 
 const DepartmentAttendance = () => {
   const { departmentName } = useParams();
