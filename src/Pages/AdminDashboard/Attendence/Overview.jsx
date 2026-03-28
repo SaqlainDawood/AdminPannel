@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import AdminAPI from '../../../api';
 
 const AttendanceOverview = () => {
   const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ const AttendanceOverview = () => {
 
   const fetchOverview = async () => {
     try {
-      const response = await axios.get('/api/admin/attendance/overview');
+      const response = await AdminAPI.get('/attendance/overview');
        console.log('API Response:', response.data);
        if (response.data && response.data.success) {
         setData(response.data.data);
