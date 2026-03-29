@@ -96,7 +96,7 @@ body {
 }
 
 .page-header p {
-  color:black;
+  color:var(--light);
   font-size: 0.875rem;
   display: flex;
   align-items: center;
@@ -110,8 +110,8 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 4rem;
+  gap:1.5rem;
+  margin-bottom: 1rem;
 }
 
 .stat-card {
