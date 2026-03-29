@@ -84,13 +84,13 @@ const ClassAttendance = () => {
 
         {/* Header */}
         <div className="page-header">
-          <h1>{data.class.code} - {data.class.name}</h1>
-          <p>
+          <h1 className='cls-code-name'>{data.class.code} - {data.class.name}</h1>
+          <p className='cls-sub-sec-semester'>
             <FaBook /> {data.class.subject} | 
             <FaUserGraduate /> Section {data.class.section} | 
             <FaCalendarAlt /> Semester {data.class.semester}
           </p>
-          <p>
+          <p className='cls-techer-dept'>
             <FaChalkboardTeacher /> Teacher: {data.class.teacher} | 
             <FaBuilding /> Department: {data.class.department}
           </p>

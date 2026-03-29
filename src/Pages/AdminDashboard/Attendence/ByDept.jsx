@@ -107,7 +107,6 @@ const DepartmentAttendance = () => {
             <FaUsers /> {data.department.studentCount} Students
           </p>
         </div>
-
         {/* Stats Cards */}
         <div className="stats-grid">
           <div className="stat-card">
