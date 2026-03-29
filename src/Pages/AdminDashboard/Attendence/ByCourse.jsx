@@ -4,7 +4,7 @@ import { attendanceApi } from '../Attendence/components/services/attendanceApi';
 import './AttendancePages.css';
 import { 
   FaArrowLeft, FaChartLine, FaCalendarAlt, FaStar, FaExclamationTriangle, 
-  FaChalkboardTeacher, FaBook, FaUserGraduate, FaClock, FaDoorOpen,
+  FaChalkboardTeacher, FaBook, FaUserGraduate, FaClock, FaDoorOpen, FaBuilding,
   FaChevronDown, FaChevronRight, FaArrowRight
 } from 'react-icons/fa';
 
