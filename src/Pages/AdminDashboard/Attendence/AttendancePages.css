@@ -97,7 +97,7 @@ body {
 .page-header .cls-code-name 
 .cls-sub-sec-semester
 .cls-techer-dept{
-color:var(black);
+color:black;
 }
 .page-header p {
   color:var(--light);
