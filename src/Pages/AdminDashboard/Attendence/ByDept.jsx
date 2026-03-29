@@ -81,7 +81,7 @@ const DepartmentAttendance = () => {
 
         {/* Header */}
         <div className="page-header">
-          <h1>{data.department.name} Department</h1>
+          <h1 className='deptname'>{data.department.name} Department</h1>
           <p>
             <FaBuilding /> {data.department.classCount} Courses | 
             <FaUsers /> {data.department.studentCount} Students
