@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { attendanceApi } from '../Attendence/components/services/attendanceApi';
-import StatsCard from '../Attendence/components/attendance/StatsCard';
-import StatusBadge from '../Attendence/components/attendance/StatsCard';
-import LoadingSpinner from '../Attendence/components/attendance/StatsCard';
-import './AttendancePages.css'
+import './AttendancePages.css'; // Import CSS
+
+// Icons from react-icons
+import { FaArrowLeft, FaChartLine, FaExclamationTriangle, FaBook, FaChalkboardTeacher, FaUsers, FaBuilding, FaArrowRight } from 'react-icons/fa';
+
 const DepartmentAttendance = () => {
   const { departmentName } = useParams();
   const navigate = useNavigate();
@@ -30,129 +31,165 @@ const DepartmentAttendance = () => {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return (
-    <div className="p-6 bg-red-50 text-red-700 rounded-lg m-6">
-      {error}
-    </div>
-  );
+  const getStatusClass = (status) => {
+    switch(status) {
+      case 'Good': return 'good';
+      case 'Average': return 'average';
+      case 'Alert': return 'alert';
+      case 'Critical': return 'critical';
+      case 'Warning': return 'warning';
+      default: return '';
+    }
+  };
+
+  const getProgressClass = (percentage) => {
+    if (percentage >= 75) return 'green';
+    if (percentage >= 60) return 'yellow';
+    return 'red';
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="error-card">
+          <div className="error-icon">⚠️</div>
+          <h3>Error Loading Data</h3>
+          <p>{error}</p>
+          <button onClick={fetchData} className="btn btn-primary">Try Again</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   return (
-    <div className="p-6">
-      {/* Header with Back Button */}
-      <div className="mb-6">
-        <button
-          onClick={() => navigate('/admin/attendance')}
-          className="text-blue-600 hover:text-blue-800 mb-4 inline-flex items-center"
-        >
-          ← Back to Overview
+    <div className="attendance-page">
+      <div className="attendance-page-container">
+        {/* Back Button */}
+        <button onClick={() => navigate('/admin/dashboard/attendance')} className="back-button">
+          <FaArrowLeft /> Back to Overview
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">{data.department.name} Department</h1>
-        <p className="text-gray-600 mt-1">
-          {data.department.classCount} Courses | {data.department.studentCount} Students
-        </p>
-      </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatsCard
-          title="Overall Attendance"
-          value={`${data.stats.overallAttendance}%`}
-          icon="📊"
-          color={data.stats.overallAttendance >= 80 ? 'green' : data.stats.overallAttendance >= 70 ? 'yellow' : 'red'}
-        />
-        <StatsCard
-          title="Students Below 75%"
-          value={data.stats.studentsBelow75}
-          icon="⚠️"
-          color="yellow"
-        />
-        <StatsCard
-          title="Courses Below 75%"
-          value={data.stats.coursesBelow75}
-          icon="📚"
-          color="red"
-        />
-      </div>
-
-      {/* Course-wise Table */}
-      <div className="bg-white rounded-lg shadow-sm border mb-8">
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">Course-wise Attendance</h2>
+        {/* Header */}
+        <div className="page-header">
+          <h1>{data.department.name} Department</h1>
+          <p>
+            <FaBuilding /> {data.department.classCount} Courses | 
+            <FaUsers /> {data.department.studentCount} Students
+          </p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Course</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Section</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teacher</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attendance</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {data.courses.map((course) => (
-                <tr key={course.classId} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{course.classCode}</p>
-                      <p className="text-xs text-gray-500">{course.className} - {course.subject}</p>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{course.section}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{course.teacher}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{course.attendance}%</td>
-                  <td className="px-6 py-4">
-                    <StatusBadge status={course.status} />
-                  </td>
-                  <td className="px-6 py-4">
-                    <Link
-                      to={`/admin/attendance/class/${course.classId}`}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                    >
-                      View →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      {/* At-risk Students */}
-      {data.atRiskStudents.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="px-6 py-4 border-b bg-red-50">
-            <h2 className="text-lg font-semibold text-red-800">⚠️ Students at Risk (Below 75%)</h2>
+        {/* Stats Cards */}
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-card-header">
+              <span className="stat-card-title">Overall Attendance</span>
+              <div className={`stat-card-icon ${data.stats.overallAttendance >= 80 ? 'green' : data.stats.overallAttendance >= 70 ? 'yellow' : 'red'}`}>
+                <FaChartLine />
+              </div>
+            </div>
+            <div className={`stat-card-value ${data.stats.overallAttendance >= 80 ? 'green' : data.stats.overallAttendance >= 70 ? 'yellow' : 'red'}`}>
+              {data.stats.overallAttendance}%
+            </div>
+            <div className="progress-container">
+              <div className="progress-bar">
+                <div 
+                  className={`progress-fill ${getProgressClass(data.stats.overallAttendance)}`}
+                  style={{ width: `${data.stats.overallAttendance}%` }}
+                ></div>
+              </div>
+            </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
+
+          <div className="stat-card">
+            <div className="stat-card-header">
+              <span className="stat-card-title">Students Below 75%</span>
+              <div className="stat-card-icon yellow">
+                <FaExclamationTriangle />
+              </div>
+            </div>
+            <div className="stat-card-value yellow">{data.stats.studentsBelow75}</div>
+            <div className="stat-card-sub">Need attention</div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-card-header">
+              <span className="stat-card-title">Courses Below 75%</span>
+              <div className="stat-card-icon red">
+                <FaBook />
+              </div>
+            </div>
+            <div className="stat-card-value red">{data.stats.coursesBelow75}</div>
+            <div className="stat-card-sub">Requires review</div>
+          </div>
+        </div>
+
+        {/* Course-wise Table */}
+        <div className="section-card">
+          <div className="section-card-header">
+            <h2><FaChalkboardTeacher /> Course-wise Attendance</h2>
+            <span className="section-badge">{data.courses.length} Courses</span>
+          </div>
+          <div className="table-responsive">
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Roll No</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Attendance</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weak Courses</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                  <th>Course</th>
+                  <th>Section</th>
+                  <th>Teacher</th>
+                  <th>Attendance</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
-                {data.atRiskStudents.map((student) => (
-                  <tr key={student.studentId} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-900">{student.rollNo}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{student.name}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-red-600">{student.attendance}%</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{student.weakCourses}</td>
-                    <td className="px-6 py-4">
-                      <Link
-                        to={`/admin/attendance/student/${student.studentId}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              <tbody>
+                {data.courses.map((course) => (
+                  <tr key={course.classId}>
+                    <td>
+                      <div className="course-info">
+                        <span className="course-code">{course.classCode}</span>
+                        <span className="course-name">{course.className} - {course.subject}</span>
+                      </div>
+                    </td>
+                    <td>{course.section}</td>
+                    <td>{course.teacher}</td>
+                    <td>
+                      <div className="attendance-display">
+                        <span className={`attendance-percentage ${course.attendance >= 75 ? 'high' : course.attendance >= 60 ? 'medium' : 'low'}`}>
+                          {course.attendance}%
+                        </span>
+                        <div className="attendance-bar">
+                          <div className="progress-bar">
+                            <div 
+                              className={`progress-fill ${getProgressClass(course.attendance)}`}
+                              style={{ width: `${course.attendance}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={`status-badge ${getStatusClass(course.status)}`}>
+                        {course.status}
+                      </span>
+                    </td>
+                    <td>
+                      <a 
+                        href={`/admin/dashboard/attendance/class/${course.classId}`}
+                        className="action-link"
+                        onClick={(e) => { e.preventDefault(); navigate(`/admin/dashboard/attendance/class/${course.classId}`); }}
                       >
-                        View →
-                      </Link>
+                        View Details <FaArrowRight />
+                      </a>
                     </td>
                   </tr>
                 ))}
@@ -160,7 +197,51 @@ const DepartmentAttendance = () => {
             </table>
           </div>
         </div>
-      )}
+
+        {/* At-risk Students */}
+        {data.atRiskStudents.length > 0 && (
+          <div className="section-card">
+            <div className="section-card-header" style={{ background: 'linear-gradient(135deg, #fef2f2 0%, white 100%)' }}>
+              <h2 style={{ color: '#dc2626' }}><FaExclamationTriangle /> Students at Risk (Below 75%)</h2>
+              <span className="section-badge" style={{ background: '#fee2e2', color: '#dc2626' }}>
+                {data.atRiskStudents.length} Students
+              </span>
+            </div>
+            <div className="table-responsive">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Attendance</th>
+                    <th>Weak Courses</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.atRiskStudents.map((student) => (
+                    <tr key={student.studentId}>
+                      <td>{student.rollNo}</td>
+                      <td>{student.name}</td>
+                      <td><span className="text-danger font-bold">{student.attendance}%</span></td>
+                      <td>{student.weakCourses}</td>
+                      <td>
+                        <a 
+                          href={`/admin/dashboard/attendance/student/${student.studentId}`}
+                          className="action-link"
+                          onClick={(e) => { e.preventDefault(); navigate(`/admin/dashboard/attendance/student/${student.studentId}`); }}
+                        >
+                          View <FaArrowRight />
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminAPI from '../../../api';
-import './AttendanceOverview.css'; // ← ADD THIS LINE
+import './AttendanceOverview.css';
 
 const AttendanceOverview = () => {
   const navigate = useNavigate();
