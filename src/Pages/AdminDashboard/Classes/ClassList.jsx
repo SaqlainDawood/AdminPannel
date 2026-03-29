@@ -351,7 +351,6 @@ const ClassList = () => {
                   </button>
                 </div>
               </div>
-
               {loading ? (
                 <div className="loading-container">
                   <MDBSpinner role="status" color="primary" size="lg">
