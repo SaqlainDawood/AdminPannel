@@ -100,7 +100,6 @@ body {
 color:black;
 }
 .page-header p {
-  color:var(--light);
   font-size: 0.875rem;
   display: flex;
   align-items: center;
