@@ -4,9 +4,11 @@ import AdminAPI from '../../../api'
 import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaSpinner } from 'react-icons/fa';
 const Dashboard = () => {
   const [error , setError] = useState("")
   const [stats, setStats] = useState({});
+  const [loading , setLoading] = useState(true);
   const navigae = useNavigate();
     useEffect(()=>{
       const fetchStats = async()=>{
@@ -42,6 +44,9 @@ const Dashboard = () => {
            }
             setError("Error fetching stats. Please try again.");
         }
+        finally{
+          setLoading(false);
+        }
       }
       fetchStats();
     },[])
@@ -67,7 +72,16 @@ const Dashboard = () => {
     { title: 'Add Faculty', icon: 'fa-user-plus', color: 'info', link: '/admin/dashboard/faculty/add', count: null },
     { title: 'Mark Attendance', icon: 'fa-clipboard-list', color: 'warning', link: '/admin/dashboard/attendance', count: null }
   ];
-
+ if (loading) {
+    return (
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
+    );
+  }
   return (
      
     <div className="dashboard-container" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', minHeight: '100vh', padding: '2rem' }}>
