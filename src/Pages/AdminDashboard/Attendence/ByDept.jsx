@@ -13,6 +13,7 @@ import {
   FaUsers,
   FaBuilding,
   FaArrowRight,
+  FaSpinner
 } from "react-icons/fa";
 
 const DepartmentAttendance = () => {
@@ -64,13 +65,16 @@ const DepartmentAttendance = () => {
     return "red";
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+   if (loading) {
+       return (
+         <div className="loading-container">
+           <div>
+             <FaSpinner className="spinner" size={40} />
+             <p className="loading-text">Loading</p>
+           </div>
+         </div>
+       );
+     }
   if (error) {
     return (
       <div className="error-container">

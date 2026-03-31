@@ -5,7 +5,7 @@ import './AttendancePages.css';
 import { 
   FaArrowLeft, FaChartLine, FaCalendarAlt, FaCheckCircle, FaTimesCircle,
   FaBook, FaChalkboardTeacher, FaUserGraduate, FaExclamationTriangle,
-  FaChevronDown, FaChevronRight, FaEnvelope, FaPhone, FaCalendarCheck
+  FaChevronDown, FaChevronRight, FaEnvelope, FaPhone, FaCalendarCheck,FaSpinner
 } from 'react-icons/fa';
 
 const StudentAttendance = () => {

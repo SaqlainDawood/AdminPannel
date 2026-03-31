@@ -5,7 +5,7 @@ import './AttendancePages.css';
 import { 
   FaArrowLeft, FaChartLine, FaCalendarAlt, FaStar, FaExclamationTriangle, 
   FaChalkboardTeacher, FaBook, FaUserGraduate, FaClock, FaDoorOpen, FaBuilding,
-  FaChevronDown, FaChevronRight, FaArrowRight
+  FaChevronDown, FaChevronRight, FaArrowRight,FaSpinner
 } from 'react-icons/fa';
 
 const ClassAttendance = () => {
@@ -51,14 +51,16 @@ const ClassAttendance = () => {
     return 'red';
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
+ if (loading) {
+        return (
+          <div className="loading-container">
+            <div>
+              <FaSpinner className="spinner" size={40} />
+              <p className="loading-text">Loading</p>
+            </div>
+          </div>
+        );
+      }
   if (error) {
     return (
       <div className="error-container">
