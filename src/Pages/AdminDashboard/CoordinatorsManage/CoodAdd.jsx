@@ -168,6 +168,7 @@ const CoodAdd = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const formDataToSend = new FormData();
       Object.keys(formData).forEach((key) => {
@@ -215,9 +216,9 @@ const CoodAdd = () => {
         
         toast.error("Error: " + error.message);
       }
-    } finally {
-        setLoading(false);
-      }
+    } finally{
+      setLoading(false);
+    }
   };
  const handleSendCredentials = async () => {
   if (!registeredCoord) return;
@@ -297,7 +298,7 @@ if (loading) {
       <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
-          <p className="loading-text">Loading...</p>
+          <p className="loading-text">Adding coordinator, please wait...</p>
         </div>
       </div>
     );
