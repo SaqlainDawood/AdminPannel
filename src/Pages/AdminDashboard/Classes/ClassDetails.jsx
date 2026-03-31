@@ -19,6 +19,7 @@ import {
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
+import {FaSpinner} from 'react-icons/fa';
 import "./ClassDetails.css";
 
 const ClassDetails = () => {
