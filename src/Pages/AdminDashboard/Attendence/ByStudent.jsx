@@ -44,13 +44,15 @@ const StudentAttendance = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
+     return (
+       <div className="loading-container">
+         <div>
+           <FaSpinner className="spinner" size={40} />
+           <p className="loading-text">Loading</p>
+         </div>
+       </div>
+     );
+   }
   if (error) {
     return (
       <div className="error-container">
