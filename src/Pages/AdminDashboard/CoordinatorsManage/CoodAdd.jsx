@@ -7,7 +7,7 @@ import {FaSpinner} from 'react-icons/fa';
 const CoodAdd = () => {
   const navigate = useNavigate();
   // const [imagePreview, setImagePreview] = useState('');  
-  const [loading , setLoading] = useState(true);
+  const [loading , setLoading] = useState(false);
   const [formData, setFormData] = useState({
     // Personel Information
     coordId: "",
