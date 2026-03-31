@@ -3,7 +3,6 @@ import './UpdateFaculty.css';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {FaSpinner} from 'react-icons/fa';
 import {
   MDBTable,
   MDBTableBody,
