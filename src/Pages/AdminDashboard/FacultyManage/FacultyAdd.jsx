@@ -4,7 +4,7 @@ import './Faculty.css';
 import { toast } from 'react-toastify'
 import AdminAPI from '../../../api';
 import { FaSpinner } from 'react-icons/fa';
-
+import './FacultyLoadingSpinner.css'
 const FacultyAdd = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
