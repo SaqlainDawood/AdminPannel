@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
 import "./ClassList.css";
-
+import {FaSpinner} from 'react-icons/fa'
 const ClassList = () => {
   const navigate = useNavigate();
   const [classes, setClasses] = useState([]);
@@ -353,11 +353,11 @@ const ClassList = () => {
               </div>
               {loading ? (
                 <div className="loading-container">
-                  <MDBSpinner role="status" color="primary" size="lg">
-                    <span className="visually-hidden">Loading...</span>
-                  </MDBSpinner>
-                  <p className="mt-3 text-muted">Loading classes...</p>
-                </div>
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
               ) : (
                 <>
                   <div className="table-responsive">

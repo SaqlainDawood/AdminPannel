@@ -283,12 +283,35 @@
 }
 
 /* ===== LOADING CONTAINER ===== */
+
+/* Loading Spinner */
 .loading-container {
-  text-align: center;
-  padding: 60px 20px;
-  background: linear-gradient(135deg, #f9f9f9 0%, #f0f0f0 100%);
-  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f9fafb;
 }
+
+.spinner {
+  width: 4rem;
+  height: 4rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6b7280;
+  text-align: center;
+}
+
 
 /* ===== CLASS TABLE ===== */
 .class-table {

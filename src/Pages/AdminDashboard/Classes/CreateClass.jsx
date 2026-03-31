@@ -3,21 +3,22 @@ import {
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBBtn,
+  // MDBBtn,
   MDBIcon,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
-  MDBTable,
-  MDBTableHead,
-  MDBTableBody,
+  // MDBModal,
+  // MDBModalDialog,
+  // MDBModalContent,
+  // MDBModalHeader,
+  // MDBModalTitle,
+  // MDBModalBody,
+  // MDBModalFooter,
+  // MDBTable,
+  // MDBTableHead,
+  // MDBTableBody,
   MDBBadge,
   // MDBAlert removed
 } from "mdb-react-ui-kit";
+import {FaSpinner} from 'react-icons/fa';
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
 import "./CreateClass.css";
@@ -426,7 +427,16 @@ const CreateClass = () => {
       </div>
     );
   };
-
+if (loading) {
+    return (
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <MDBContainer className="py-4">

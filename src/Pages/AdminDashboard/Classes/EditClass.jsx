@@ -9,6 +9,7 @@ import {
   MDBSpinner,
   MDBBadge,
 } from "mdb-react-ui-kit";
+import {FaSpinner} from 'react-icons/fa';
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
 import "./EditClass.css";
@@ -238,17 +239,16 @@ const EditClass = () => {
     navigate(`/admin/dashboard/classes/view/${id}`);
   };
 
-  if (loading) {
+   if (loading) {
     return (
-      <MDBContainer className="py-5 text-center">
-        <MDBSpinner role="status" color="primary" size="lg">
-          <span className="visually-hidden">Loading...</span>
-        </MDBSpinner>
-        <p className="mt-3">Loading class data...</p>
-      </MDBContainer>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
     );
   }
-
   return (
     <MDBContainer fluid className="py-4 edit-class-container">
       {/* Header */}

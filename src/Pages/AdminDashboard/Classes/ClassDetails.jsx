@@ -72,12 +72,12 @@ const ClassDetails = () => {
 
   if (loading) {
     return (
-      <MDBContainer className="py-5 text-center">
-        <MDBSpinner role="status" color="primary" size="lg">
-          <span className="visually-hidden">Loading...</span>
-        </MDBSpinner>
-        <p className="mt-3">Loading class details...</p>
-      </MDBContainer>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
     );
   }
 
