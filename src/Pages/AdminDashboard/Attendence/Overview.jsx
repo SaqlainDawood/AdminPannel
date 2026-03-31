@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { 
+  FaUniversity, 
+  FaUsers, 
+  FaExclamationTriangle, 
+  FaChartLine, 
+  FaBuilding, 
+  FaFilter, 
+  FaDownload,
+  FaEye,
+  FaSpinner,
+  FaBuilding as FaDepartment,
+  FaBook,
+  FaGraduationCap,
+  FaArrowRight
+} from 'react-icons/fa';
+import { MdWarning, MdSchool, MdOutlineDashboard } from 'react-icons/md';
+import { HiOutlineAcademicCap } from 'react-icons/hi';
+import { GiAlarmClock } from 'react-icons/gi';
 import AdminAPI from '../../../api';
-import './AttendanceOverview.css'
+import './AttendanceOverview.css';
 
 const AttendanceOverview = () => {
   const navigate = useNavigate();
@@ -34,7 +52,7 @@ const AttendanceOverview = () => {
     return (
       <div className="loading-container">
         <div>
-          <div className="spinner"></div>
+          <FaSpinner className="spinner" size={40} />
           <p className="loading-text">Loading attendance data...</p>
         </div>
       </div>
@@ -45,7 +63,9 @@ const AttendanceOverview = () => {
     return (
       <div className="error-container">
         <div className="error-card">
-          <div className="error-icon">⚠️</div>
+          <div className="error-icon">
+            <FaExclamationTriangle size={48} />
+          </div>
           <h3 className="error-title">Error Loading Data</h3>
           <p className="error-text">{error}</p>
           <button onClick={fetchOverview} className="retry-btn">
@@ -60,7 +80,9 @@ const AttendanceOverview = () => {
     return (
       <div className="empty-container">
         <div className="empty-card">
-          <div className="empty-icon">📊</div>
+          <div className="empty-icon">
+            <FaChartLine size={48} />
+          </div>
           <h3 className="empty-title">No Data Available</h3>
           <p className="empty-text">No attendance records found. Start marking attendance to see statistics.</p>
         </div>
@@ -91,15 +113,22 @@ const AttendanceOverview = () => {
       <div className="attendance-header">
         <div className="header-content">
           <div className="header-title">
-            <h1>Attendance Management</h1>
-            <p>Monitor and track attendance across all departments</p>
+            <div className="header-icon">
+              <MdOutlineDashboard size={32} />
+            </div>
+            <div>
+              <h1>Attendance Management</h1>
+              <p>Monitor and track attendance across all departments</p>
+            </div>
           </div>
           <div className="header-actions">
             <button className="btn-filter">
-              🔍 Filter
+              <FaFilter size={16} />
+              Filter
             </button>
             <button className="btn-export">
-              📥 Export Report
+              <FaDownload size={16} />
+              Export Report
             </button>
           </div>
         </div>
@@ -116,7 +145,7 @@ const AttendanceOverview = () => {
                 <p className="stat-sub">of total classes</p>
               </div>
               <div className="stat-icon blue">
-                📊
+                <FaUniversity size={32} />
               </div>
             </div>
             <div className="progress-bar">
@@ -139,7 +168,7 @@ const AttendanceOverview = () => {
                 </p>
               </div>
               <div className="stat-icon yellow">
-                👥
+                <FaUsers size={32} />
               </div>
             </div>
             <div className="progress-bar">
@@ -157,10 +186,12 @@ const AttendanceOverview = () => {
               <div>
                 <p className="stat-title">Students Below 60%</p>
                 <p className="stat-value red">{data.universityStats?.studentsBelow60 || 0}</p>
-                <p className="stat-sub">⚠️ Critical - Action Required</p>
+                <p className="stat-sub">
+                  <FaExclamationTriangle size={12} /> Critical - Action Required
+                </p>
               </div>
               <div className="stat-icon red">
-                ⚠️
+                <MdWarning size={32} />
               </div>
             </div>
           </div>
@@ -170,10 +201,15 @@ const AttendanceOverview = () => {
         <div className="section">
           <div className="section-header">
             <h2 className="section-title">
-              <span className="section-title-icon">🏛️</span>
+              <span className="section-title-icon">
+                <FaBuilding size={20} />
+              </span>
               Department-wise Attendance
             </h2>
-            <span className="section-badge">{data.departmentStats?.length || 0} Departments</span>
+            <span className="section-badge">
+              <FaDepartment size={14} />
+              {data.departmentStats?.length || 0} Departments
+            </span>
           </div>
           <div className="table-responsive">
             <table className="data-table">
@@ -191,7 +227,7 @@ const AttendanceOverview = () => {
                     <tr key={index}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span>🏢</span>
+                          <FaGraduationCap size={18} color="#4b5563" />
                           <strong>{dept.departmentName}</strong>
                         </div>
                       </td>
@@ -216,7 +252,7 @@ const AttendanceOverview = () => {
                           className="btn-link"
                           onClick={() => navigate(`/admin/dashboard/attendance/department/${encodeURIComponent(dept.departmentName)}`)}
                         >
-                          View Details →
+                          View Details <FaArrowRight size={12} />
                         </button>
                       </td>
                     </tr>
@@ -237,10 +273,13 @@ const AttendanceOverview = () => {
         <div className="section">
           <div className="section-header" style={{ background: 'linear-gradient(135deg, #fffbeb 0%, white 100%)' }}>
             <h2 className="section-title">
-              <span className="section-title-icon">⚠️</span>
+              <span className="section-title-icon">
+                <FaExclamationTriangle size={20} color="#d97706" />
+              </span>
               Courses Needing Attention
             </h2>
             <span className="section-badge" style={{ color: '#d97706' }}>
+              <GiAlarmClock size={14} />
               {data.coursesNeedingAttention?.length || 0} Courses at risk
             </span>
           </div>
@@ -266,7 +305,12 @@ const AttendanceOverview = () => {
                           <small style={{ color: '#6b7280' }}>{course.className} - {course.subject}</small>
                         </div>
                       </td>
-                      <td>{course.department}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <FaBuilding size={14} color="#6b7280" />
+                          {course.department}
+                        </div>
+                      </td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                           <span style={{ minWidth: '45px', color: '#dc2626', fontWeight: 'bold' }}>{course.attendance}%</span>
@@ -288,7 +332,7 @@ const AttendanceOverview = () => {
                           className="btn-link"
                           onClick={() => navigate(`/admin/dashboard/attendance/class/${course.classId}`)}
                         >
-                          View Details →
+                          View Details <FaArrowRight size={12} />
                         </button>
                       </td>
                     </tr>
