@@ -6,7 +6,6 @@ import AdminAPI from '../../../api';
 import {FaSpinner} from 'react-icons/fa';
 const FacultyAdd = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     employeeID: '',
     firstName: '',
@@ -91,7 +90,7 @@ const FacultyAdd = () => {
             'Content-Type': 'multipart/form-data',
           }
         })
-    console.log("📧 Form Email:", formData.email);
+      console.log("📧 Form Email:", formData.email);
       if (res.data.success) {
         setRegisteredFaculty({
           name: `${formData.firstName} ${formData.lastName}`,

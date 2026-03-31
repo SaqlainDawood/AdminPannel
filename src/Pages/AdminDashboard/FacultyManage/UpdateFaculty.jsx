@@ -9,13 +9,12 @@ import {
   MDBTableBody,
   MDBTableHead,
   MDBContainer,
-  MDBSpinner,
   MDBBtn,
   MDBCard,
   MDBCardBody,
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
-
+import { FaSpinner } from "react-icons/fa";
 const UpdateFaculty = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -42,7 +41,6 @@ const UpdateFaculty = () => {
     emergencyContact: "",
     emergencyPerson: "",
   });
-
   const [loading, setLoading] = useState(true);
 
   // Fetch faculty data

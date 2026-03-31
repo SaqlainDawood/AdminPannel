@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify'
-import { MDBNavbar, MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBNavbarBrand, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
+import {MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
 import AdminAPI from '../../../api';
 import { FaSpinner } from 'react-icons/fa';
 const ViewFaculty = () => {
