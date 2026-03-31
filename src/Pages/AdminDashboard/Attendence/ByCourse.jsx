@@ -56,7 +56,7 @@ const ClassAttendance = () => {
           <div className="loading-container">
             <div>
               <FaSpinner className="spinner" size={40} />
-              <p className="loading-text">Loading</p>
+              <p className="loading-text">Loading, Course Attendance</p>
             </div>
           </div>
         );
