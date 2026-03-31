@@ -215,7 +215,9 @@ const CoodAdd = () => {
         
         toast.error("Error: " + error.message);
       }
-    }
+    } finally {
+        setLoading(false);
+      }
   };
  const handleSendCredentials = async () => {
   if (!registeredCoord) return;
@@ -295,7 +297,7 @@ if (loading) {
       <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
-          <p className="loading-text">Loading attendance data...</p>
+          <p className="loading-text">Loading...</p>
         </div>
       </div>
     );

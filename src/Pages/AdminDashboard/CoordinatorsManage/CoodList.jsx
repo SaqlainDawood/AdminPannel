@@ -128,7 +128,7 @@ const CoodList = () => {
       <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
-          <p className="loading-text">Loading attendance data...</p>
+          <p className="loading-text">Loading...</p>
         </div>
       </div>
     );
