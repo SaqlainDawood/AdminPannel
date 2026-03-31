@@ -246,11 +246,11 @@ const CoodUpdate = () => {
   };
   if (loading) {
     return (
-      <div className="loader-container text-center py-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
         </div>
-        <p className="mt-3">Loading student details...</p>
       </div>
     );
   }

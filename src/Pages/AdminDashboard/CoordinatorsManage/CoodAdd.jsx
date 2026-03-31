@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import AdminAPI from "../../../api";
-
+import {FaSpinner} from 'react-icons/fa';
 const CoodAdd = () => {
   const navigate = useNavigate();
   // const [imagePreview, setImagePreview] = useState('');  
+  const [loading , setLoading] = useState(true);
   const [formData, setFormData] = useState({
     // Personel Information
     coordId: "",
@@ -289,6 +290,16 @@ const CoodAdd = () => {
     { value: "on_leave", label: "On Leave" },
     { value: "inactive", label: "Inactive" },
   ];
+if (loading) {
+    return (
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cood-add-container">

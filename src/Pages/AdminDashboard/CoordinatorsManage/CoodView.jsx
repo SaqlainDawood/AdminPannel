@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from "axios";
 import AdminAPI from "../../../api";
+import {FaSpinner} from 'react-icons/fa';
 const CoodView = () => {
   const { id } = useParams();
   const [viewCoord, setViewCoord] = useState([]);
@@ -69,18 +70,17 @@ const CoodView = () => {
     fetchCoordinator();
   }, [id, navigate]);
   // Show loading state
-  if (loading) {
+ if (loading) {
     return (
-      <div className="approvals-container">
-        <div className="container-fluid text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-3">Loading pending approvals...</p>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
         </div>
       </div>
     );
   }
+
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);

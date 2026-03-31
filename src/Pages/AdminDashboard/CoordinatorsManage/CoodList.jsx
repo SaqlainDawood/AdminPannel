@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import AdminAPI from "../../../api";
-
+import {FaSpinner} from 'react-icons/fa';
 const CoodList = () => {
   const [coordinators, setCoordinators] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -123,14 +123,12 @@ const CoodList = () => {
       </span>
     );
   };
-  if (loading) {
+ if (loading) {
     return (
-      <div className="approvals-container">
-        <div className="container-fluid text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-3 text-success fw-bold">Loading...</p>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
         </div>
       </div>
     );
