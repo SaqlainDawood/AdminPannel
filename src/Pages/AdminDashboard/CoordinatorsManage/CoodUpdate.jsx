@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import AdminAPI from "../../../api";
+import { FaSpinner } from "react-icons/fa";
 const CoodUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();

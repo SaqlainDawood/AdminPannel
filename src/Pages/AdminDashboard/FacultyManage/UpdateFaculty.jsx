@@ -3,6 +3,7 @@ import './UpdateFaculty.css';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {FaSpinner} from 'react-icons/fa';
 import {
   MDBTable,
   MDBTableBody,
@@ -91,10 +92,12 @@ const UpdateFaculty = () => {
 
   if (loading) {
     return (
-      <MDBContainer className="text-center mt-5">
-        <MDBSpinner grow color="primary" />
-        <p className="mt-2">Loading Faculty Data...</p>
-      </MDBContainer>
+     <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
     );
   }
 

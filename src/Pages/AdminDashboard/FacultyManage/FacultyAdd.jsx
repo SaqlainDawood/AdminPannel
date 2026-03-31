@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Faculty.css';
 import { toast } from 'react-toastify'
 import AdminAPI from '../../../api';
+import {FaSpinner} from 'react-icons/fa';
 const FacultyAdd = () => {
   const navigate = useNavigate();
 
@@ -218,7 +219,16 @@ const FacultyAdd = () => {
     'Lecturer',
     'Visiting Faculty'
   ];
-
+ if (loading) {
+    return (
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="faculty-add-container">
       <div className="container-fluid">

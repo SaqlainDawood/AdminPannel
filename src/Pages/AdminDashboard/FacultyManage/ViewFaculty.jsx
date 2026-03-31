@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify'
 import { MDBNavbar, MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBNavbarBrand, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
 import AdminAPI from '../../../api';
+import { FaSpinner } from 'react-icons/fa';
 const ViewFaculty = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -42,9 +43,11 @@ const ViewFaculty = () => {
   }, [id, navigate]);
   if (loading) {
     return (
-      <div className="loader-container">
-        <div className="spinner"></div>
-        <p>Loading faculty details...</p>
+       <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
       </div>
     );
   }

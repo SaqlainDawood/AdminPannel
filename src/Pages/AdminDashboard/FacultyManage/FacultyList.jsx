@@ -6,6 +6,7 @@ import axios from 'axios'
 import {toast} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
 import AdminAPI from '../../../api';
+import {FaSpinner} from 'react-icons/fa';
 const FacultyList = () => {
   const [faculty, setFaculty] = useState([]);
   const [loading , setLoading] = useState(true);
@@ -85,8 +86,11 @@ const navigate = useNavigate();
   };
  if (loading) {
     return (
-      <div className="faculty-list-container text-center mt-5">
-        <h3>Loading Faculty Data!!!!</h3>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading attendance data...</p>
+        </div>
       </div>
     );
   }
