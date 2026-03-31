@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { FaSpinner } from "react-icons/fa";
 import {
   MDBContainer,
   MDBCard,
@@ -254,11 +255,11 @@ const StudentUpdate = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="loader-container text-center py-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading Update Student...</p>
         </div>
-        <p className="mt-3">Loading student details...</p>
       </div>
     );
   }

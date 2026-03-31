@@ -572,10 +572,12 @@ return (
                 {loading ? (
                   <tr>
                     <td colSpan="8" className="text-center py-4">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                      <div className="loading-container">
+                        <div>
+                          <FaSpinner className="spinner" size={40} />
+                          <p className="loading-text">Loading Students...</p>
+                        </div>
                       </div>
-                      <p className="mt-2">Loading students...</p>
                     </td>
                   </tr>
                 ) : currentStudents.length === 0 ? (

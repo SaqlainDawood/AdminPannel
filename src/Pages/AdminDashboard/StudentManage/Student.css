@@ -30,6 +30,35 @@
   display: flex;
   gap: 0.5rem;
 }
+/* =================Lodaing Spinner================= */
+
+/* Loading Spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f9fafb;
+}
+
+.spinner {
+  width: 4rem;
+  height: 4rem;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6b7280;
+  text-align: center;
+}
 
 /* Small Stat Cards */
 /* === Stats Section Layout === */

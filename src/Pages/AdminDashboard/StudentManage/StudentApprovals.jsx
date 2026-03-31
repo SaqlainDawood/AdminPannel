@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Student.css';
 import { toast } from 'react-toastify';
 import AdminAPI from '../../../api';
-
+import {FaSpinner} from 'react-icons/fa';
 const StudentApprovals = () => {
   const [pendingStudents, setPendingStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -12,7 +12,6 @@ const StudentApprovals = () => {
   const [filter, setFilter] = useState('all');
   const [initialLoading, setInitialLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-
   useEffect(() => {
     const fetchPendingStudents = async () => {
       try {
@@ -133,12 +132,10 @@ const StudentApprovals = () => {
 
   if (initialLoading) {
     return (
-      <div className="approvals-container">
-        <div className="container-fluid text-center py-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-3">Loading pending approvals...</p>
+       <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading Student Approvals...</p>
         </div>
       </div>
     );

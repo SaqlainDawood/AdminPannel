@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import {toast} from 'react-toastify'
 import AdminAPI from '../../../api';
+import {FaSpinner} from 'react-icons/fa';
 const StudentAssign = () => {
   const navigate = useNavigate();
   const [newStudents, setNewStudents] = useState([]);
@@ -11,7 +12,7 @@ const StudentAssign = () => {
   const [rollNoPrefix, setRollNoPrefix] = useState('');
   const [startingNumber, setStartingNumber] = useState(1);
   const [selectedStudents, setSelectedStudents] = useState([]);
-
+ const [loading, setLoading] = useState(true);
   const sections = ['A', 'B', 'C', 'D'];
   const departments = [...new Set(newStudents.map(s => s.department))];
 
@@ -106,10 +107,6 @@ const handleRegistrationChange = (_id, registrationNo) => {
     useEffect(()=>{
       fetchUnassignRollStd();
     },[])
-    
-  
-
-
   const assignRollNumbers = async() => {
     const studentsToAssign = newStudents.filter(s =>
       selectedStudents.includes(s._id) && s.rollNo &&  s.registrationNo && s.section
@@ -141,6 +138,8 @@ const handleRegistrationChange = (_id, registrationNo) => {
       console.log("Assign Error:", error.response?.data || error);
 
   toast.error(error.response?.data?.message || "Failed to assign roll numbers");
+    } finally{
+      setLoading(false);
     }
     // const missingData = studentsToAssign.filter(s => !s.rollNo || !s.section);
     // if (missingData.length > 0) {
@@ -160,7 +159,16 @@ const handleRegistrationChange = (_id, registrationNo) => {
 
   const unassignedCount = newStudents.filter(s => !s.rollNo).length;
   const assignedCount = newStudents.filter(s => s.rollNo).length;
-
+if (loading) {
+    return (
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading Students data...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="assign-container">
       <div className="container-fluid">

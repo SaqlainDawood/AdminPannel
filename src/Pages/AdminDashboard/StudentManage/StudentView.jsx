@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify'
 import { MDBNavbar, MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBNavbarBrand, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
 import AdminAPI from '../../../api';
-
+import { FaSpinner } from 'react-icons/fa';
 const StudentView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -66,9 +66,11 @@ const StudentView = () => {
 
   if (loading) {
     return (
-      <div className="loader-container">
-        <div className="spinner"></div>
-        <p>Loading Student details...</p>
+      <div className="loading-container">
+        <div>
+          <FaSpinner className="spinner" size={40} />
+          <p className="loading-text">Loading Student View...</p>
+        </div>
       </div>
     );
   }
