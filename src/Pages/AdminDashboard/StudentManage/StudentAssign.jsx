@@ -103,6 +103,9 @@ const handleRegistrationChange = (_id, registrationNo) => {
           navigate('/admin/login');
         }
       }
+      finally{
+        setLoading(false);
+      }
     }
     useEffect(()=>{
       fetchUnassignRollStd();
@@ -138,8 +141,6 @@ const handleRegistrationChange = (_id, registrationNo) => {
       console.log("Assign Error:", error.response?.data || error);
 
   toast.error(error.response?.data?.message || "Failed to assign roll numbers");
-    } finally{
-      setLoading(false);
     }
     // const missingData = studentsToAssign.filter(s => !s.rollNo || !s.section);
     // if (missingData.length > 0) {

@@ -16,9 +16,7 @@ const StudentApprovals = () => {
     const fetchPendingStudents = async () => {
       try {
         const res = await AdminAPI.get("/stats/students/pending");
-        
         let studentsArray = [];
-        
         if (Array.isArray(res.data)) {
           studentsArray = res.data;
         } else if (res.data && Array.isArray(res.data.students)) {
@@ -58,12 +56,9 @@ const StudentApprovals = () => {
 
   const confirmAction = async () => {
     if (!selectedStudent) return;
-    
     // Prevent multiple clicks
     if (processing) return;
-    
     setProcessing(true);
-    
     try {
       if (actionType === 'approve') {
         const res = await AdminAPI.put(`/stats/students/approve/${selectedStudent._id}`);
@@ -114,7 +109,6 @@ const StudentApprovals = () => {
       setProcessing(false);
     }
   };
-
   const getDocumentStatus = (documents) => {
     if (!documents || typeof documents !== 'object') {
       return { completed: 0, total: 0, percentage: 0 };
