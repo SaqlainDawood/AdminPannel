@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Faculty.css';
 import { toast } from 'react-toastify'
 import AdminAPI from '../../../api';
-import {FaSpinner} from 'react-icons/fa';
+import { FaSpinner } from 'react-icons/fa';
+
 const FacultyAdd = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -40,6 +41,7 @@ const FacultyAdd = () => {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -69,10 +71,42 @@ const FacultyAdd = () => {
     }
   };
 
+  const resetForm = () => {
+    setFormData({
+      employeeID: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      cnic: '',
+      dateOfBirth: '',
+      gender: '',
+      address: '',
+      city: '',
+      department: '',
+      designation: '',
+      qualification: '',
+      specialization: '',
+      experience: '',
+      joiningDate: '',
+      salary: '',
+      accountTitle: '',
+      accountNumber: '',
+      bankName: '',
+      emergencyContact: '',
+      emergencyPerson: '',
+      userName: '',
+      password: '',
+    });
+    setProfileImage(null);
+    setImagePreview('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    
     try {
       const submitData = new FormData();
       Object.keys(formData).forEach(key => {
@@ -80,17 +114,19 @@ const FacultyAdd = () => {
           submitData.append(key, formData[key]);
         }
       });
+      
       if (profileImage) {
         submitData.append('profileImage', profileImage);
       }
-      const res = await AdminAPI.post('/faculty/add',
-        submitData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }
-        })
+      
+      const res = await AdminAPI.post('/faculty/add', submitData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      
       console.log("📧 Form Email:", formData.email);
+      
       if (res.data.success) {
         setRegisteredFaculty({
           name: `${formData.firstName} ${formData.lastName}`,
@@ -103,35 +139,7 @@ const FacultyAdd = () => {
           joiningDate: formData.joiningDate   
         });      
         setShowSuccessModal(true);
-        // toast.success('Faculty member added successfully!');
-        setFormData({
-          employeeID: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          cnic: '',
-          dateOfBirth: '',
-          gender: '',
-          address: '',
-          city: '',
-          department: '',
-          designation: '',
-          qualification: '',
-          specialization: '',
-          experience: '',
-          joiningDate: '',
-          salary: '',
-          accountTitle: '',
-          accountNumber: '',
-          bankName: '',
-          emergencyContact: '',
-          emergencyPerson: '',
-          userName: '',
-          password: ''
-        })
-        setProfileImage(null);
-        setImagePreview('');
+        resetForm(); // Reset form after successful submission
       }
     } catch (error) {
       console.error('API Error:', error);
@@ -145,64 +153,62 @@ const FacultyAdd = () => {
     } finally {
       setLoading(false);
     }
-    // navigate('/admin/dashboard/faculty/list');
   };
 
   const handleCancel = () => {
     navigate('/admin/dashboard/faculty/list');
   };
- const handleSendCredentials = async () => {
-  if (!registeredFaculty) return;
-  setSendingEmail(true);
-  
-  try {
-    const emailData = {
-      to: registeredFaculty.email,
-      subject: `Welcome to University - Your Faculty Account Credentials`,
-      facultyName: registeredFaculty.name,
-      employeeID: registeredFaculty.employeeID,
-      department: registeredFaculty.department,
-      designation: registeredFaculty.designation,
-      userName: registeredFaculty.userName,
-      password: registeredFaculty.password,
-      joiningDate: registeredFaculty.joiningDate
-    };
 
-    const res = await AdminAPI.post("/faculty/send-credential",
-      emailData,
-      {
+  const handleSendCredentials = async () => {
+    if (!registeredFaculty) return;
+    setSendingEmail(true);
+    
+    try {
+      const emailData = {
+        to: registeredFaculty.email,
+        subject: `Welcome to University - Your Faculty Account Credentials`,
+        facultyName: registeredFaculty.name,
+        employeeID: registeredFaculty.employeeID,
+        department: registeredFaculty.department,
+        designation: registeredFaculty.designation,
+        userName: registeredFaculty.userName,
+        password: registeredFaculty.password,
+        joiningDate: registeredFaculty.joiningDate
+      };
+
+      const res = await AdminAPI.post("/faculty/send-credential", emailData, {
         headers: {
           'Content-Type': 'application/json',
         }
-      }
-    );
+      });
 
-    if (res.data.success) {
-      toast.success(`Login credentials sent successfully to ${registeredFaculty.email}`);
-      setShowSuccessModal(false);
-      navigate('/admin/dashboard/faculty/list');
-    } else {
-      toast.error(res.data.message || 'Failed to send email. Please try again.');
+      if (res.data.success) {
+        toast.success(`Login credentials sent successfully to ${registeredFaculty.email}`);
+        setShowSuccessModal(false);
+        navigate('/admin/dashboard/faculty/list');
+      } else {
+        toast.error(res.data.message || 'Failed to send email. Please try again.');
+      }
+    } catch (error) {
+      console.error('Email sending error:', error);
+      
+      if (error.code === 'ERR_NETWORK') {
+        toast.error('Cannot connect to email service. Please check if server is running.');
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to send email. Please try again.');
+      }
+    } finally {
+      setSendingEmail(false);
     }
-  } catch (error) {
-    console.error('Email sending error:', error);
-    
-    // Better error handling
-    if (error.code === 'ERR_NETWORK') {
-      toast.error('Cannot connect to email service. Please check if server is running.');
-    } else if (error.response?.data?.message) {
-      toast.error(error.response.data.message);
-    } else {
-      toast.error('Failed to send email. Please try again.');
-    }
-  } finally {
-    setSendingEmail(false);
-  }
-};
+  };
+
   const handleAddAnother = () => {
     setShowSuccessModal(false);
     setRegisteredFaculty(null);
   };
+
   const departments = [
     'Computer Science',
     'Electrical Engineering',
@@ -218,16 +224,19 @@ const FacultyAdd = () => {
     'Lecturer',
     'Visiting Faculty'
   ];
- if (loading) {
+
+  // Show loading spinner when loading is true
+  if (loading) {
     return (
       <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
-          <p className="loading-text">Loading attendance data...</p>
+          <p className="loading-text">Adding faculty member...</p>
         </div>
       </div>
     );
   }
+
   return (
     <div className="faculty-add-container">
       <div className="container-fluid">
@@ -242,12 +251,14 @@ const FacultyAdd = () => {
             </p>
           </div>
         </div>
+        
         {error && (
           <div className="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Error:</strong> {error}
             <button type="button" className="btn-close" onClick={() => setError('')}></button>
           </div>
         )}
+        
         <form onSubmit={handleSubmit}>
           <div className="row g-4">
             {/* Left Column - Profile Image */}
@@ -604,33 +615,38 @@ const FacultyAdd = () => {
                   </div>
                 </div>
               </div>
+              
               {/* Login Credentials */}
               <div className="form-section-card">
                 <h3 className="section-title">
                   <i className="fas fa-key me-2"></i>Login Credentials
                 </h3>
-                <div className="row g-3" >
+                <div className="row g-3">
                   <div className="col-md-6">
-                    <label className="form-label">User Name</label>
-                    <input type='text'
+                    <label className="form-label">User Name *</label>
+                    <input 
+                      type='text'
                       name='userName'
                       className='form-control'
                       value={formData.userName}
                       placeholder='Saqlain@university.edu'
                       onChange={handleChange}
-                      required />
+                      required 
+                    />
                   </div>
                   <div className="col-md-6">
-                    <label className="form-label">Password</label>
+                    <label className="form-label">Password *</label>
                     <div className="password-input-container">
-                      <input type={showPassword ? "text" : "password"}
+                      <input 
+                        type={showPassword ? "text" : "password"}
                         id='password'
                         name='password'
                         value={formData.password}
                         onChange={handleChange}
                         placeholder='********'
                         className='form-control password-input'
-                        required />
+                        required 
+                      />
                       <button
                         type="button"
                         className="password-toggle-btn"
@@ -648,25 +664,16 @@ const FacultyAdd = () => {
                 <button type="button" className="btn-cancel" onClick={handleCancel}>
                   <i className="fas fa-times me-2"></i>Cancel
                 </button>
-                <button type="submit"
-                  className="btn-submit"
-                  disabled={loading}>
-                  {loading ? (<>
-                    <i className="fas fa-spinner fa-spin me-2"></i>
-                    Adding...
-                  </>) : (
-                    <>
-                      <i className="fas fa-check me-2"></i>
-                      Add Faculty Member
-                    </>
-                  )
-                  }
+                <button type="submit" className="btn-submit">
+                  <i className="fas fa-check me-2"></i>
+                  Add Faculty Member
                 </button>
               </div>
             </div>
           </div>
         </form>
       </div>
+      
       {/* Success Modal */}
       {showSuccessModal && registeredFaculty && (
         <div className="modal-overlay" onClick={() => setShowSuccessModal(false)}>
@@ -744,20 +751,17 @@ const FacultyAdd = () => {
                 onClick={handleSendCredentials}
                 disabled={sendingEmail}
               >
-                {
-                  sendingEmail ? (
-                    <>
-                      <i className="fas fa-spinner fa-spin me-2"></i>
-                      Sending Email.....
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-paper-plane me-2"></i>
-                      Send Login Credentials
-                    </>
-                  )
-                }
-
+                {sendingEmail ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin me-2"></i>
+                    Sending Email.....
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-paper-plane me-2"></i>
+                    Send Login Credentials
+                  </>
+                )}
               </button>
             </div>
           </div>
