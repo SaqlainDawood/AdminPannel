@@ -38,6 +38,7 @@ import AttendanceOverview from './Pages/AdminDashboard/Attendence/Overview';
 import ClassAttendance from './Pages/AdminDashboard/Attendence/ByCourse'
 import StudentAttendance from './Pages/AdminDashboard/Attendence/ByStudent'
 import DepartmentAttendance from './Pages/AdminDashboard/Attendence/ByDept'
+import ManageEnrollment from './Pages/AdminDashboard/Classes/ManageEnrollment'
 function App() {
 
   return (
@@ -93,6 +94,7 @@ function App() {
               <Route path='listclass' element={<ClassList/>} />
               <Route path='view/:id' element={<ClassDetails/>}/>
               <Route path='edit/:id' element={<EditClass/>}/>
+              <Route path=''/>
             </Route>
             <Route path='attendance'>
               <Route index element={<AttendanceOverview />} />

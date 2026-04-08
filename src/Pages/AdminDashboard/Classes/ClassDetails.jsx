@@ -19,7 +19,7 @@ import {
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
 import { toast } from "react-toastify";
-import {FaSpinner} from 'react-icons/fa';
+import { FaSpinner } from "react-icons/fa";
 import "./ClassDetails.css";
 
 const ClassDetails = () => {
@@ -416,6 +416,19 @@ const ClassDetails = () => {
             {/* Students Tab */}
             <MDBTabsPane open={activeTab === "students"}>
               <h5 className="mb-3">Enrolled Students</h5>
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="mb-0">Enrolled Students</h5>
+                <MDBBtn
+                  color="primary"
+                  size="sm"
+                  onClick={() =>
+                    navigate(`/admin/dashboard/classes/${id}/enroll`)
+                  }
+                >
+                  <MDBIcon fas icon="user-plus" className="me-2" />
+                  Manage Enrollment
+                </MDBBtn>
+              </div>
               {classData.students && classData.students.length > 0 ? (
                 <div className="table-responsive">
                   <table className="table">
