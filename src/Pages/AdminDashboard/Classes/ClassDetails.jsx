@@ -415,7 +415,6 @@ const ClassDetails = () => {
 
             {/* Students Tab */}
             <MDBTabsPane open={activeTab === "students"}>
-              <h5 className="mb-3">Enrolled Students</h5>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="mb-0">Enrolled Students</h5>
                 <MDBBtn
