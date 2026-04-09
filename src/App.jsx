@@ -94,7 +94,7 @@ function App() {
               <Route path='listclass' element={<ClassList/>} />
               <Route path='view/:id' element={<ClassDetails/>}/>
               <Route path='edit/:id' element={<EditClass/>}/>
-              <Route path=''/>
+              <Route path=':id/enroll' element={<ManageEnrollment/>}/>
             </Route>
             <Route path='attendance'>
               <Route index element={<AttendanceOverview />} />
