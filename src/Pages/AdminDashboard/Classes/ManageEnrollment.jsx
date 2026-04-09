@@ -8,7 +8,6 @@ import {
   MDBIcon,
   MDBBadge,
   MDBSpinner,
-  MDBTabPane,
   MDBTable,
   MDBTableHead,
   MDBTableBody,
@@ -171,6 +170,16 @@ const ManageEnrollment = () => {
     }
   };
   
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <MDBSpinner grow className="text-primary">
+          <span className="visually-hidden">Loading...</span>
+        </MDBSpinner>
+      </div>
+    );
+  }
+  
   return (
     <MDBContainer fluid className="py-4">
       {/* Header */}
@@ -232,11 +241,13 @@ const ManageEnrollment = () => {
       {/* Tabs */}
       <MDBCard className="shadow-4">
         <MDBCardBody>
+          {/* Custom Tabs Navigation */}
           <ul className="nav nav-tabs mb-4">
             <li className="nav-item">
               <button
                 className={`nav-link ${activeTab === "enrolled" ? "active" : ""}`}
                 onClick={() => setActiveTab("enrolled")}
+                style={{ cursor: "pointer" }}
               >
                 <MDBIcon fas icon="user-graduate" className="me-2" />
                 Enrolled Students ({stats?.counts?.enrolled || 0})
@@ -246,6 +257,7 @@ const ManageEnrollment = () => {
               <button
                 className={`nav-link ${activeTab === "available" ? "active" : ""}`}
                 onClick={() => setActiveTab("available")}
+                style={{ cursor: "pointer" }}
               >
                 <MDBIcon fas icon="users" className="me-2" />
                 Available Students
@@ -253,79 +265,95 @@ const ManageEnrollment = () => {
             </li>
           </ul>
           
+          {/* Tab Content */}
           {activeTab === "enrolled" ? (
-            // Enrolled Students Table
-            <div className="table-responsive">
-               <MDBTable striped hover>
-                <MDBTableHead>
-                  <tr>
-                    <th>Roll No</th>
-                    <th>Student Name</th>
-                    <th>Status</th>
-                    <th>Enrollment Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </MDBTableHead>
-                <MDBTableBody>
-                  {enrolledStudents.map((student) => (
-                    <tr key={student._id}>
-                      <td>{student.studentDetails?.rollNo || "N/A"}</td>
-                      <td>
-                        <strong>
-                          {student.studentDetails?.firstName} {student.studentDetails?.lastName}
-                        </strong>
-                      </td>
-                      <td>
-                        <MDBBadge
-                          color={student.status === "enrolled" ? "success" : student.status === "dropped" ? "warning" : "info"}
-                          pill
-                        >
-                          {student.status}
-                        </MDBBadge>
-                      </td>
-                      <td>{new Date(student.enrollmentDate).toLocaleDateString()}</td>
-                      <td>
-                        <div className="dropdown">
-                          <button className="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                            Actions
-                          </button>
-                          <ul className="dropdown-menu">
-                            {student.status === "enrolled" && (
-                              <>
+            <div className="tab-pane fade show active">
+              <div className="table-responsive">
+                <MDBTable striped hover>
+                  <MDBTableHead>
+                    <tr>
+                      <th>Roll No</th>
+                      <th>Student Name</th>
+                      <th>Status</th>
+                      <th>Enrollment Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </MDBTableHead>
+                  <MDBTableBody>
+                    {enrolledStudents.length > 0 ? (
+                      enrolledStudents.map((student) => (
+                        <tr key={student._id}>
+                          <td>{student.studentDetails?.rollNo || "N/A"}</td>
+                          <td>
+                            <strong>
+                              {student.studentDetails?.firstName} {student.studentDetails?.lastName}
+                            </strong>
+                          </td>
+                          <td>
+                            <MDBBadge
+                              color={student.status === "enrolled" ? "success" : student.status === "dropped" ? "warning" : "info"}
+                              pill
+                            >
+                              {student.status}
+                            </MDBBadge>
+                          </td>
+                          <td>{new Date(student.enrollmentDate).toLocaleDateString()}</td>
+                          <td>
+                            <div className="dropdown">
+                              <button className="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                Actions
+                              </button>
+                              <ul className="dropdown-menu">
+                                {student.status === "enrolled" && (
+                                  <>
+                                    <li>
+                                      <button
+                                        className="dropdown-item"
+                                        onClick={() => handleUpdateStatus(student.student, "completed", student.studentDetails?.firstName)}
+                                      >
+                                        <MDBIcon fas icon="check-circle" className="me-2 text-success" />
+                                        Mark as Completed
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <hr className="dropdown-divider" />
+                                    </li>
+                                  </>
+                                )}
                                 <li>
                                   <button
-                                    className="dropdown-item"
-                                    onClick={() => handleUpdateStatus(student.student, "completed", student.studentDetails?.firstName)}
+                                    className="dropdown-item text-danger"
+                                    onClick={() => handleRemoveStudent(student.student, student.studentDetails?.firstName)}
                                   >
-                                    <MDBIcon fas icon="check-circle" className="me-2 text-success" />
-                                    Mark as Completed
+                                    <MDBIcon fas icon="trash" className="me-2" />
+                                    Remove from Class
                                   </button>
                                 </li>
-                                <li>
-                                  <hr className="dropdown-divider" />
-                                </li>
-                              </>
-                            )}
-                            <li>
-                              <button
-                                className="dropdown-item text-danger"
-                                onClick={() => handleRemoveStudent(student.student, student.studentDetails?.firstName)}
-                              >
-                                <MDBIcon fas icon="trash" className="me-2" />
-                                Remove from Class
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </MDBTableBody>
-              </MDBTable>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="text-center">
+                          <div className="py-4">
+                            <MDBIcon fas icon="user-graduate" size="3x" className="text-muted mb-3" />
+                            <p className="text-muted">No students enrolled in this class</p>
+                            <MDBBtn color="primary" size="sm" onClick={() => setActiveTab("available")}>
+                              <MDBIcon fas icon="user-plus" className="me-2" />
+                              Enroll Students
+                            </MDBBtn>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </MDBTableBody>
+                </MDBTable>
+              </div>
             </div>
           ) : (
-            // Available Students Section
-            <>
+            <div className="tab-pane fade show active">
               {/* Filters */}
               <div className="row mb-4">
                 <div className="col-md-4">
@@ -388,40 +416,58 @@ const ManageEnrollment = () => {
                     </tr>
                   </MDBTableHead>
                   <MDBTableBody>
-                    {availableStudents.map((student) => (
-                      <tr key={student._id}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedStudents.includes(student._id)}
-                            onChange={() => toggleStudentSelection(student._id)}
-                            disabled={student.hasScheduleConflict}
-                          />
-                        </td>
-                        <td>{student.rollNo || "N/A"}</td>
-                        <td>
-                          <strong>{student.firstName} {student.lastName}</strong>
-                        </td>
-                        <td>{student.enrollment?.department || "N/A"}</td>
-                        <td>{student.enrollment?.semester || "N/A"}</td>
-                        <td>
-                          <MDBBadge color="success" pill>Active</MDBBadge>
-                        </td>
-                        <td>
-                          {student.hasScheduleConflict ? (
-                            <span className="text-danger">
-                              <MDBIcon fas icon="exclamation-triangle" />
-                              <small className="ms-1">Conflict!</small>
-                            </span>
-                          ) : (
-                            <span className="text-success">
-                              <MDBIcon fas icon="check-circle" />
-                              <small className="ms-1">Available</small>
-                            </span>
+                    {availableStudents.length > 0 ? (
+                      availableStudents.map((student) => (
+                        <tr key={student._id}>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedStudents.includes(student._id)}
+                              onChange={() => toggleStudentSelection(student._id)}
+                              disabled={student.hasScheduleConflict}
+                            />
+                          </td>
+                          <td>{student.rollNo || "N/A"}</td>
+                          <td>
+                            <strong>{student.firstName} {student.lastName}</strong>
+                          </td>
+                          <td>{student.enrollment?.department || "N/A"}</td>
+                          <td>{student.enrollment?.semester || "N/A"}</td>
+                          <td>
+                            <MDBBadge color="success" pill>Active</MDBBadge>
+                          </td>
+                          <td>
+                            {student.hasScheduleConflict ? (
+                              <span className="text-danger">
+                                <MDBIcon fas icon="exclamation-triangle" />
+                                <small className="ms-1">Conflict!</small>
+                              </span>
+                            ) : (
+                              <span className="text-success">
+                                <MDBIcon fas icon="check-circle" />
+                                <small className="ms-1">Available</small>
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center py-4">
+                          <MDBIcon fas icon="users" size="3x" className="text-muted mb-3" />
+                          <p className="text-muted">No available students found</p>
+                          {(searchTerm || filterDepartment || filterSemester) && (
+                            <MDBBtn color="secondary" size="sm" onClick={() => {
+                              setSearchTerm("");
+                              setFilterDepartment("");
+                              setFilterSemester("");
+                            }}>
+                              Clear Filters
+                            </MDBBtn>
                           )}
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </MDBTableBody>
                 </MDBTable>
               </div>
@@ -450,7 +496,7 @@ const ManageEnrollment = () => {
                   </MDBPagination>
                 </div>
               )}
-            </>
+            </div>
           )}
         </MDBCardBody>
       </MDBCard>
