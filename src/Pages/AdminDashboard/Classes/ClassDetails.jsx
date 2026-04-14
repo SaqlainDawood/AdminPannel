@@ -114,7 +114,7 @@ const ClassDetails = () => {
         <div className="d-flex align-items-center">
           <MDBBtn
             color="link"
-            className="text-dark p-0 me-3"
+            className="text-dark p-1 me-3"
             onClick={handleBack}
           >
             <MDBIcon fas icon="arrow-left" size="lg" />
