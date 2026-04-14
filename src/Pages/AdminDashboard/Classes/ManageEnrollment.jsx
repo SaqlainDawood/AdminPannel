@@ -207,7 +207,7 @@ const ManageEnrollment = () => {
         <div>
           <MDBBtn
             color="link"
-            className="text-dark p-0 me-3"
+            className="text-dark p-1 me-3"
             onClick={() => navigate(-1)}
           >
             <MDBIcon fas icon="arrow-left" size="lg" />
