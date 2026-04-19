@@ -748,6 +748,4 @@ const ManageEnrollment = () => {
     </MDBContainer>
   );
 };
-admindaud
-saqlaindaud
 export default ManageEnrollment;
