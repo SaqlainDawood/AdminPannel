@@ -214,7 +214,8 @@ const FacultyAdd = () => {
     'Electrical Engineering',
     'Mechanical Engineering',
     'Civil Engineering',
-    'Software Engineering'
+    'Software Engineering',
+    'Pharmacy'
   ];
 
   const designations = [
