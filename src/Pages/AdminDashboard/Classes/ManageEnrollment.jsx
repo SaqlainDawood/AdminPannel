@@ -42,7 +42,7 @@ const ManageEnrollment = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdown, setOpenDropdown] = useState(null);
-  
+  const [pageSize, setPageSize] = useState(20);
   // 🆕 State for dynamic filter options
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [semesterOptions, setSemesterOptions] = useState([]);
@@ -110,14 +110,13 @@ const ManageEnrollment = () => {
         department: filterDepartment,
         semester: filterSemester,
         page: currentPage,
-        limit: 20,
+        limit: pageSize, // ← CHANGE THIS: Use pageSize instead of hardcoded 20
       });
       if (response.success) {
         const students = response.data.students || [];
         setAvailableStudents(students);
         setTotalPages(response.data.pagination?.totalPages || 1);
-        
-        // 🆕 Extract unique departments and semesters from ALL available students (without filters)
+
         await fetchFilterOptions();
       }
     } catch (error) {
@@ -130,52 +129,56 @@ const ManageEnrollment = () => {
   // 🆕 New function: Fetch only filter options (departments and semesters)
   const fetchFilterOptions = async () => {
     try {
-      // Fetch all available students without any filters to get complete list
+      // Fetch all students for filter options (use a larger limit)
       const response = await getAvailableStudents(id, {
         search: "",
         department: "",
         semester: "",
         page: 1,
-        limit: 1000, // Get all students for filter options
+        limit: 1000, // Keep this large to get all options
       });
-      
+
       if (response.success) {
         const allStudents = response.data.students || [];
-        
-        // Extract unique departments
-        const uniqueDepartments = [...new Set(
-          allStudents
-            .map(s => s.enrollment?.department)
-            .filter(dept => dept && dept !== "undefined" && dept !== "null")
-        )];
-        
-        // Extract unique semesters
-        const uniqueSemesters = [...new Set(
-          allStudents
-            .map(s => s.enrollment?.semester)
-            .filter(sem => sem && sem !== "undefined" && sem !== "null")
-        )];
-        
-        // Sort alphabetically
+
+        const uniqueDepartments = [
+          ...new Set(
+            allStudents
+              .map((s) => s.enrollment?.department)
+              .filter(
+                (dept) => dept && dept !== "undefined" && dept !== "null",
+              ),
+          ),
+        ];
+
+        const uniqueSemesters = [
+          ...new Set(
+            allStudents
+              .map((s) => s.enrollment?.semester)
+              .filter((sem) => sem && sem !== "undefined" && sem !== "null"),
+          ),
+        ];
+
         uniqueDepartments.sort();
         uniqueSemesters.sort((a, b) => {
-          // Extract number from semester string (e.g., "1st Semester" -> 1)
           const numA = parseInt(a) || 0;
           const numB = parseInt(b) || 0;
           return numA - numB;
         });
-        
+
         setDepartmentOptions(uniqueDepartments);
         setSemesterOptions(uniqueSemesters);
-        
-        console.log("📊 Department Options:", uniqueDepartments);
-        console.log("📚 Semester Options:", uniqueSemesters);
       }
     } catch (error) {
       console.error("Error fetching filter options:", error);
     }
   };
-
+  // Add this function with your other handlers
+  const handlePageSizeChange = (e) => {
+    const newSize = parseInt(e.target.value);
+    setPageSize(newSize);
+    setCurrentPage(1); // Reset to first page when changing page size
+  };
   const handleEnrollSelected = async () => {
     if (selectedStudents.length === 0) {
       toast.info("Please select at least one student");
@@ -567,13 +570,15 @@ const ManageEnrollment = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <select
                     className="form-select"
                     value={filterDepartment}
                     onChange={(e) => setFilterDepartment(e.target.value)}
                   >
-                    <option value="">All Departments ({departmentOptions.length})</option>
+                    <option value="">
+                      All Departments ({departmentOptions.length})
+                    </option>
                     {departmentOptions.map((dept) => (
                       <option key={dept} value={dept}>
                         {dept}
@@ -581,13 +586,15 @@ const ManageEnrollment = () => {
                     ))}
                   </select>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-2">
                   <select
                     className="form-select"
                     value={filterSemester}
                     onChange={(e) => setFilterSemester(e.target.value)}
                   >
-                    <option value="">All Semesters ({semesterOptions.length})</option>
+                    <option value="">
+                      All Semesters ({semesterOptions.length})
+                    </option>
                     {semesterOptions.map((sem) => (
                       <option key={sem} value={sem}>
                         {sem}
@@ -595,9 +602,27 @@ const ManageEnrollment = () => {
                     ))}
                   </select>
                 </div>
+                <div className="col-md-2">
+                  <select
+                    className="form-select"
+                    value={pageSize}
+                    onChange={handlePageSizeChange}
+                  >
+                    <option value="10">10 per page</option>
+                    <option value="20">20 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                    <option value="500">500 per page</option>
+                    <option value="1000">1000 per page</option>
+                  </select>
+                </div>
                 <div className="col-md-3">
                   <div className="d-flex gap-2">
-                    <MDBBtn color="primary" onClick={handleEnrollSelected} style={{ flex: 1 }}>
+                    <MDBBtn
+                      color="primary"
+                      onClick={handleEnrollSelected}
+                      style={{ flex: 1 }}
+                    >
                       <MDBIcon fas icon="user-plus" className="me-2" />
                       Enroll ({selectedStudents.length})
                     </MDBBtn>
@@ -609,7 +634,12 @@ const ManageEnrollment = () => {
                   </div>
                 </div>
               </div>
-
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <small className="text-muted">
+                  Showing {availableStudents.length} of {totalPages * pageSize}{" "}
+                  students (Page {currentPage} of {totalPages})
+                </small>
+              </div>
               {/* Available Students Table */}
               <div className="table-responsive">
                 <MDBTable hover>
