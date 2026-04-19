@@ -42,6 +42,11 @@ const ManageEnrollment = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [openDropdown, setOpenDropdown] = useState(null);
+  
+  // 🆕 State for dynamic filter options
+  const [departmentOptions, setDepartmentOptions] = useState([]);
+  const [semesterOptions, setSemesterOptions] = useState([]);
+
   const toggleDropdown = (studentId) => {
     if (openDropdown === studentId) {
       setOpenDropdown(null);
@@ -49,6 +54,7 @@ const ManageEnrollment = () => {
       setOpenDropdown(studentId);
     }
   };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".custom-dropdown")) {
@@ -58,6 +64,7 @@ const ManageEnrollment = () => {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
   useEffect(() => {
     fetchEnrollmentStats();
     fetchEnrolledStudents();
@@ -94,6 +101,7 @@ const ManageEnrollment = () => {
     }
   };
 
+  // 🆕 Updated: Extract unique departments and semesters from available students
   const fetchAvailableStudents = async () => {
     try {
       setLoading(true);
@@ -105,13 +113,66 @@ const ManageEnrollment = () => {
         limit: 20,
       });
       if (response.success) {
-        setAvailableStudents(response.data.students || []);
+        const students = response.data.students || [];
+        setAvailableStudents(students);
         setTotalPages(response.data.pagination?.totalPages || 1);
+        
+        // 🆕 Extract unique departments and semesters from ALL available students (without filters)
+        await fetchFilterOptions();
       }
     } catch (error) {
       toast.error("Failed to fetch available students");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🆕 New function: Fetch only filter options (departments and semesters)
+  const fetchFilterOptions = async () => {
+    try {
+      // Fetch all available students without any filters to get complete list
+      const response = await getAvailableStudents(id, {
+        search: "",
+        department: "",
+        semester: "",
+        page: 1,
+        limit: 1000, // Get all students for filter options
+      });
+      
+      if (response.success) {
+        const allStudents = response.data.students || [];
+        
+        // Extract unique departments
+        const uniqueDepartments = [...new Set(
+          allStudents
+            .map(s => s.enrollment?.department)
+            .filter(dept => dept && dept !== "undefined" && dept !== "null")
+        )];
+        
+        // Extract unique semesters
+        const uniqueSemesters = [...new Set(
+          allStudents
+            .map(s => s.enrollment?.semester)
+            .filter(sem => sem && sem !== "undefined" && sem !== "null")
+        )];
+        
+        // Sort alphabetically
+        uniqueDepartments.sort();
+        uniqueSemesters.sort((a, b) => {
+          // Extract number from semester string (e.g., "1st Semester" -> 1)
+          const numA = parseInt(a) || 0;
+          const numB = parseInt(b) || 0;
+          return numA - numB;
+        });
+        
+        setDepartmentOptions(uniqueDepartments);
+        setSemesterOptions(uniqueSemesters);
+        
+        console.log("📊 Department Options:", uniqueDepartments);
+        console.log("📚 Semester Options:", uniqueSemesters);
+      }
+    } catch (error) {
+      console.error("Error fetching filter options:", error);
     }
   };
 
@@ -190,7 +251,15 @@ const ManageEnrollment = () => {
     }
   };
 
-  if (loading) {
+  // 🆕 Clear all filters
+  const clearFilters = () => {
+    setSearchTerm("");
+    setFilterDepartment("");
+    setFilterSemester("");
+    setCurrentPage(1);
+  };
+
+  if (loading && activeTab === "enrolled") {
     return (
       <div className="text-center py-5">
         <MDBSpinner grow className="text-primary">
@@ -285,7 +354,10 @@ const ManageEnrollment = () => {
             <li className="nav-item">
               <button
                 className={`nav-link ${activeTab === "available" ? "active" : ""}`}
-                onClick={() => setActiveTab("available")}
+                onClick={() => {
+                  setActiveTab("available");
+                  fetchFilterOptions(); // Fetch filter options when switching to available tab
+                }}
                 style={{ cursor: "pointer" }}
               >
                 <MDBIcon fas icon="users" className="me-2" />
@@ -294,7 +366,7 @@ const ManageEnrollment = () => {
             </li>
           </ul>
 
-          {/* Tab Content */}
+          {/* Tab Content - Enrolled Students */}
           {activeTab === "enrolled" ? (
             <div className="tab-pane fade show active">
               <div className="table-responsive">
@@ -338,7 +410,6 @@ const ManageEnrollment = () => {
                               student.enrollmentDate,
                             ).toLocaleDateString()}
                           </td>
-                          {/* Actions Column */}
                           <td>
                             <div
                               className="custom-dropdown"
@@ -484,10 +555,11 @@ const ManageEnrollment = () => {
               </div>
             </div>
           ) : (
+            // Tab Content - Available Students (UPDATED with dynamic dropdowns)
             <div className="tab-pane fade show active">
-              {/* Filters */}
+              {/* Filters - DYNAMIC DROPDOWNS */}
               <div className="row mb-4">
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <MDBInput
                     label="Search Students"
                     icon="search"
@@ -501,11 +573,12 @@ const ManageEnrollment = () => {
                     value={filterDepartment}
                     onChange={(e) => setFilterDepartment(e.target.value)}
                   >
-                    <option value="">All Departments</option>
-                    <option value="Computer Science">Computer Science</option>
-                    <option value="Software Engineering">
-                      Software Engineering
-                    </option>
+                    <option value="">All Departments ({departmentOptions.length})</option>
+                    {departmentOptions.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="col-md-3">
@@ -514,27 +587,26 @@ const ManageEnrollment = () => {
                     value={filterSemester}
                     onChange={(e) => setFilterSemester(e.target.value)}
                   >
-                    <option value="">All Semesters</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
+                    <option value="">All Semesters ({semesterOptions.length})</option>
+                    {semesterOptions.map((sem) => (
                       <option key={sem} value={sem}>
                         {sem}
-                        {sem === 1
-                          ? "st"
-                          : sem === 2
-                            ? "nd"
-                            : sem === 3
-                              ? "rd"
-                              : "th"}{" "}
-                        Semester
                       </option>
                     ))}
                   </select>
                 </div>
-                <div className="col-md-2">
-                  <MDBBtn color="primary" onClick={handleEnrollSelected} block>
-                    <MDBIcon fas icon="user-plus" className="me-2" />
-                    Enroll ({selectedStudents.length})
-                  </MDBBtn>
+                <div className="col-md-3">
+                  <div className="d-flex gap-2">
+                    <MDBBtn color="primary" onClick={handleEnrollSelected} style={{ flex: 1 }}>
+                      <MDBIcon fas icon="user-plus" className="me-2" />
+                      Enroll ({selectedStudents.length})
+                    </MDBBtn>
+                    {(searchTerm || filterDepartment || filterSemester) && (
+                      <MDBBtn color="secondary" onClick={clearFilters}>
+                        <MDBIcon fas icon="times" />
+                      </MDBBtn>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -622,11 +694,7 @@ const ManageEnrollment = () => {
                             <MDBBtn
                               color="secondary"
                               size="sm"
-                              onClick={() => {
-                                setSearchTerm("");
-                                setFilterDepartment("");
-                                setFilterSemester("");
-                              }}
+                              onClick={clearFilters}
                             >
                               Clear Filters
                             </MDBBtn>
