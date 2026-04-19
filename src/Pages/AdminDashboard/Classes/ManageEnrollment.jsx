@@ -30,6 +30,7 @@ const ManageEnrollment = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // State variables
   const [activeTab, setActiveTab] = useState("enrolled");
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState(null);
@@ -41,12 +42,15 @@ const ManageEnrollment = () => {
   const [filterSemester, setFilterSemester] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalStudents, setTotalStudents] = useState(0);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [pageSize, setPageSize] = useState(20);
-  // 🆕 State for dynamic filter options
+  
+  // Dynamic filter options
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [semesterOptions, setSemesterOptions] = useState([]);
 
+  // Dropdown handlers
   const toggleDropdown = (studentId) => {
     if (openDropdown === studentId) {
       setOpenDropdown(null);
@@ -55,6 +59,7 @@ const ManageEnrollment = () => {
     }
   };
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".custom-dropdown")) {
@@ -65,17 +70,20 @@ const ManageEnrollment = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // Initial data fetch
   useEffect(() => {
     fetchEnrollmentStats();
     fetchEnrolledStudents();
   }, [id]);
 
+  // Fetch available students when filters change
   useEffect(() => {
     if (activeTab === "available") {
       fetchAvailableStudents();
     }
-  }, [activeTab, searchTerm, filterDepartment, filterSemester, currentPage]);
+  }, [activeTab, searchTerm, filterDepartment, filterSemester, currentPage, pageSize]);
 
+  // Fetch enrollment statistics
   const fetchEnrollmentStats = async () => {
     try {
       const response = await getEnrollmentStats(id);
@@ -87,6 +95,7 @@ const ManageEnrollment = () => {
     }
   };
 
+  // Fetch enrolled students
   const fetchEnrolledStudents = async () => {
     try {
       setLoading(true);
@@ -101,7 +110,7 @@ const ManageEnrollment = () => {
     }
   };
 
-  // 🆕 Updated: Extract unique departments and semesters from available students
+  // Fetch available students with pagination and filters
   const fetchAvailableStudents = async () => {
     try {
       setLoading(true);
@@ -110,14 +119,18 @@ const ManageEnrollment = () => {
         department: filterDepartment,
         semester: filterSemester,
         page: currentPage,
-        limit: pageSize, // ← CHANGE THIS: Use pageSize instead of hardcoded 20
+        limit: pageSize,
       });
       if (response.success) {
         const students = response.data.students || [];
         setAvailableStudents(students);
         setTotalPages(response.data.pagination?.totalPages || 1);
-
-        await fetchFilterOptions();
+        setTotalStudents(response.data.pagination?.totalStudents || 0);
+        
+        // Fetch filter options only when no filters are applied
+        if (!filterDepartment && !filterSemester && !searchTerm) {
+          await fetchFilterOptions();
+        }
       }
     } catch (error) {
       toast.error("Failed to fetch available students");
@@ -126,46 +139,44 @@ const ManageEnrollment = () => {
     }
   };
 
-  // 🆕 New function: Fetch only filter options (departments and semesters)
+  // Fetch unique departments and semesters for filter dropdowns
   const fetchFilterOptions = async () => {
     try {
-      // Fetch all students for filter options (use a larger limit)
       const response = await getAvailableStudents(id, {
         search: "",
         department: "",
         semester: "",
         page: 1,
-        limit: 1000, // Keep this large to get all options
+        limit: 1000,
       });
-
+      
       if (response.success) {
         const allStudents = response.data.students || [];
-
-        const uniqueDepartments = [
-          ...new Set(
-            allStudents
-              .map((s) => s.enrollment?.department)
-              .filter(
-                (dept) => dept && dept !== "undefined" && dept !== "null",
-              ),
-          ),
-        ];
-
-        const uniqueSemesters = [
-          ...new Set(
-            allStudents
-              .map((s) => s.enrollment?.semester)
-              .filter((sem) => sem && sem !== "undefined" && sem !== "null"),
-          ),
-        ];
-
+        
+        // Extract unique departments
+        const uniqueDepartments = [...new Set(
+          allStudents
+            .map(s => s.enrollment?.department)
+            .filter(dept => dept && dept !== "undefined" && dept !== "null")
+        )];
+        
+        // Extract unique semesters
+        const uniqueSemesters = [...new Set(
+          allStudents
+            .map(s => s.enrollment?.semester)
+            .filter(sem => sem && sem !== "undefined" && sem !== "null")
+        )];
+        
+        // Sort departments alphabetically
         uniqueDepartments.sort();
+        
+        // Sort semesters numerically
         uniqueSemesters.sort((a, b) => {
           const numA = parseInt(a) || 0;
           const numB = parseInt(b) || 0;
           return numA - numB;
         });
-
+        
         setDepartmentOptions(uniqueDepartments);
         setSemesterOptions(uniqueSemesters);
       }
@@ -173,12 +184,8 @@ const ManageEnrollment = () => {
       console.error("Error fetching filter options:", error);
     }
   };
-  // Add this function with your other handlers
-  const handlePageSizeChange = (e) => {
-    const newSize = parseInt(e.target.value);
-    setPageSize(newSize);
-    setCurrentPage(1); // Reset to first page when changing page size
-  };
+
+  // Enroll selected students
   const handleEnrollSelected = async () => {
     if (selectedStudents.length === 0) {
       toast.info("Please select at least one student");
@@ -205,12 +212,9 @@ const ManageEnrollment = () => {
     }
   };
 
+  // Remove student from class
   const handleRemoveStudent = async (studentId, studentName) => {
-    if (
-      window.confirm(
-        `Are you sure you want to remove ${studentName} from this class?`,
-      )
-    ) {
+    if (window.confirm(`Are you sure you want to remove ${studentName} from this class?`)) {
       try {
         const response = await removeStudentFromClass(id, studentId);
         if (response.success) {
@@ -225,6 +229,7 @@ const ManageEnrollment = () => {
     }
   };
 
+  // Update student status
   const handleUpdateStatus = async (studentId, status, studentName) => {
     try {
       const response = await updateStudentStatus(id, studentId, status);
@@ -238,14 +243,16 @@ const ManageEnrollment = () => {
     }
   };
 
+  // Toggle student selection
   const toggleStudentSelection = (studentId) => {
     setSelectedStudents((prev) =>
       prev.includes(studentId)
         ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId],
+        : [...prev, studentId]
     );
   };
 
+  // Select/Deselect all students
   const selectAllStudents = () => {
     if (selectedStudents.length === availableStudents.length) {
       setSelectedStudents([]);
@@ -254,7 +261,7 @@ const ManageEnrollment = () => {
     }
   };
 
-  // 🆕 Clear all filters
+  // Clear all filters
   const clearFilters = () => {
     setSearchTerm("");
     setFilterDepartment("");
@@ -262,6 +269,14 @@ const ManageEnrollment = () => {
     setCurrentPage(1);
   };
 
+  // Handle page size change
+  const handlePageSizeChange = (e) => {
+    const newSize = parseInt(e.target.value);
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
+  // Loading state
   if (loading && activeTab === "enrolled") {
     return (
       <div className="text-center py-5">
@@ -339,10 +354,10 @@ const ManageEnrollment = () => {
         </div>
       )}
 
-      {/* Tabs */}
+      {/* Main Card */}
       <MDBCard className="shadow-4">
         <MDBCardBody>
-          {/* Custom Tabs Navigation */}
+          {/* Tabs Navigation */}
           <ul className="nav nav-tabs mb-4">
             <li className="nav-item">
               <button
@@ -359,7 +374,7 @@ const ManageEnrollment = () => {
                 className={`nav-link ${activeTab === "available" ? "active" : ""}`}
                 onClick={() => {
                   setActiveTab("available");
-                  fetchFilterOptions(); // Fetch filter options when switching to available tab
+                  fetchFilterOptions();
                 }}
                 style={{ cursor: "pointer" }}
               >
@@ -400,8 +415,8 @@ const ManageEnrollment = () => {
                                 student.status === "enrolled"
                                   ? "success"
                                   : student.status === "dropped"
-                                    ? "warning"
-                                    : "info"
+                                  ? "warning"
+                                  : "info"
                               }
                               pill
                             >
@@ -409,15 +424,10 @@ const ManageEnrollment = () => {
                             </MDBBadge>
                           </td>
                           <td>
-                            {new Date(
-                              student.enrollmentDate,
-                            ).toLocaleDateString()}
+                            {new Date(student.enrollmentDate).toLocaleDateString()}
                           </td>
                           <td>
-                            <div
-                              className="custom-dropdown"
-                              style={{ position: "relative" }}
-                            >
+                            <div className="custom-dropdown" style={{ position: "relative" }}>
                               <button
                                 className="btn btn-sm btn-secondary dropdown-toggle"
                                 onClick={() => toggleDropdown(student._id)}
@@ -455,7 +465,7 @@ const ManageEnrollment = () => {
                                             handleUpdateStatus(
                                               student.student,
                                               "completed",
-                                              student.studentDetails?.firstName,
+                                              student.studentDetails?.firstName
                                             );
                                             setOpenDropdown(null);
                                           }}
@@ -474,19 +484,12 @@ const ManageEnrollment = () => {
                                             cursor: "pointer",
                                           }}
                                         >
-                                          <MDBIcon
-                                            fas
-                                            icon="check-circle"
-                                            className="me-2 text-success"
-                                          />
+                                          <MDBIcon fas icon="check-circle" className="me-2 text-success" />
                                           Mark as Completed
                                         </button>
                                       </li>
                                       <li>
-                                        <hr
-                                          className="dropdown-divider"
-                                          style={{ margin: "0.25rem 0" }}
-                                        />
+                                        <hr className="dropdown-divider" style={{ margin: "0.25rem 0" }} />
                                       </li>
                                     </>
                                   )}
@@ -496,7 +499,7 @@ const ManageEnrollment = () => {
                                       onClick={() => {
                                         handleRemoveStudent(
                                           student.student,
-                                          student.studentDetails?.firstName,
+                                          student.studentDetails?.firstName
                                         );
                                         setOpenDropdown(null);
                                       }}
@@ -514,11 +517,7 @@ const ManageEnrollment = () => {
                                         cursor: "pointer",
                                       }}
                                     >
-                                      <MDBIcon
-                                        fas
-                                        icon="trash"
-                                        className="me-2"
-                                      />
+                                      <MDBIcon fas icon="trash" className="me-2" />
                                       Remove from Class
                                     </button>
                                   </li>
@@ -532,20 +531,9 @@ const ManageEnrollment = () => {
                       <tr>
                         <td colSpan="5" className="text-center">
                           <div className="py-4">
-                            <MDBIcon
-                              fas
-                              icon="user-graduate"
-                              size="3x"
-                              className="text-muted mb-3"
-                            />
-                            <p className="text-muted">
-                              No students enrolled in this class
-                            </p>
-                            <MDBBtn
-                              color="primary"
-                              size="sm"
-                              onClick={() => setActiveTab("available")}
-                            >
+                            <MDBIcon fas icon="user-graduate" size="3x" className="text-muted mb-3" />
+                            <p className="text-muted">No students enrolled in this class</p>
+                            <MDBBtn color="primary" size="sm" onClick={() => setActiveTab("available")}>
                               <MDBIcon fas icon="user-plus" className="me-2" />
                               Enroll Students
                             </MDBBtn>
@@ -558,9 +546,9 @@ const ManageEnrollment = () => {
               </div>
             </div>
           ) : (
-            // Tab Content - Available Students (UPDATED with dynamic dropdowns)
+            // Tab Content - Available Students
             <div className="tab-pane fade show active">
-              {/* Filters - DYNAMIC DROPDOWNS */}
+              {/* Filters Section */}
               <div className="row mb-4">
                 <div className="col-md-3">
                   <MDBInput
@@ -576,9 +564,7 @@ const ManageEnrollment = () => {
                     value={filterDepartment}
                     onChange={(e) => setFilterDepartment(e.target.value)}
                   >
-                    <option value="">
-                      All Departments ({departmentOptions.length})
-                    </option>
+                    <option value="">All Departments ({departmentOptions.length})</option>
                     {departmentOptions.map((dept) => (
                       <option key={dept} value={dept}>
                         {dept}
@@ -592,9 +578,7 @@ const ManageEnrollment = () => {
                     value={filterSemester}
                     onChange={(e) => setFilterSemester(e.target.value)}
                   >
-                    <option value="">
-                      All Semesters ({semesterOptions.length})
-                    </option>
+                    <option value="">All Semesters ({semesterOptions.length})</option>
                     {semesterOptions.map((sem) => (
                       <option key={sem} value={sem}>
                         {sem}
@@ -618,11 +602,7 @@ const ManageEnrollment = () => {
                 </div>
                 <div className="col-md-3">
                   <div className="d-flex gap-2">
-                    <MDBBtn
-                      color="primary"
-                      onClick={handleEnrollSelected}
-                      style={{ flex: 1 }}
-                    >
+                    <MDBBtn color="primary" onClick={handleEnrollSelected} style={{ flex: 1 }}>
                       <MDBIcon fas icon="user-plus" className="me-2" />
                       Enroll ({selectedStudents.length})
                     </MDBBtn>
@@ -634,12 +614,14 @@ const ManageEnrollment = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Info Bar */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <small className="text-muted">
-                  Showing {availableStudents.length} of {totalPages * pageSize}{" "}
-                  students (Page {currentPage} of {totalPages})
+                  Showing {availableStudents.length} of {totalStudents} students (Page {currentPage} of {totalPages})
                 </small>
               </div>
+
               {/* Available Students Table */}
               <div className="table-responsive">
                 <MDBTable hover>
@@ -649,8 +631,7 @@ const ManageEnrollment = () => {
                         <input
                           type="checkbox"
                           checked={
-                            selectedStudents.length ===
-                              availableStudents.length &&
+                            selectedStudents.length === availableStudents.length &&
                             availableStudents.length > 0
                           }
                           onChange={selectAllStudents}
@@ -672,9 +653,7 @@ const ManageEnrollment = () => {
                             <input
                               type="checkbox"
                               checked={selectedStudents.includes(student._id)}
-                              onChange={() =>
-                                toggleStudentSelection(student._id)
-                              }
+                              onChange={() => toggleStudentSelection(student._id)}
                               disabled={student.hasScheduleConflict}
                             />
                           </td>
@@ -709,23 +688,10 @@ const ManageEnrollment = () => {
                     ) : (
                       <tr>
                         <td colSpan="7" className="text-center py-4">
-                          <MDBIcon
-                            fas
-                            icon="users"
-                            size="3x"
-                            className="text-muted mb-3"
-                          />
-                          <p className="text-muted">
-                            No available students found
-                          </p>
-                          {(searchTerm ||
-                            filterDepartment ||
-                            filterSemester) && (
-                            <MDBBtn
-                              color="secondary"
-                              size="sm"
-                              onClick={clearFilters}
-                            >
+                          <MDBIcon fas icon="users" size="3x" className="text-muted mb-3" />
+                          <p className="text-muted">No available students found</p>
+                          {(searchTerm || filterDepartment || filterSemester) && (
+                            <MDBBtn color="secondary" size="sm" onClick={clearFilters}>
                               Clear Filters
                             </MDBBtn>
                           )}
@@ -741,25 +707,34 @@ const ManageEnrollment = () => {
                 <div className="d-flex justify-content-center mt-4">
                   <MDBPagination>
                     <MDBPaginationItem disabled={currentPage === 1}>
-                      <MDBPaginationLink
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                      >
+                      <MDBPaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
                         Previous
                       </MDBPaginationLink>
                     </MDBPaginationItem>
-                    {[...Array(totalPages)].map((_, i) => (
-                      <MDBPaginationItem key={i} active={currentPage === i + 1}>
-                        <MDBPaginationLink
-                          onClick={() => setCurrentPage(i + 1)}
-                        >
-                          {i + 1}
-                        </MDBPaginationLink>
-                      </MDBPaginationItem>
-                    ))}
+                    {[...Array(totalPages)].map((_, i) => {
+                      // Show limited page numbers for better UX
+                      if (
+                        i + 1 === 1 ||
+                        i + 1 === totalPages ||
+                        (i + 1 >= currentPage - 2 && i + 1 <= currentPage + 2)
+                      ) {
+                        return (
+                          <MDBPaginationItem key={i} active={currentPage === i + 1}>
+                            <MDBPaginationLink onClick={() => setCurrentPage(i + 1)}>
+                              {i + 1}
+                            </MDBPaginationLink>
+                          </MDBPaginationItem>
+                        );
+                      } else if (
+                        (i + 1 === currentPage - 3 && currentPage > 4) ||
+                        (i + 1 === currentPage + 3 && currentPage < totalPages - 3)
+                      ) {
+                        return <MDBPaginationItem key={i}>...</MDBPaginationItem>;
+                      }
+                      return null;
+                    })}
                     <MDBPaginationItem disabled={currentPage === totalPages}>
-                      <MDBPaginationLink
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                      >
+                      <MDBPaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
                         Next
                       </MDBPaginationLink>
                     </MDBPaginationItem>
