@@ -1,0 +1,1063 @@
+/* =========================================
+   VOUCHER PREVIEW OVERLAY
+========================================= */
+
+.voucher-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+  overflow-y: auto;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.voucher-preview-modal {
+  width: min(1000px, 100%);
+  max-height: 95vh;
+
+  background: #f5f7fb;
+  border-radius: 16px;
+
+  overflow-y: auto;
+
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.voucher-preview-header {
+  padding: 20px 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.voucher-preview-header h3 {
+  margin: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.voucher-preview-header p {
+  margin: 5px 0 0;
+
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.voucher-preview-close {
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f3f4f6;
+  color: #4b5563;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.voucher-preview-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.voucher-preview-actions {
+  padding: 15px 25px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.voucher-preview-actions button {
+  border: none;
+  border-radius: 8px;
+
+  padding: 10px 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.voucher-print-btn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.voucher-print-btn:hover {
+  background: #dbeafe;
+}
+
+.voucher-download-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.voucher-download-btn:hover {
+  background: #1d4ed8;
+}
+
+
+/* =========================================
+   VOUCHER PAPER
+========================================= */
+
+.voucher-paper {
+  width: calc(100% - 50px);
+  max-width: 850px;
+
+  margin: 25px auto;
+
+  padding: 35px;
+
+  background: #ffffff;
+
+  border: 1px solid #d1d5db;
+
+  box-shadow:
+    0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   UNIVERSITY HEADER
+========================================= */
+
+.voucher-university-header {
+  text-align: center;
+
+  padding-bottom: 20px;
+
+  border-bottom: 2px solid #111827;
+}
+
+.voucher-bank-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+
+  margin-bottom: 5px;
+}
+
+.voucher-university-header h1 {
+  margin: 0;
+
+  font-size: 25px;
+  font-weight: 800;
+
+  color: #111827;
+}
+
+.voucher-university-header p {
+  margin: 7px 0 0;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #4b5563;
+}
+
+
+/* =========================================
+   META
+========================================= */
+
+.voucher-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  border: 1px solid #d1d5db;
+  border-top: none;
+}
+
+.voucher-meta div {
+  padding: 12px 15px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  border-right: 1px solid #d1d5db;
+}
+
+.voucher-meta div:last-child {
+  border-right: none;
+}
+
+.voucher-meta span {
+  color: #6b7280;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.voucher-meta strong {
+  color: #111827;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.voucher-section {
+  margin-top: 20px;
+}
+
+.voucher-section-heading {
+  padding: 9px 12px;
+
+  background: #f3f4f6;
+
+  border: 1px solid #d1d5db;
+  border-bottom: none;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #111827;
+  text-transform: uppercase;
+}
+
+
+/* =========================================
+   STUDENT INFO
+========================================= */
+
+.voucher-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-info-grid div {
+  min-height: 55px;
+
+  padding: 9px 12px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.voucher-info-grid div:nth-child(even) {
+  border-right: none;
+}
+
+.voucher-info-grid div:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.voucher-info-grid span,
+.voucher-payment-info span {
+  font-size: 11px;
+
+  color: #6b7280;
+
+  margin-bottom: 3px;
+}
+
+.voucher-info-grid strong,
+.voucher-payment-info strong {
+  font-size: 13px;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   PAYMENT INFO
+========================================= */
+
+.voucher-payment-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-payment-info div {
+  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-right: 1px solid #d1d5db;
+}
+
+.voucher-payment-info div:last-child {
+  border-right: none;
+}
+
+
+/* =========================================
+   FEE TABLE
+========================================= */
+
+.voucher-fee-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-fee-table th,
+.voucher-fee-table td {
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+
+  font-size: 13px;
+}
+
+.voucher-fee-table th {
+  background: #f9fafb;
+
+  color: #374151;
+
+  text-align: left;
+
+  font-weight: 700;
+}
+
+.voucher-fee-table th:first-child,
+.voucher-fee-table td:first-child {
+  width: 60px;
+  text-align: center;
+}
+
+.voucher-fee-table th:last-child,
+.voucher-fee-table td:last-child {
+  width: 160px;
+  text-align: right;
+}
+
+.voucher-total-row {
+  background: #f3f4f6;
+}
+
+.voucher-total-row td {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   AMOUNT BOX
+========================================= */
+
+.voucher-amount-box {
+  margin-top: 20px;
+
+  padding: 15px 18px;
+
+  border: 2px solid #111827;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.voucher-amount-box span {
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #374151;
+}
+
+.voucher-amount-box strong {
+  font-size: 18px;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   INSTRUCTIONS
+========================================= */
+
+.voucher-instructions {
+  margin-top: 20px;
+
+  padding: 15px;
+
+  background: #f9fafb;
+
+  border: 1px solid #e5e7eb;
+}
+
+.voucher-instructions h4 {
+  margin: 0 0 8px;
+
+  font-size: 13px;
+
+  color: #111827;
+}
+
+.voucher-instructions ul {
+  margin: 0;
+
+  padding-left: 18px;
+}
+
+.voucher-instructions li {
+  margin-bottom: 5px;
+
+  font-size: 11px;
+
+  color: #4b5563;
+}
+
+
+/* =========================================
+   SIGNATURES
+========================================= */
+
+.voucher-signatures {
+  margin-top: 45px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 80px;
+}
+
+.voucher-signatures div {
+  text-align: center;
+}
+
+.voucher-signatures span {
+  display: block;
+
+  height: 1px;
+
+  background: #111827;
+
+  margin-bottom: 7px;
+}
+
+.voucher-signatures p {
+  margin: 0;
+
+  font-size: 11px;
+
+  color: #4b5563;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.voucher-footer {
+  margin-top: 30px;
+  padding-top: 12px;
+
+  border-top: 1px solid #d1d5db;
+
+  text-align: center;
+}
+
+.voucher-footer p {
+  margin: 0 0 3px;
+
+  font-size: 10px;
+
+  color: #6b7280;
+}
+
+.voucher-footer strong {
+  font-size: 11px;
+
+  color: #374151;
+}
+/* =========================================
+   FIVE VOUCHER COPIES
+========================================= */
+
+.voucher-preview-vouchers {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding: 20px;
+}
+
+/* =========================================
+   EACH VOUCHER
+========================================= */
+
+.voucher-paper {
+  flex: 0 0 285px;
+  width: 285px;
+
+  margin: 0;
+
+  padding: 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #cfd4dc;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   COPY TITLE
+========================================= */
+
+.voucher-copy-title {
+  text-align: center;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  color: #111827;
+
+  margin-bottom: 8px;
+
+  min-height: 15px;
+}
+
+/* =========================================
+   SMALLER HEADER
+========================================= */
+
+.voucher-university-header {
+  text-align: center;
+
+  padding-bottom: 9px;
+
+  border-bottom: 1px solid #111827;
+}
+
+.voucher-bank-name {
+  font-size: 8px;
+  font-weight: 700;
+
+  margin-bottom: 3px;
+}
+
+.voucher-university-header h1 {
+  margin: 0;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.voucher-university-header p {
+  margin: 3px 0 0;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+/* =========================================
+   META
+========================================= */
+
+.voucher-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  border: 1px solid #d1d5db;
+  border-top: none;
+}
+
+.voucher-meta div {
+  padding: 6px 5px;
+
+  min-width: 0;
+
+  border-right: 1px solid #d1d5db;
+}
+
+.voucher-meta div:last-child {
+  border-right: none;
+}
+
+.voucher-meta span {
+  display: block;
+
+  font-size: 7px;
+  color: #6b7280;
+}
+
+.voucher-meta strong {
+  display: block;
+
+  font-size: 8px;
+  color: #111827;
+
+  word-break: break-word;
+}
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.voucher-section {
+  margin-top: 9px;
+}
+
+.voucher-section-heading {
+  padding: 5px 6px;
+
+  background: #f3f4f6;
+
+  border: 1px solid #d1d5db;
+  border-bottom: none;
+
+  font-size: 8px;
+  font-weight: 800;
+}
+
+/* =========================================
+   STUDENT INFO
+========================================= */
+
+.voucher-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-info-grid div {
+  min-height: 32px;
+
+  padding: 5px;
+
+  border-right: 1px solid #d1d5db;
+  border-bottom: 1px solid #d1d5db;
+
+  box-sizing: border-box;
+}
+
+.voucher-info-grid div:nth-child(even) {
+  border-right: none;
+}
+
+.voucher-info-grid div:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+.voucher-info-grid span,
+.voucher-payment-info span {
+  display: block;
+
+  font-size: 7px;
+  color: #6b7280;
+
+  margin-bottom: 2px;
+}
+
+.voucher-info-grid strong,
+.voucher-payment-info strong {
+  display: block;
+
+  font-size: 8px;
+  color: #111827;
+
+  word-break: break-word;
+}
+
+/* =========================================
+   PAYMENT
+========================================= */
+
+.voucher-payment-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-payment-info div {
+  padding: 6px;
+
+  border-right: 1px solid #d1d5db;
+}
+
+.voucher-payment-info div:last-child {
+  border-right: none;
+}
+
+/* =========================================
+   FEE TABLE
+========================================= */
+
+.voucher-fee-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  border: 1px solid #d1d5db;
+}
+
+.voucher-fee-table th,
+.voucher-fee-table td {
+  padding: 5px;
+
+  border: 1px solid #d1d5db;
+
+  font-size: 8px;
+}
+
+.voucher-fee-table th {
+  background: #f9fafb;
+
+  font-weight: 700;
+
+  text-align: left;
+}
+
+.voucher-fee-table th:first-child,
+.voucher-fee-table td:first-child {
+  width: 25px;
+
+  text-align: center;
+}
+
+.voucher-fee-table th:last-child,
+.voucher-fee-table td:last-child {
+  width: 60px;
+
+  text-align: right;
+}
+
+.voucher-total-row {
+  background: #f3f4f6;
+}
+
+.voucher-total-row td {
+  font-weight: 800;
+}
+
+/* =========================================
+   AMOUNT
+========================================= */
+
+.voucher-amount-box {
+  margin-top: 9px;
+
+  padding: 7px;
+
+  border: 1px solid #111827;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 5px;
+}
+
+.voucher-amount-box span {
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.voucher-amount-box strong {
+  font-size: 9px;
+}
+
+/* =========================================
+   INSTRUCTIONS
+========================================= */
+
+.voucher-instructions {
+  margin-top: 9px;
+
+  padding: 7px;
+
+  background: #f9fafb;
+
+  border: 1px solid #e5e7eb;
+}
+
+.voucher-instructions h4 {
+  margin: 0 0 4px;
+
+  font-size: 8px;
+}
+
+.voucher-instructions ul {
+  margin: 0;
+
+  padding-left: 12px;
+}
+
+.voucher-instructions li {
+  margin-bottom: 2px;
+
+  font-size: 6.5px;
+  color: #4b5563;
+}
+
+/* =========================================
+   SIGNATURES
+========================================= */
+
+.voucher-signatures {
+  margin-top: 18px;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+.voucher-signatures span {
+  display: block;
+
+  height: 1px;
+
+  background: #111827;
+
+  margin-bottom: 4px;
+}
+
+.voucher-signatures p {
+  margin: 0;
+
+  text-align: center;
+
+  font-size: 6.5px;
+  color: #4b5563;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.voucher-footer {
+  margin-top: 12px;
+
+  padding-top: 6px;
+
+  border-top: 1px solid #d1d5db;
+
+  text-align: center;
+}
+
+.voucher-footer p {
+  margin: 0 0 2px;
+
+  font-size: 6px;
+  color: #6b7280;
+}
+
+.voucher-footer strong {
+  font-size: 7px;
+}
+.voucher-preview-vouchers {
+  display: flex;
+  gap: 12px;
+
+  width: max-content;
+
+  overflow-x: auto;
+
+  padding: 20px;
+}
+
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .voucher-preview-overlay {
+    padding: 10px;
+  }
+
+  .voucher-preview-modal {
+    max-height: 98vh;
+  }
+
+  .voucher-paper {
+    width: calc(100% - 20px);
+    padding: 20px;
+    margin: 10px auto;
+  }
+
+  .voucher-university-header h1 {
+    font-size: 19px;
+  }
+
+  .voucher-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .voucher-meta div {
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .voucher-meta div:last-child {
+    border-bottom: none;
+  }
+
+  .voucher-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .voucher-info-grid div {
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .voucher-info-grid div:last-child {
+    border-bottom: none;
+  }
+
+  .voucher-payment-info {
+    grid-template-columns: 1fr;
+  }
+
+  .voucher-payment-info div {
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .voucher-payment-info div:last-child {
+    border-bottom: none;
+  }
+
+  .voucher-fee-table {
+    min-width: 600px;
+  }
+
+  .voucher-section {
+    overflow-x: auto;
+  }
+
+  .voucher-signatures {
+    gap: 30px;
+  }
+
+  .voucher-preview-actions {
+    padding: 12px 15px;
+  }
+
+  .voucher-paper {
+    overflow-x: auto;
+  }
+}
+
+
+/* =========================================
+   PRINT
+========================================= */
+
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  .voucher-paper,
+  .voucher-paper * {
+    visibility: visible;
+  }
+
+  .voucher-preview-overlay {
+    position: absolute;
+    inset: 0;
+
+    padding: 0;
+
+    background: white;
+  }
+
+  .voucher-preview-modal {
+    width: 100%;
+    max-height: none;
+
+    overflow: visible;
+
+    background: white;
+
+    box-shadow: none;
+  }
+
+  .voucher-paper {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 20px;
+
+    border: none;
+    box-shadow: none;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
