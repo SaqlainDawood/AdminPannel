@@ -197,9 +197,15 @@ const CoodAdd = () => {
       );
       if (response.data.success) {
         toast.success(response.data.message);
-        navigate("/admin/dashboard/coordinators/list");
+        // FIX: backend response shape is { success, message, coordinator: {...} }
+        // Save it so the success modal actually has data to show, and so
+        // "Send Login Credentials" has coordId/department/coordinatorRole/joiningDate to send.
+        setRegisteredCoord(response.data.coordinator);
+        setShowSuccessModal(true);
+        // NOTE: navigate() was removed from here on purpose — navigating away
+        // immediately meant the success modal below could never actually be seen.
+        // The "Add Another Coordinator" button in the modal now handles navigation/reset.
       }
-       setShowSuccessModal(true);
     } catch (error) {
       console.log(" Coordinator Registration Error", error);
       if (error.response) {
@@ -224,7 +230,26 @@ const CoodAdd = () => {
   if (!registeredCoord) return;
   setSendingEmail(true);
   try {
-   
+    // FIX: this was previously empty. Backend's sendCoordEmail (utils/CoorRegisterEmail.js)
+    // reads: to, name, coordId, department, coordinatorRole, username, password, joiningDate.
+    // The plain-text password is never returned by the register API (only the hash is
+    // stored), so it has to come from formData (still in state) — not from registeredCoord.
+    const response = await AdminAPI.post("/coordinator/send-credential", {
+      to: registeredCoord.email || formData.email,
+      name: registeredCoord.name,
+      coordId: registeredCoord.coordId,
+      department: registeredCoord.department,
+      coordinatorRole: registeredCoord.coordinatorRole,
+      username: registeredCoord.username || formData.username,
+      password: formData.password,
+      joiningDate: registeredCoord.joiningDate,
+    });
+
+    if (response.data.success) {
+      toast.success(response.data.message || "Credentials sent successfully");
+    } else {
+      toast.error(response.data.message || "Failed to send credentials");
+    }
   } catch (error) {
     console.error('Email sending error:', error);
     
@@ -243,6 +268,7 @@ const CoodAdd = () => {
   const handleAddAnother = () => {
     setShowSuccessModal(false);
     setRegisteredCoord(null);
+    navigate("/admin/dashboard/coordinators/list");
   };
   const departments = [
     "Computer Science",
@@ -374,11 +400,14 @@ if (loading) {
                       id="phone"
                       name="phone"
                       className="form-control"
-                      placeholder="+92 300 1234567"
+                      placeholder="+923001234567"
                       value={formData.phone}
                       onChange={handleChange}
                       required
                     />
+                    <small className="text-muted">
+                      Format: +92 followed by 10 digits, no spaces (e.g. +923001234567)
+                    </small>
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">CNIC *</label>
@@ -495,7 +524,7 @@ if (loading) {
                       onChange={handleChange}
                       className="form-control"
                       min="1980"
-                      max="2024"
+                      max={new Date().getFullYear()}
                       required
                     />
                   </div>
@@ -1002,7 +1031,7 @@ if (loading) {
             <div className="modal-header">
               <h3>
                 <i className="fas fa-check-circle text-success me-2"></i>
-                Faculty Member Added Successfully!
+                Coordinator Added Successfully!
               </h3>
               <button className="btn-close" onClick={() => setShowSuccessModal(false)}>
                 <i className="fas fa-times"></i>
@@ -1018,7 +1047,7 @@ if (loading) {
                 <div className="detail-item">
                   <i className="fas fa-user-graduate"></i>
                   <div>
-                    <strong>Faculty Name</strong>
+                    <strong>Coordinator Name</strong>
                     <span>{registeredCoord.name}</span>
                   </div>
                 </div>
@@ -1032,8 +1061,8 @@ if (loading) {
                 <div className="detail-item">
                   <i className="fas fa-id-card"></i>
                   <div>
-                    <strong>Employee ID</strong>
-                    <span>{registeredCoord.employeeID}</span>
+                    <strong>Coordinator ID</strong>
+                    <span>{registeredCoord.coordId}</span>
                   </div>
                 </div>
                 <div className="detail-item">
@@ -1046,15 +1075,15 @@ if (loading) {
                 <div className="detail-item">
                   <i className="fas fa-briefcase"></i>
                   <div>
-                    <strong>Designation</strong>
-                    <span>{registeredCoord.designation}</span>
+                    <strong>Role Title</strong>
+                    <span>{registeredCoord.roleTitle}</span>
                   </div>
                 </div>
               </div>
 
               <div className="alert alert-info">
                 <i className="fas fa-info-circle me-2"></i>
-                Faculty member has been registered successfully. Login credentials will be sent via email.
+                Coordinator has been registered successfully. Click "Send Login Credentials" to email them their username and password.
               </div>
             </div>
 
@@ -1065,7 +1094,7 @@ if (loading) {
                 disabled={sendingEmail}
               >
                 <i className="fas fa-user-plus me-2"></i>
-                Add Another Faculty
+                Add Another Coordinator
               </button>
               <button
                 className="btn btn-success"
