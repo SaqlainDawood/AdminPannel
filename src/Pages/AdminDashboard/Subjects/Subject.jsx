@@ -79,6 +79,30 @@ const getDepartmentId = (subject) => {
     return getId(subject.department);
   }
 
+  if (typeof subject.degreeClassId === "object") {
+    const degreeDepartmentId = subject.degreeClassId.departmentId;
+
+    if (typeof degreeDepartmentId === "object") {
+      return getId(degreeDepartmentId);
+    }
+
+    if (degreeDepartmentId) {
+      return degreeDepartmentId;
+    }
+  }
+
+  if (typeof subject.degreeClass === "object") {
+    const degreeDepartmentId = subject.degreeClass.departmentId;
+
+    if (typeof degreeDepartmentId === "object") {
+      return getId(degreeDepartmentId);
+    }
+
+    if (degreeDepartmentId) {
+      return degreeDepartmentId;
+    }
+  }
+
   return "";
 };
 
@@ -107,6 +131,14 @@ const getDepartmentName = (subject, departments) => {
 
   if (subject?.department?.name) {
     return subject.department.name;
+  }
+
+  if (subject?.degreeClassId?.departmentId?.name) {
+    return subject.degreeClassId.departmentId.name;
+  }
+
+  if (subject?.degreeClass?.departmentId?.name) {
+    return subject.degreeClass.departmentId.name;
   }
 
   const department = departments.find(
