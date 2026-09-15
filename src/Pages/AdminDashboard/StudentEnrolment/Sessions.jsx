@@ -2472,37 +2472,6 @@ const Sessions = () => {
                                 />
                             </div>
 
-                                    </div>
-
-                                </div>
-
-
-                                <div className="preview-line" />
-
-
-                                <div className="preview-item">
-
-                                    <span>
-                                        02
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Fall
-                                        </strong>
-
-                                        <small>
-                                            Starts after Spring
-                                        </small>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
                             {/* ACTIONS */}
 
                             <div className="session-modal-actions">
@@ -2542,8 +2511,7 @@ const Sessions = () => {
                                             <Sparkles
                                                 size={17}
                                             />
-
-                                            Generate Spring + Fall
+                                            Generate Sessions
                                         </>
 
                                     )}
