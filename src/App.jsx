@@ -39,6 +39,18 @@ import ClassAttendance from './Pages/AdminDashboard/Attendence/ByCourse'
 import StudentAttendance from './Pages/AdminDashboard/Attendence/ByStudent'
 import DepartmentAttendance from './Pages/AdminDashboard/Attendence/ByDept'
 import ManageEnrollment from './Pages/AdminDashboard/Classes/ManageEnrollment'
+import  Department  from './Pages/AdminDashboard/StudentEnrolment/Department'
+import DegreeClasses from './Pages/AdminDashboard/StudentEnrolment/DegreeClasses'
+import GenerateVoucher from './Pages/AdminDashboard/FeeManage/GenerateVoucher'
+// import SessionManagement from './Pages/AdminDashboard/StudentEnrolment/SessionManagement'
+import Sessions from './Pages/AdminDashboard/StudentEnrolment/Sessions'
+import Batch from './Pages/AdminDashboard/StudentEnrolment/Batch'
+import VoucherPage from './Pages/AdminDashboard/FeeManage/VoucherPage'
+import TuitionFeeList from './Pages/AdminDashboard/FeeManage/TuitionFeeList'
+import TuitionFeeModal from './Pages/AdminDashboard/FeeManage/TuitionFeeModal'
+import Voucher from './Pages/AdminDashboard/FeeManage/Voucher'
+import Campus from './Pages/AdminDashboard/StudentEnrolment/Campus'
+import Subject from './Pages/AdminDashboard/Subjects/Subject'
 function App() {
 
   return (
@@ -52,7 +64,12 @@ function App() {
 
 
           <Route path='/admin/dashboard' element={<AdminSidebar />}>
+          <Route path='/admin/dashboard/Campus' element={<Campus />}></Route>
+          <Route path='/admin/dashboard/Department' element={<Department />}></Route>
+          <Route path='/admin/dashboard/DegreeClasses' element={<DegreeClasses />}></Route>
             <Route index element={<Dashboard />} />
+            <Route path='Sessions' element={<Sessions />} />
+            <Route path='Batches' element={<Batch />}/>
             <Route path='students'>
               <Route index element={<Navigate to='list' replace />} />
               <Route path='list' element={<StudentList />} />
@@ -61,6 +78,9 @@ function App() {
               <Route path='view/:id' element={<StudentView/>}/>
               <Route path='update/:id' element={<StudentUpdate/>}/>
             </Route>
+
+            <Route path='subjects' element={<Subject />} />
+           
 
             <Route path='faculty'>
               <Route index element={<Navigate to='list' replace />} />
@@ -80,6 +100,8 @@ function App() {
             <Route path='fee'>
               <Route index element={<Navigate to='vouchers' replace />} />
               <Route path='vouchers' element={<FeeManagement />} />
+              <Route path='Voucher' element={<Voucher />}/>
+             <Route path="generatevoucher" element={<VoucherPage />} />
               <Route path='verify' element={<FeeVerify />} />
             </Route>
             <Route path='exam'>

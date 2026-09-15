@@ -1,0 +1,80 @@
+.voucher-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* ==========================================
+   HOME
+========================================== */
+
+.voucher-home {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.voucher-home-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 45px 35px;
+  text-align: center;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+}
+
+.voucher-home-icon {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eef4ff;
+  color: #2563eb;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.voucher-home-card h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #172033;
+}
+
+.voucher-home-card p {
+  margin: 10px 0 25px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.open-generate-btn {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 13px 25px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.open-generate-btn:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 600px) {
+  .voucher-home {
+    padding: 15px;
+  }
+
+  .voucher-home-card {
+    padding: 30px 20px;
+  }
+}

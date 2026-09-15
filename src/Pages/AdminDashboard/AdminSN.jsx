@@ -4,16 +4,16 @@ import './AdminSidebar.css'; // Import the CSS file below
 import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom';
 import Header from './AdminHeader/Header';
 const AdminSidebar = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
-  const handleLogOut = ()=>{
+  const handleLogOut = () => {
     const confirmLogOut = toast.info("Are you sure you want to Logout!!!!")
-    if(confirmLogOut){
-         navigate('/admin/login')
+    if (confirmLogOut) {
+      navigate('/admin/login')
     }
-   
+
   }
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -26,6 +26,30 @@ const navigate = useNavigate();
       icon: 'fa-dashboard',
       path: '/admin/dashboard'
     },
+    {
+      id: 'enrolment',
+      title: 'Student Enrolment',
+      icon: 'fa-users',
+      
+      submenu: [
+        { id: 'student-list', title: 'Campus', icon: 'fa-home', path: '/admin/dashboard/Campus' },
+        { id: 'student-list', title: 'Department', icon: 'fa-home', path: '/admin/dashboard/Department' },
+        { id: 'student-approval', title: 'Classes', icon: 'fa-clock', path: '/admin/dashboard/DegreeClasses' },
+        { id: 'student-assign', title: 'sessions', icon: 'fa-id-card', path: '/admin/dashboard/Sessions' },
+         { id: 'student-assign', title: 'Batches', icon: 'fa-id-card', path: '/admin/dashboard/Batches' },
+      ]
+    },
+
+    {
+      id: 'subjects',
+      title: 'Subjects',
+      icon: 'fa-book',
+       submenu: [
+        { id: 'subject-list', title: 'Subjects', icon: 'fa-book', path: '/admin/dashboard/subjects' },
+      ]
+
+    },
+
     {
       id: 'students',
       title: 'Student Management',
@@ -43,7 +67,7 @@ const navigate = useNavigate();
       icon: 'fa-chalkboard-teacher',
       path: '/admin/dashboard/faculty',
       submenu: [
-        { id: 'faculty-list', title: 'All Faculty',  icon: 'fa-list', path: '/admin/dashboard/faculty/list' },
+        { id: 'faculty-list', title: 'All Faculty', icon: 'fa-list', path: '/admin/dashboard/faculty/list' },
         { id: 'faculty-add', title: 'Register Faculty', icon: 'fa-user-plus', path: '/admin/dashboard/faculty/add' },
         // { id:'faculty-update',title:'Update Faculty' , icon:'fa-user-plus', path:'/admin/dashboard/faculty/update/:id'},
         // { id:'faculty-view', title:'View Faculty' , icon:'fa-list' ,path:'/admin/dashboard/faculty/view/:id'},
@@ -66,7 +90,8 @@ const navigate = useNavigate();
       path: '/admin/dashboard/fee',
       submenu: [
         { id: 'fee-vouchers', title: 'Fee Vouchers', icon: 'fa-receipt', path: '/admin/dashboard/fee/vouchers' },
-        { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-check-circle', path: '/admin/dashboard/fee/verify' },
+        { id: 'fee-verify', title: 'Fee manage', icon: 'fa-check-circle', path: '/admin/dashboard/fee/generatevoucher' },
+         { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-check-circle', path: '/admin/dashboard/fee/verify' },
       ]
     },
     {
@@ -76,34 +101,34 @@ const navigate = useNavigate();
       path: '/admin/dashboard/exam',
       submenu: [
         { id: 'exam-announce', title: 'Announcements', icon: 'fa-bullhorn', path: '/admin/dashboard/exam/announcements' },
-        { id: 'exam-datesheet', title: 'Date Sheets', icon: 'fa-calendar-alt', path:'/admin/dashboard/exam/datesheets' },
+        { id: 'exam-datesheet', title: 'Date Sheets', icon: 'fa-calendar-alt', path: '/admin/dashboard/exam/datesheets' },
         { id: 'exam-results', title: 'Results', icon: 'fa-graduation-cap', path: '/admin/dashboard/exam/results' },
       ]
     },
     {
       id: 'classes',
       title: 'Assign Classes',
-        icon: 'fa-tasks',
+      icon: 'fa-tasks',
       path: '/admin/dashboard/classes',
       submenu: [
         { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
-        { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path:'/admin/dashboard/classes/listclass' },
+        { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path: '/admin/dashboard/classes/listclass' },
       ]
     },
     {
-  id: 'attendance',
-  title: 'Attendance',
-  icon: 'fa-clipboard-check',
-  path: '/admin/dashboard/attendance',
-  submenu: [
-    { 
-      id: 'overview', 
-      title: 'Overview', 
-      icon: 'fa-chart-line', 
-      path: '/admin/dashboard/attendance/overview' 
-    }
-  ]
-},
+      id: 'attendance',
+      title: 'Attendance',
+      icon: 'fa-clipboard-check',
+      path: '/admin/dashboard/attendance',
+      submenu: [
+        {
+          id: 'overview',
+          title: 'Overview',
+          icon: 'fa-chart-line',
+          path: '/admin/dashboard/attendance/overview'
+        }
+      ]
+    },
     {
       id: 'books',
       title: 'Books & Notes',
@@ -163,13 +188,13 @@ const navigate = useNavigate();
             {menuItems.map(item => (
               <li key={item.id} className="nav-item">
                 <Link
-                  to={item.path === 'logout' ? '#' :item.path}
+                  to={item.path === 'logout' ? '#' : item.path}
                   className={`nav-link ${activeMenu === item.id ? 'active' : ''} ${item.className || ''}`}
                   onClick={() => {
-                    if(item.id === 'logout'){
+                    if (item.id === 'logout') {
                       handleLogOut();
                     }
-                   else if (item.submenu) {
+                    else if (item.submenu) {
                       toggleSubmenu(item.id);
                     } else {
                       setActiveMenu(item.id);
@@ -210,7 +235,7 @@ const navigate = useNavigate();
         </nav>
 
         {/* User Profile Section at Bottom */}
-  
+
       </div>
 
       {/* Toggle Button */}
@@ -234,7 +259,7 @@ const navigate = useNavigate();
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Your page content goes here */}
         <div className="container-fluid p-4">
-         <Header/>
+          <Header />
           <Outlet />
         </div>
       </div>

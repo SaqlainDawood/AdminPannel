@@ -17,6 +17,9 @@ import {
 import "./FeeManagement.css";
 import GenerateVoucherModal from "./GenerateVoucherModal";
 import VoucherPreview from "./VoucherPreview";
+import GenerateVoucher from "./GenerateVoucher";
+import { useNavigate } from "react-router-dom";
+import TuitionFeeList from "./TuitionFeeList";
 const FeeManagement = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,7 +30,7 @@ const [voucherData, setVoucherData] = useState(null);
   // =========================
   // STATIC DATA
   // =========================
-
+const navigate = useNavigate();
   const stats = [
     {
       label: "Total Revenue",
@@ -414,7 +417,7 @@ const [voucherData, setVoucherData] = useState(null);
 
               <button
                 className="fee-primary-btn"
-                onClick={() => setShowVoucherModal(true)}
+                 onClick={() => navigate("/admin/dashboard/fee/Voucher")}
               >
                 <Plus size={17} />
                 Generate Voucher

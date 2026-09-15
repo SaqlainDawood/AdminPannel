@@ -1,0 +1,1133 @@
+/* =========================================================
+   BATCH PAGE
+========================================================= */
+
+.batches-page {
+    padding: 24px;
+    background: #f7f8fc;
+    min-height: 100vh;
+    color: #1f2937;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.batches-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.batch-title-section {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.batch-main-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.batch-title-section h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.batch-title-section p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.add-batch-btn {
+    border: none;
+    background: #4f46e5;
+    color: #fff;
+    height: 42px;
+    padding: 0 17px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.add-batch-btn:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.batch-page-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.batch-page-error button {
+    border: none;
+    background: #b91c1c;
+    color: white;
+    padding: 7px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.batch-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.batch-stat-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.batch-stat-card span {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.batch-stat-card strong {
+    font-size: 25px;
+    color: #111827;
+}
+
+.batch-stat-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.batch-stat-icon.blue {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.batch-stat-icon.green {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.batch-stat-icon.orange {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.batch-stat-icon.red {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.batches-toolbar {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.batch-search {
+    height: 40px;
+    flex: 1;
+    min-width: 220px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    color: #9ca3af;
+}
+
+.batch-search input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #111827;
+    background: transparent;
+}
+
+.batch-filter {
+    height: 40px;
+    min-width: 145px;
+    padding: 0 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    outline: none;
+    cursor: pointer;
+}
+
+.batch-result-count {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.batches-table-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.batches-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.batches-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1050px;
+}
+
+.batches-table thead {
+    background: #f9fafb;
+}
+
+.batches-table th {
+    padding: 13px 15px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.batches-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f1f3;
+    font-size: 13px;
+    color: #374151;
+}
+
+.batches-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.batches-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================================
+   BATCH NAME
+========================================================= */
+
+.batch-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.batch-avatar {
+    width: 39px;
+    height: 39px;
+    border-radius: 9px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.batch-name-cell strong {
+    display: block;
+    font-size: 14px;
+    color: #111827;
+}
+
+.batch-name-cell small {
+    display: block;
+    margin-top: 3px;
+    color: #9ca3af;
+    font-size: 10px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.batch-shift-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.batch-session-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.batch-semester-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.batch-semester-info strong {
+    color: #111827;
+}
+
+.batch-semester-info small {
+    color: #9ca3af;
+}
+
+.batch-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.batch-status.active {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.batch-status.completed {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.batch-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.batch-actions button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.view-batch-btn {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.view-batch-btn:hover {
+    background: #dbeafe;
+}
+
+.edit-batch-btn {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.edit-batch-btn:hover {
+    background: #ede9fe;
+}
+
+.advance-batch-btn {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.advance-batch-btn:hover {
+    background: #d1fae5;
+}
+
+.delete-batch-btn {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.delete-batch-btn:hover {
+    background: #fee2e2;
+}
+
+.batch-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.batch-loading {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+.batch-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #4f46e5;
+    border-radius: 50%;
+    animation: batchSpin 0.8s linear infinite;
+    margin-bottom: 12px;
+}
+
+.batch-loading p {
+    margin: 0;
+    font-size: 13px;
+}
+
+@keyframes batchSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.batch-empty {
+    min-height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.batch-empty h3 {
+    margin: 12px 0 5px;
+    color: #374151;
+    font-size: 16px;
+}
+
+.batch-empty p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.batch-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+    overflow-y: auto;
+    backdrop-filter: blur(2px);
+}
+
+/* =========================================================
+   CREATE / EDIT MODAL
+========================================================= */
+
+.batch-modal {
+    width: min(650px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+    animation: batchModalIn 0.2s ease;
+}
+
+@keyframes batchModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.batch-modal-header {
+    padding: 19px 21px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.batch-modal-header h2 {
+    margin: 0;
+    font-size: 19px;
+    color: #111827;
+}
+
+.batch-modal-header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.batch-close-btn {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.batch-close-btn:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.batch-modal form {
+    padding: 21px;
+}
+
+.batch-form-group {
+    margin-bottom: 16px;
+}
+
+.batch-form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.batch-form-group input,
+.batch-form-group select {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 11px;
+    outline: none;
+    background: #fff;
+    color: #111827;
+    font-size: 13px;
+    box-sizing: border-box;
+    transition: border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.batch-form-group input:focus,
+.batch-form-group select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.batch-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* =========================================================
+   DEPENDENT DROPDOWN
+========================================================= */
+
+.batch-dependent-note {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.batch-form-group select:disabled {
+    background: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   BATCH NAME PREVIEW
+========================================================= */
+
+.batch-name-preview {
+    margin: 3px 0 18px;
+    padding: 13px 14px;
+    border: 1px dashed #c7d2fe;
+    border-radius: 9px;
+    background: #eef2ff;
+}
+
+.batch-name-preview span {
+    display: block;
+    color: #6366f1;
+    font-size: 11px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.batch-name-preview strong {
+    color: #312e81;
+    font-size: 17px;
+}
+
+/* =========================================================
+   FORM ERROR
+========================================================= */
+
+.batch-form-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-bottom: 17px;
+}
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.batch-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    padding-top: 5px;
+    margin-top: 4px;
+}
+
+.batch-cancel-btn,
+.batch-save-btn {
+    min-height: 40px;
+    padding: 0 15px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.batch-cancel-btn {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.batch-cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+.batch-save-btn {
+    background: #4f46e5;
+    color: #fff;
+}
+
+.batch-save-btn:hover {
+    background: #4338ca;
+}
+
+.batch-save-btn:disabled,
+.batch-cancel-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   MINI SPINNER
+========================================================= */
+
+.batch-mini-spinner {
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: batchSpin 0.7s linear infinite;
+}
+
+/* =========================================================
+   VIEW MODAL
+========================================================= */
+
+.batch-view-modal {
+    width: min(700px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+    animation: batchModalIn 0.2s ease;
+}
+
+.batch-view-content {
+    padding: 21px;
+}
+
+/* =========================================================
+   VIEW HERO
+========================================================= */
+
+.batch-view-hero {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 17px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 18px;
+}
+
+.batch-view-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.batch-view-hero h3 {
+    margin: 0 0 5px;
+    font-size: 19px;
+    color: #111827;
+}
+
+.batch-view-hero span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* =========================================================
+   DETAIL GRID
+========================================================= */
+
+.batch-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
+}
+
+.batch-detail-item {
+    padding: 13px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.batch-detail-item span {
+    display: block;
+    font-size: 10px;
+    color: #9ca3af;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.batch-detail-item strong {
+    display: block;
+    color: #111827;
+    font-size: 13px;
+}
+
+.detail-active {
+    color: #059669 !important;
+}
+
+.detail-completed {
+    color: #6b7280 !important;
+}
+
+/* =========================================================
+   ID BOX
+========================================================= */
+
+.batch-id-box {
+    margin-top: 12px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+
+.batch-id-box span {
+    display: block;
+    color: #9ca3af;
+    font-size: 10px;
+    margin-bottom: 4px;
+}
+
+.batch-id-box strong {
+    display: block;
+    font-size: 11px;
+    color: #4b5563;
+    word-break: break-all;
+}
+
+/* =========================================================
+   VIEW FOOTER
+========================================================= */
+
+.batch-view-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+/* =========================================================
+   ADVANCE MODAL
+========================================================= */
+
+.batch-advance-modal {
+    width: min(500px, 100%);
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+    animation: batchModalIn 0.2s ease;
+}
+
+.batch-advance-content {
+    padding: 21px;
+}
+
+.batch-advance-info {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 17px;
+}
+
+.batch-advance-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px;
+}
+
+.batch-advance-info-row:last-child {
+    border-bottom: none;
+}
+
+.batch-advance-info-row span {
+    color: #6b7280;
+}
+
+.batch-advance-info-row strong {
+    color: #111827;
+}
+
+.batch-advance-current {
+    color: #4f46e5 !important;
+}
+
+.batch-advance-next {
+    color: #059669 !important;
+}
+
+/* =========================================================
+   ADVANCE SESSION SELECT
+========================================================= */
+
+.batch-advance-session-box {
+    margin-top: 14px;
+}
+
+.batch-advance-session-box label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.batch-advance-session-box select {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 10px;
+    background: #fff;
+    outline: none;
+    font-size: 13px;
+}
+
+.batch-advance-session-box select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.batch-auto-note {
+    margin-top: 7px;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+/* =========================================================
+   SEMESTER HISTORY
+========================================================= */
+
+.batch-history {
+    margin-top: 18px;
+}
+
+.batch-history h3 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: #111827;
+}
+
+.batch-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.batch-history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 13px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.batch-history-semester {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.batch-history-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.batch-history-semester strong {
+    font-size: 12px;
+    color: #111827;
+}
+
+.batch-history-session {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+    .batch-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .batches-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .batch-result-count {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .batches-page {
+        padding: 16px;
+    }
+
+    .batches-header {
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .batch-title-section h1 {
+        font-size: 21px;
+    }
+
+    .add-batch-btn {
+        white-space: nowrap;
+    }
+
+    .batch-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .batches-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .batch-search {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .batch-filter {
+        width: 100%;
+    }
+
+    .batch-result-count {
+        width: auto;
+    }
+
+    .batch-form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .batch-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .batches-page {
+        padding: 12px;
+    }
+
+    .batches-header {
+        flex-direction: column;
+    }
+
+    .add-batch-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .batch-modal-overlay {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .batch-modal,
+    .batch-view-modal,
+    .batch-advance-modal {
+        max-height: calc(100vh - 20px);
+    }
+
+    .batch-modal form,
+    .batch-view-content,
+    .batch-advance-content {
+        padding: 16px;
+    }
+
+    .batch-modal-actions,
+    .batch-view-footer {
+        flex-direction: column-reverse;
+    }
+
+    .batch-cancel-btn,
+    .batch-save-btn {
+        width: 100%;
+    }
+}
