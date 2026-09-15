@@ -23,6 +23,7 @@ import {
 
 import {
     getSessions,
+    createSession,
     generateSessions,
     updateSession,
     deleteSession,
@@ -73,6 +74,9 @@ const Sessions = () => {
     const [showGenerateModal, setShowGenerateModal] =
         useState(false);
 
+    const [showAddModal, setShowAddModal] =
+        useState(false);
+
     // Holds { message, created, skipped } after a successful Generate
     // call, so we can show the user exactly which sessions were made
     // vs already existed — cleared when the modal is closed.
@@ -106,9 +110,15 @@ const Sessions = () => {
     const [generateForm, setGenerateForm] =
         useState({
             degreeClassId: "",
-            springStartDate: "",
-            semesterMonths: 6,
+            startYear: new Date().getFullYear(),
         });
+
+    const [addForm, setAddForm] = useState({
+        name: "",
+        term: "",
+        year: new Date().getFullYear(),
+        isActive: true,
+    });
 
 
     // =====================================================
@@ -603,16 +613,70 @@ const Sessions = () => {
                           degreeClasses[0]
                       )
                     : "",
-            springStartDate: "",
-            semesterMonths: 6,
+            startYear: new Date().getFullYear(),
         });
 
         setShowGenerateModal(true);
     };
 
+    const handleOpenAddSession = () => {
+        setError("");
+        setAddForm({
+            name: "",
+            term: "",
+            year: new Date().getFullYear(),
+            isActive: true,
+        });
+        setShowAddModal(true);
+    };
+
+    const handleAddSession = async (e) => {
+        e.preventDefault();
+        setError("");
+
+        if (!addForm.name.trim()) {
+            setError("Session name is required.");
+            return;
+        }
+
+        if (!addForm.term) {
+            setError("Please select a term.");
+            return;
+        }
+
+        if (!addForm.year) {
+            setError("Year is required.");
+            return;
+        }
+
+        try {
+            setGenerating(true);
+
+            const payload = {
+                name: addForm.name.trim(),
+                term: addForm.term,
+                year: Number(addForm.year),
+                isActive: Boolean(addForm.isActive),
+            };
+
+            await createSession(payload);
+            setShowAddModal(false);
+            await fetchData();
+        } catch (err) {
+            console.error("Create session error:", err);
+            setError(
+                err?.response?.data?.message ||
+                err?.message ||
+                "Failed to create session."
+            );
+        } finally {
+            setGenerating(false);
+        }
+    };
+
 
     // =====================================================
-    // GENERATE SPRING + FALL
+    // GENERATE SESSIONS
     // =====================================================
 
     const handleGenerate = async (e) => {
@@ -621,70 +685,28 @@ const Sessions = () => {
 
         setError("");
 
-
-        if (
-            !generateForm.springStartDate
-        ) {
-
-            setError(
-                "Please select Spring start date."
-            );
-
+        if (!generateForm.degreeClassId) {
+            setError("Please select a degree class.");
             return;
         }
 
-
-        const semesterMonths =
-            Number(
-                generateForm.semesterMonths
-            );
-
-
-        if (
-            !semesterMonths ||
-            semesterMonths < 1
-        ) {
-
-            setError(
-                "Semester duration must be at least 1 month."
-            );
-
+        if (!generateForm.startYear) {
+            setError("Please enter a start year.");
             return;
         }
-
 
         try {
 
             setGenerating(true);
 
-
             const payload = {
-                springStartDate:
-                    generateForm.springStartDate,
-
-                semesterMonths:
-                    semesterMonths,
+                degreeClassId: generateForm.degreeClassId,
+                startYear: Number(generateForm.startYear),
             };
 
-            // Optional — sessions are university-wide, this is only
-            // sent if the user picked a class (backend validates it
-            // if present, but never requires it).
-            if (generateForm.degreeClassId) {
-                payload.degreeClassId =
-                    generateForm.degreeClassId;
-            }
+            const response = await generateSessions(payload);
 
-
-            const response =
-                await generateSessions(
-                    payload
-                );
-
-            // Backend shape: { success, message, data: { created, skipped, spring, fall } }
-            const result =
-                response?.data ||
-                response ||
-                {};
+            const result = response?.data || response || {};
 
             setGenerateResult({
                 message:
@@ -704,8 +726,6 @@ const Sessions = () => {
                         : [],
             });
 
-            // Refresh the list/counts in the background —
-            // modal stays open so the user can read the summary.
             await fetchData();
 
         } catch (err) {
@@ -714,7 +734,6 @@ const Sessions = () => {
                 "Generate session error:",
                 err
             );
-
 
             setError(
                 err?.response?.data?.message ||
@@ -1087,8 +1106,22 @@ const Sessions = () => {
 
         setGenerateForm({
             degreeClassId: "",
-            springStartDate: "",
-            semesterMonths: 6,
+            startYear: new Date().getFullYear(),
+        });
+    };
+
+    const closeAddModal = () => {
+        if (generating) {
+            return;
+        }
+
+        setShowAddModal(false);
+        setError("");
+        setAddForm({
+            name: "",
+            term: "",
+            year: new Date().getFullYear(),
+            isActive: true,
         });
     };
 
@@ -1256,20 +1289,33 @@ const Sessions = () => {
                 </div>
 
 
-                <button
-                    className="add-session-btn"
-                    onClick={
-                        handleOpenGenerate
-                    }
-                >
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                    <button
+                        className="add-session-btn"
+                        onClick={
+                            handleOpenAddSession
+                        }
+                        style={{ background: "#3b82f6" }}
+                    >
+                        <Plus size={18} />
+                        Add Session
+                    </button>
 
-                    <Sparkles
-                        size={18}
-                    />
+                    <button
+                        className="add-session-btn"
+                        onClick={
+                            handleOpenGenerate
+                        }
+                    >
 
-                    Generate Sessions
+                        <Sparkles
+                            size={18}
+                        />
 
-                </button>
+                        Generate Sessions
+
+                    </button>
+                </div>
 
             </div>
 
@@ -1953,6 +1999,136 @@ const Sessions = () => {
             </div>
 
 
+            {showAddModal && (
+                <div className="session-modal-overlay">
+                    <div className="session-modal generate-session-modal">
+                        <div className="session-modal-header">
+                            <div>
+                                <div className="generate-modal-title">
+                                    <div className="generate-icon">
+                                        <Plus size={20} />
+                                    </div>
+                                    <div>
+                                        <h2>Add Session</h2>
+                                        <p>Create a single session manually</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                className="session-close-btn"
+                                onClick={closeAddModal}
+                            >
+                                <X size={19} />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAddSession}>
+                            {error && (
+                                <div className="session-form-error">
+                                    <AlertCircle size={17} />
+                                    {error}
+                                </div>
+                            )}
+
+                            <div className="session-form-group">
+                                <label>
+                                    Session Name <span>*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={addForm.name}
+                                    onChange={(e) =>
+                                        setAddForm((prev) => ({
+                                            ...prev,
+                                            name: e.target.value,
+                                        }))
+                                    }
+                                    placeholder="Spring 2026"
+                                    required
+                                />
+                            </div>
+
+                            <div className="session-form-group">
+                                <label>
+                                    Term <span>*</span>
+                                </label>
+                                <select
+                                    name="term"
+                                    value={addForm.term}
+                                    onChange={(e) =>
+                                        setAddForm((prev) => ({
+                                            ...prev,
+                                            term: e.target.value,
+                                        }))
+                                    }
+                                    required
+                                >
+                                    <option value="">Select Term</option>
+                                    <option value="Spring">Spring</option>
+                                    <option value="Fall">Fall</option>
+                                </select>
+                            </div>
+
+                            <div className="session-form-group">
+                                <label>
+                                    Year <span>*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="year"
+                                    min="2020"
+                                    max="2100"
+                                    value={addForm.year}
+                                    onChange={(e) =>
+                                        setAddForm((prev) => ({
+                                            ...prev,
+                                            year: e.target.value,
+                                        }))
+                                    }
+                                    required
+                                />
+                            </div>
+
+                            <div className="session-form-group">
+                                <label className="session-toggle-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={addForm.isActive}
+                                        onChange={(e) =>
+                                            setAddForm((prev) => ({
+                                                ...prev,
+                                                isActive: e.target.checked,
+                                            }))
+                                        }
+                                    />
+                                    Active session
+                                </label>
+                            </div>
+
+                            <div className="session-modal-footer">
+                                <button
+                                    type="button"
+                                    className="session-cancel-btn"
+                                    onClick={closeAddModal}
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="session-save-btn"
+                                    disabled={generating}
+                                >
+                                    {generating ? "Saving..." : "Create Session"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* =================================================
                 GENERATE MODAL
             ================================================= */}
@@ -2043,14 +2219,13 @@ const Sessions = () => {
                             <div className="generate-info-box">
 
                                 <strong>
-                                    How this works
+                                    Bulk generation
                                 </strong>
 
                                 <p>
-                                    Enter the Spring start
-                                    date and semester duration.
-                                    The backend will automatically
-                                    create both Spring and Fall.
+                                    Select a degree class and enter the
+                                    start year. The backend will generate
+                                    the related session records for that class.
                                 </p>
 
                             </div>
@@ -2061,10 +2236,7 @@ const Sessions = () => {
                             <div className="session-form-group">
 
                                 <label>
-                                    Degree Class{" "}
-                                    <span style={{ fontWeight: 400, opacity: 0.6 }}>
-                                        (optional)
-                                    </span>
+                                    Degree Class <span>*</span>
                                 </label>
 
                                 <select
@@ -2075,6 +2247,7 @@ const Sessions = () => {
                                     onChange={
                                         handleGenerateChange
                                     }
+                                    required
                                 >
 
                                     <option value="">
@@ -2115,6 +2288,21 @@ const Sessions = () => {
 
                                 </select>
 
+                            </div>
+
+                            <div className="session-form-group">
+                                <label>
+                                    Start Year <span>*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="startYear"
+                                    min="2020"
+                                    max="2100"
+                                    value={generateForm.startYear}
+                                    onChange={handleGenerateChange}
+                                    required
+                                />
                             </div>
 
 
@@ -2269,102 +2457,20 @@ const Sessions = () => {
                             )}
 
 
-                            {/* SPRING DATE */}
-
                             <div className="session-form-group">
-
                                 <label>
-                                    Spring Start Date
+                                    Start Year <span>*</span>
                                 </label>
-
-                                <div className="session-date-input">
-
-                                    <CalendarDays
-                                        size={16}
-                                    />
-
-                                    <input
-                                        type="date"
-                                        name="springStartDate"
-                                        value={
-                                            generateForm.springStartDate
-                                        }
-                                        onChange={
-                                            handleGenerateChange
-                                        }
-                                        required
-                                    />
-
-                                </div>
-
-                                <small className="field-help">
-                                    This date starts the
-                                    new academic cycle.
-                                </small>
-
+                                <input
+                                    type="number"
+                                    name="startYear"
+                                    min="2020"
+                                    max="2100"
+                                    value={generateForm.startYear}
+                                    onChange={handleGenerateChange}
+                                    required
+                                />
                             </div>
-
-
-                            {/* SEMESTER MONTHS */}
-
-                            <div className="session-form-group">
-
-                                <label>
-                                    Semester Duration
-                                </label>
-
-                                <div className="months-input-wrapper">
-
-                                    <input
-                                        type="number"
-                                        name="semesterMonths"
-                                        min="1"
-                                        max="12"
-                                        value={
-                                            generateForm.semesterMonths
-                                        }
-                                        onChange={
-                                            handleGenerateChange
-                                        }
-                                        required
-                                    />
-
-                                    <span>
-                                        Months
-                                    </span>
-
-                                </div>
-
-                                <small className="field-help">
-                                    Example: 6 months.
-                                    Fall starts immediately
-                                    after Spring according
-                                    to the backend logic.
-                                </small>
-
-                            </div>
-
-
-                            {/* PREVIEW */}
-
-                            <div className="generation-preview">
-
-                                <div className="preview-item">
-
-                                    <span>
-                                        01
-                                    </span>
-
-                                    <div>
-
-                                        <strong>
-                                            Spring
-                                        </strong>
-
-                                        <small>
-                                            Starts from your
-                                            selected date
-                                        </small>
 
                                     </div>
 
