@@ -9,8 +9,6 @@ import {
   BookOpen,
   Building2,
   GraduationCap,
-  Clock3,
-  CalendarDays,
   CheckCircle2,
   XCircle,
   RefreshCw,
@@ -25,7 +23,6 @@ import {
 
 import { getDepartments } from "../../../services/departmentAPI";
 import { getDegreeClasses } from "../../../services/degreeClassAPI";
-import { getShifts } from "../../../services/shiftAPI";
 
 import "./Subject.css";
 
@@ -34,8 +31,6 @@ const emptyForm = {
   code: "",
   departmentId: "",
   degreeClassId: "",
-  semester: "",
-  shiftId: "",
   creditHours: 3,
   isActive: true,
 };
@@ -105,24 +100,6 @@ const getDegreeClassId = (subject) => {
   return "";
 };
 
-const getShiftId = (subject) => {
-  if (!subject) return "";
-
-  if (typeof subject.shiftId === "object") {
-    return getId(subject.shiftId);
-  }
-
-  if (subject.shiftId) {
-    return subject.shiftId;
-  }
-
-  if (subject.shift) {
-    return getId(subject.shift);
-  }
-
-  return "";
-};
-
 const getDepartmentName = (subject, departments) => {
   if (subject?.departmentId?.name) {
     return subject.departmentId.name;
@@ -155,27 +132,10 @@ const getDegreeClassName = (subject, degreeClasses) => {
   return degreeClass?.name || "—";
 };
 
-const getShiftName = (subject, shifts) => {
-  if (subject?.shiftId?.name) {
-    return subject.shiftId.name;
-  }
-
-  if (subject?.shift?.name) {
-    return subject.shift.name;
-  }
-
-  const shift = shifts.find(
-    (item) => getId(item) === getShiftId(subject)
-  );
-
-  return shift?.name || "—";
-};
-
 export default function Subject() {
   const [subjects, setSubjects] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [degreeClasses, setDegreeClasses] = useState([]);
-  const [shifts, setShifts] = useState([]);
 
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
@@ -203,22 +163,16 @@ export default function Subject() {
       setLoading(true);
       setError("");
 
-      const [
-        subjectsResponse,
-        departmentsResponse,
-        degreeClassesResponse,
-        shiftsResponse,
-      ] = await Promise.all([
-        getSubjects(),
-        getDepartments(),
-        getDegreeClasses(),
-        getShifts(),
-      ]);
+      const [subjectsResponse, departmentsResponse, degreeClassesResponse] =
+        await Promise.all([
+          getSubjects(),
+          getDepartments(),
+          getDegreeClasses(),
+        ]);
 
       setSubjects(unwrap(subjectsResponse));
       setDepartments(unwrap(departmentsResponse));
       setDegreeClasses(unwrap(degreeClassesResponse));
-      setShifts(unwrap(shiftsResponse));
     } catch (err) {
       console.error("Subject fetch error:", err);
       setError(getErrorMessage(err));
@@ -249,20 +203,6 @@ export default function Subject() {
     });
   }, [degreeClasses, formData.departmentId]);
 
-  const filteredShifts = useMemo(() => {
-    if (!formData.degreeClassId) return [];
-
-    return shifts.filter((shift) => {
-      if (typeof shift.degreeClassId === "object") {
-        return (
-          getId(shift.degreeClassId) === formData.degreeClassId
-        );
-      }
-
-      return shift.degreeClassId === formData.degreeClassId;
-    });
-  }, [shifts, formData.degreeClassId]);
-
   const filteredSubjects = useMemo(() => {
     let result = [...subjects];
 
@@ -288,27 +228,17 @@ export default function Subject() {
           degreeClasses
         );
 
-        const shiftName = getShiftName(subject, shifts);
-
         return (
           subject.name?.toLowerCase().includes(search) ||
           subject.code?.toLowerCase().includes(search) ||
           departmentName.toLowerCase().includes(search) ||
-          degreeClassName.toLowerCase().includes(search) ||
-          shiftName.toLowerCase().includes(search)
+          degreeClassName.toLowerCase().includes(search)
         );
       });
     }
 
     return result;
-  }, [
-    subjects,
-    searchTerm,
-    statusFilter,
-    departments,
-    degreeClasses,
-    shifts,
-  ]);
+  }, [subjects, searchTerm, statusFilter, departments, degreeClasses]);
 
   // ==========================================
   // FORM
@@ -322,7 +252,6 @@ export default function Subject() {
         ...prev,
         departmentId: value,
         degreeClassId: "",
-        shiftId: "",
       }));
 
       return;
@@ -332,7 +261,6 @@ export default function Subject() {
       setFormData((prev) => ({
         ...prev,
         degreeClassId: value,
-        shiftId: "",
       }));
 
       return;
@@ -368,8 +296,6 @@ export default function Subject() {
       code: subject.code || "",
       departmentId: getDepartmentId(subject),
       degreeClassId: getDegreeClassId(subject),
-      semester: subject.semester ?? "",
-      shiftId: getShiftId(subject),
       creditHours: subject.creditHours ?? 3,
       isActive: subject.isActive !== false,
     });
@@ -413,14 +339,6 @@ export default function Subject() {
       return "Please select a degree class.";
     }
 
-    if (!formData.semester) {
-      return "Please select a semester.";
-    }
-
-    if (!formData.shiftId) {
-      return "Please select a shift.";
-    }
-
     if (!formData.creditHours || Number(formData.creditHours) <= 0) {
       return "Credit hours must be greater than 0.";
     }
@@ -449,10 +367,7 @@ export default function Subject() {
       const payload = {
         name: formData.name.trim(),
         code: formData.code.trim().toUpperCase(),
-        departmentId: formData.departmentId,
         degreeClassId: formData.degreeClassId,
-        semester: Number(formData.semester),
-        shift: formData.shiftId,
         creditHours: Number(formData.creditHours),
         isActive: Boolean(formData.isActive),
       };
@@ -718,8 +633,6 @@ export default function Subject() {
                   <th>Code</th>
                   <th>Department</th>
                   <th>Degree Class</th>
-                  <th>Semester</th>
-                  <th>Shift</th>
                   <th>Credit Hours</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -753,18 +666,6 @@ export default function Subject() {
 
                     <td>
                       {getDegreeClassName(subject, degreeClasses)}
-                    </td>
-
-                    <td>
-                      <span className="subject-semester">
-                        Semester {subject.semester || "—"}
-                      </span>
-                    </td>
-
-                    <td>
-                      <span className="subject-shift">
-                        {getShiftName(subject, shifts)}
-                      </span>
                     </td>
 
                     <td>
@@ -1011,76 +912,6 @@ export default function Subject() {
                       </div>
                     </div>
 
-                    <div className="subject-form-group">
-                      <label>
-                        Semester <span>*</span>
-                      </label>
-
-                      <div className="subject-select-wrapper">
-                        <CalendarDays size={17} />
-
-                        <select
-                          name="semester"
-                          value={formData.semester}
-                          onChange={handleFormChange}
-                          required
-                        >
-                          <option value="">
-                            Select Semester
-                          </option>
-
-                          {Array.from(
-                            { length: 12 },
-                            (_, index) => index + 1
-                          ).map((semester) => (
-                            <option
-                              key={semester}
-                              value={semester}
-                            >
-                              Semester {semester}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="subject-form-group">
-                      <label>
-                        Shift <span>*</span>
-                      </label>
-
-                      <div className="subject-select-wrapper">
-                        <Clock3 size={17} />
-
-                        <select
-                          name="shiftId"
-                          value={formData.shiftId}
-                          onChange={handleFormChange}
-                          disabled={!formData.degreeClassId}
-                          required
-                        >
-                          <option value="">
-                            {formData.degreeClassId
-                              ? "Select Shift"
-                              : "Select Degree Class First"}
-                          </option>
-
-                          {filteredShifts
-                            .filter(
-                              (shift) =>
-                                shift.isActive !== false
-                            )
-                            .map((shift) => (
-                              <option
-                                key={getId(shift)}
-                                value={getId(shift)}
-                              >
-                                {shift.name}
-                              </option>
-                            ))}
-                        </select>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -1239,26 +1070,6 @@ export default function Subject() {
                         selectedSubject,
                         degreeClasses
                       )}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="subject-detail-card">
-                  <CalendarDays size={19} />
-                  <div>
-                    <span>Semester</span>
-                    <strong>
-                      Semester {selectedSubject.semester || "—"}
-                    </strong>
-                  </div>
-                </div>
-
-                <div className="subject-detail-card">
-                  <Clock3 size={19} />
-                  <div>
-                    <span>Shift</span>
-                    <strong>
-                      {getShiftName(selectedSubject, shifts)}
                     </strong>
                   </div>
                 </div>
