@@ -953,7 +953,7 @@ if (loading) {
                         type="password"
                         id="password"
                         name="password"
-                        className="form-control"
+                        clasName="form-control"
                         placeholder="Generate strong password"
                         value={formData.password}
                         onChange={handleChange}
