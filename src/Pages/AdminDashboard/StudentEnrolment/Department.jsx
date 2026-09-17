@@ -8,6 +8,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { FaSpinner } from "react-icons/fa";
 import "./DepartmentManagement.css";
 
 import {
@@ -456,10 +457,18 @@ const Department = () => {
                   <td colSpan="6">
 
                     <div className="department-loading">
-                      <div className="loading-spinner"></div>
+
+                      <div className="department-spinner-wrapper">
+                        <FaSpinner
+                          className="department-spinner"
+                          size={32}
+                        />
+                      </div>
+
                       <p>
                         Loading departments...
                       </p>
+
                     </div>
 
                   </td>
@@ -798,7 +807,13 @@ const Department = () => {
                 >
 
                   {saving ? (
-                    "Saving..."
+                    <>
+                      <FaSpinner
+                        className="department-button-spinner"
+                        size={16}
+                      />
+                      Saving...
+                    </>
                   ) : (
                     <>
                       <Plus size={18} />

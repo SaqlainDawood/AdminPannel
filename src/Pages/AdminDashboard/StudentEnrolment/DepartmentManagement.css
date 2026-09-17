@@ -860,3 +860,108 @@
   color: #dc2626;
   font-size: 12px;
 }
+/* =========================================
+   DEPARTMENT PROFESSIONAL PURPLE SPINNER
+========================================= */
+
+/* Main loading area */
+.department-loading {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Spinner circular wrapper */
+.department-spinner-wrapper {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid rgba(124, 58, 237, 0.14);
+  border-top-color: #7c3aed;
+  border-right-color: #a855f7;
+
+  border-radius: 50%;
+
+  background: rgba(124, 58, 237, 0.035);
+
+  box-shadow:
+    0 4px 12px rgba(124, 58, 237, 0.10),
+    inset 0 0 0 1px rgba(124, 58, 237, 0.03);
+
+  animation: departmentSpinnerRotate 0.85s linear infinite;
+}
+
+/* Spinner icon */
+.department-spinner {
+  color: #7c3aed;
+  flex-shrink: 0;
+
+  filter:
+    drop-shadow(0 2px 4px rgba(124, 58, 237, 0.22));
+}
+
+/* Loading text */
+.department-loading p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+/* Save button spinner */
+.department-button-spinner {
+  color: currentColor;
+  flex-shrink: 0;
+
+  animation: departmentSpinnerRotate 0.75s linear infinite;
+}
+
+/* Button alignment when saving */
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Rotation */
+@keyframes departmentSpinnerRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   OPTIONAL: DISABLED SAVE BUTTON
+========================================= */
+
+.save-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+  .department-spinner-wrapper {
+    width: 46px;
+    height: 46px;
+  }
+
+  .department-loading {
+    min-height: 180px;
+  }
+}

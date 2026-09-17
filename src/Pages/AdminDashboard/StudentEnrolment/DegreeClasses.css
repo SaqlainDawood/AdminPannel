@@ -1069,3 +1069,112 @@
         padding: 12px;
     }
 }
+/* =========================================
+   DEGREE CLASSES - PROFESSIONAL PURPLE SPINNER
+========================================= */
+
+.degree-loading {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.degree-spinner-wrapper {
+    width: 52px;
+    height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(124, 58, 237, 0.14);
+    border-top-color: #7c3aed;
+    border-right-color: #a855f7;
+
+    border-radius: 50%;
+
+    background: rgba(124, 58, 237, 0.035);
+
+    box-shadow:
+        0 4px 12px rgba(124, 58, 237, 0.10),
+        inset 0 0 0 1px rgba(124, 58, 237, 0.03);
+
+    animation: degreeSpinnerRotate 0.85s linear infinite;
+}
+
+.degree-spinner {
+    color: #7c3aed;
+    flex-shrink: 0;
+
+    filter:
+        drop-shadow(
+            0 2px 4px rgba(124, 58, 237, 0.22)
+        );
+}
+
+.degree-loading p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    letter-spacing: 0.1px;
+}
+
+/* =========================================
+   SAVE BUTTON SPINNER
+========================================= */
+
+.degree-button-spinner {
+    color: currentColor;
+    flex-shrink: 0;
+
+    animation: degreeSpinnerRotate 0.75s linear infinite;
+}
+
+.degree-save-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.degree-save-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+/* =========================================
+   ROTATION
+========================================= */
+
+@keyframes degreeSpinnerRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .degree-spinner-wrapper {
+        width: 46px;
+        height: 46px;
+    }
+
+    .degree-loading {
+        min-height: 180px;
+    }
+}

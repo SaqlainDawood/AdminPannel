@@ -3,7 +3,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-
+import { FaSpinner } from "react-icons/fa";
 import {
   Plus,
   Search,
@@ -1669,15 +1669,12 @@ const Batch = () => {
                     colSpan="8"
                   >
 
-                    <div className="batch-loading">
-
-                      <div className="batch-spinner"></div>
-
-                      <p>
-                        Loading batches...
-                      </p>
-
-                    </div>
+                   <div className="batch-loading">
+  <FaSpinner className="batch-spinner-icon" size={38} />
+  <p>
+    Loading batches...
+  </p>
+</div>
 
                   </td>
 
@@ -1978,19 +1975,11 @@ const Batch = () => {
                               }
                             >
 
-                              {deletingId ===
-                              batchId ? (
-
-                                <span className="mini-spinner"></span>
-
-                              ) : (
-
-                                <Trash2
-                                  size={16}
-                                />
-
-                              )}
-
+                             {deletingId === batchId ? (
+  <FaSpinner className="button-spinner-icon" size={15} />
+) : (
+  <Trash2 size={16} />
+)}
                             </button>
 
                           </div>
@@ -2114,16 +2103,12 @@ const Batch = () => {
 
               {loadingFormData ? (
 
-                <div className="batch-form-loading">
-
-                  <div className="batch-spinner"></div>
-
-                  <span>
-                    Loading form data...
-                  </span>
-
-                </div>
-
+              <div className="batch-form-loading">
+  <FaSpinner className="batch-spinner-icon" size={28} />
+  <span>
+    Loading form data...
+  </span>
+</div>
               ) : (
 
                 <>
@@ -2608,16 +2593,11 @@ const Batch = () => {
                     >
 
                       {submitting ? (
-
-                        <>
-
-                          <span className="mini-spinner"></span>
-
-                          Saving...
-
-                        </>
-
-                      ) : (
+  <>
+    <FaSpinner className="button-spinner-icon" size={15} />
+    Saving...
+  </>
+)  : (
 
                         <>
 
@@ -3176,15 +3156,11 @@ const Batch = () => {
               {loadingSemesterInfo ? (
 
                 <div className="advance-loading">
-
-                  <div className="batch-spinner"></div>
-
-                  <span>
-                    Loading semester
-                    history...
-                  </span>
-
-                </div>
+  <FaSpinner className="batch-spinner-icon" size={28} />
+  <span>
+    Loading semester history...
+  </span>
+</div>
 
               ) : semesterInfo ? (
 
@@ -3419,16 +3395,11 @@ const Batch = () => {
                   >
 
                     {advancingId ? (
-
-                      <>
-
-                        <span className="mini-spinner"></span>
-
-                        Advancing...
-
-                      </>
-
-                    ) : (
+  <>
+    <FaSpinner className="button-spinner-icon" size={15} />
+    Advancing...
+  </>
+)  : (
 
                       <>
 

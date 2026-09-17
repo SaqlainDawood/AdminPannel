@@ -33,8 +33,8 @@
   width: 48px;
   height: 48px;
   border-radius: 12px;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -58,7 +58,7 @@
 .subject-add-btn {
   border: none;
   outline: none;
-  background: #ff6b00;
+  background: #7c3aed;
   color: #fff;
   min-height: 42px;
   padding: 0 17px;
@@ -71,11 +71,11 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s ease;
-  box-shadow: 0 5px 14px rgba(255, 107, 0, 0.18);
+  box-shadow: 0 5px 14px rgba(124, 58, 237, 0.18);
 }
 
 .subject-add-btn:hover {
-  background: #e85f00;
+  background: #6d28d9;
   transform: translateY(-1px);
 }
 
@@ -149,8 +149,8 @@
   width: 43px;
   height: 43px;
   border-radius: 10px;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,8 +207,8 @@
 }
 
 .subject-search:focus-within {
-  border-color: #ff6b00;
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.08);
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
 }
 
 .subject-search input {
@@ -248,7 +248,7 @@
 }
 
 .subject-filter select:focus {
-  border-color: #ff6b00;
+  border-color: #7c3aed;
 }
 
 .subject-refresh-btn {
@@ -265,8 +265,8 @@
 }
 
 .subject-refresh-btn:hover {
-  color: #ff6b00;
-  border-color: #ff6b00;
+  color: #7c3aed;
+  border-color: #7c3aed;
 }
 
 .subject-refresh-btn:disabled {
@@ -369,8 +369,8 @@
   width: 35px;
   height: 35px;
   border-radius: 8px;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -460,22 +460,22 @@
 }
 
 .subject-action-btn.view {
-  color: #596579;
+  color: #2563eb;
 }
 
 .subject-action-btn.view:hover {
-  color: #2563eb;
+  color: #1d4ed8;
   border-color: #bfdbfe;
   background: #eff6ff;
 }
 
 .subject-action-btn.edit {
-  color: #ff6b00;
+  color: #7c3aed;
 }
 
 .subject-action-btn.edit:hover {
-  background: #fff1e8;
-  border-color: #fed7aa;
+  background: #f3e8ff;
+  border-color: #ddd6fe;
 }
 
 .subject-action-btn.delete {
@@ -521,8 +521,8 @@
   width: 62px;
   height: 62px;
   border-radius: 50%;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -546,13 +546,17 @@
   border: none;
   border-radius: 8px;
   padding: 0 14px;
-  background: #ff6b00;
+  background: #7c3aed;
   color: #fff;
   display: inline-flex;
   align-items: center;
   gap: 7px;
   cursor: pointer;
   font-weight: 600;
+}
+
+.subject-empty-btn:hover {
+  background: #6d28d9;
 }
 
 /* ==========================================
@@ -612,8 +616,8 @@
   width: 39px;
   height: 39px;
   border-radius: 9px;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -679,7 +683,7 @@
 }
 
 .subject-section-heading svg {
-  color: #ff6b00;
+  color: #7c3aed;
 }
 
 /* ==========================================
@@ -729,8 +733,8 @@
 
 .subject-form-group input:focus,
 .subject-form-group select:focus {
-  border-color: #ff6b00;
-  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.07);
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.07);
 }
 
 .subject-form-group input::placeholder {
@@ -822,7 +826,7 @@
 }
 
 .subject-toggle input:checked + .subject-toggle-slider {
-  background: #ff6b00;
+  background: #7c3aed;
 }
 
 .subject-toggle
@@ -888,19 +892,14 @@
 
 .subject-save-btn {
   border: none;
-  background: #ff6b00;
+  background: #7c3aed;
   color: #fff;
   min-width: 125px;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.14);
 }
 
 .subject-save-btn:hover {
-  background: #e85f00;
-}
-
-.subject-save-btn:disabled,
-.subject-cancel-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  background: #6d28d9;
 }
 
 /* ==========================================
@@ -927,8 +926,8 @@
   width: 52px;
   height: 52px;
   border-radius: 11px;
-  background: #fff1e8;
-  color: #ff6b00;
+  background: #f3e8ff;
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -963,7 +962,7 @@
 }
 
 .subject-detail-card > svg {
-  color: #ff6b00;
+  color: #7c3aed;
   flex-shrink: 0;
 }
 
@@ -1101,4 +1100,115 @@
     width: 100%;
     margin-left: 0;
   }
+}
+/* =========================================================
+   SUBJECT PROFESSIONAL LOADING SPINNER
+========================================================= */
+
+.subject-loading {
+  min-height: 240px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 15px;
+}
+
+.subject-spinner-wrapper {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid rgba(124, 58, 237, 0.14);
+
+  border-top-color: #7c3aed;
+  border-right-color: #a855f7;
+
+  border-radius: 50%;
+
+  background: rgba(124, 58, 237, 0.035);
+
+  box-shadow:
+    0 5px 15px rgba(124, 58, 237, 0.12),
+    inset 0 0 0 1px rgba(124, 58, 237, 0.03);
+
+  animation: subjectSpinnerRotate 0.85s linear infinite;
+}
+
+.subject-spinner {
+  color: #7c3aed;
+
+  flex-shrink: 0;
+
+  filter:
+    drop-shadow(
+      0 2px 5px
+      rgba(124, 58, 237, 0.25)
+    );
+}
+
+.subject-loading p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  letter-spacing: 0.1px;
+}
+
+
+/* =========================================================
+   SAVE BUTTON SPINNER
+========================================================= */
+
+.subject-button-spinner {
+  color: currentColor;
+
+  flex-shrink: 0;
+
+  animation:
+    subjectSpinnerRotate
+    0.75s linear infinite;
+}
+
+
+/* =========================================================
+   SPINNER ANIMATION
+========================================================= */
+
+@keyframes subjectSpinnerRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .subject-spinner-wrapper {
+    width: 52px;
+    height: 52px;
+  }
+
+  .subject-loading {
+    min-height: 200px;
+  }
+
 }

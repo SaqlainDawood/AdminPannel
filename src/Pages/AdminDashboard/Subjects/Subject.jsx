@@ -14,6 +14,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 
+import { FaSpinner } from "react-icons/fa";
+
 import {
   getSubjects,
   createSubject,
@@ -195,12 +197,15 @@ export default function Subject() {
       setLoading(true);
       setError("");
 
-      const [subjectsResponse, departmentsResponse, degreeClassesResponse] =
-        await Promise.all([
-          getSubjects(),
-          getDepartments(),
-          getDegreeClasses(),
-        ]);
+      const [
+        subjectsResponse,
+        departmentsResponse,
+        degreeClassesResponse,
+      ] = await Promise.all([
+        getSubjects(),
+        getDepartments(),
+        getDegreeClasses(),
+      ]);
 
       setSubjects(unwrap(subjectsResponse));
       setDepartments(unwrap(departmentsResponse));
@@ -239,11 +244,15 @@ export default function Subject() {
     let result = [...subjects];
 
     if (statusFilter === "active") {
-      result = result.filter((subject) => subject.isActive !== false);
+      result = result.filter(
+        (subject) => subject.isActive !== false
+      );
     }
 
     if (statusFilter === "inactive") {
-      result = result.filter((subject) => subject.isActive === false);
+      result = result.filter(
+        (subject) => subject.isActive === false
+      );
     }
 
     if (searchTerm.trim()) {
@@ -270,7 +279,13 @@ export default function Subject() {
     }
 
     return result;
-  }, [subjects, searchTerm, statusFilter, departments, degreeClasses]);
+  }, [
+    subjects,
+    searchTerm,
+    statusFilter,
+    departments,
+    degreeClasses,
+  ]);
 
   // ==========================================
   // FORM
@@ -371,7 +386,10 @@ export default function Subject() {
       return "Please select a degree class.";
     }
 
-    if (!formData.creditHours || Number(formData.creditHours) <= 0) {
+    if (
+      !formData.creditHours ||
+      Number(formData.creditHours) <= 0
+    ) {
       return "Credit hours must be greater than 0.";
     }
 
@@ -411,11 +429,15 @@ export default function Subject() {
 
         await updateSubject(id, payload);
 
-        setSuccessMessage("Subject updated successfully.");
+        setSuccessMessage(
+          "Subject updated successfully."
+        );
       } else {
         await createSubject(payload);
 
-        setSuccessMessage("Subject created successfully.");
+        setSuccessMessage(
+          "Subject created successfully."
+        );
       }
 
       await fetchData();
@@ -451,7 +473,9 @@ export default function Subject() {
 
       await deleteSubject(id);
 
-      setSuccessMessage("Subject deleted successfully.");
+      setSuccessMessage(
+        "Subject deleted successfully."
+      );
 
       await fetchData();
     } catch (err) {
@@ -489,56 +513,87 @@ export default function Subject() {
 
   return (
     <div className="subject-page">
+
       {/* HEADER */}
+
       <div className="subject-header">
+
         <div>
           <div className="subject-title-row">
+
             <div className="subject-title-icon">
               <BookOpen size={24} />
             </div>
 
             <div>
+
               <h1>Subjects</h1>
+
               <p>
-                Manage university subjects, courses and academic
-                information.
+                Manage university subjects, courses and
+                academic information.
               </p>
+
             </div>
+
           </div>
         </div>
 
-        <button className="subject-add-btn" onClick={openAddModal}>
+        <button
+          className="subject-add-btn"
+          onClick={openAddModal}
+        >
           <Plus size={18} />
           Add Subject
         </button>
+
       </div>
 
+
       {/* ALERTS */}
+
       {error && !showModal && (
         <div className="subject-alert subject-alert-error">
+
           <XCircle size={18} />
+
           <span>{error}</span>
 
-          <button onClick={() => setError("")}>
+          <button
+            onClick={() => setError("")}
+          >
             <X size={16} />
           </button>
+
         </div>
       )}
+
 
       {successMessage && (
         <div className="subject-alert subject-alert-success">
+
           <CheckCircle2 size={18} />
+
           <span>{successMessage}</span>
 
-          <button onClick={() => setSuccessMessage("")}>
+          <button
+            onClick={() =>
+              setSuccessMessage("")
+            }
+          >
             <X size={16} />
           </button>
+
         </div>
       )}
 
+
       {/* STATS */}
+
       <div className="subject-stats">
+
         <div className="subject-stat-card">
+
           <div className="subject-stat-icon">
             <BookOpen size={21} />
           </div>
@@ -547,9 +602,12 @@ export default function Subject() {
             <span>Total Subjects</span>
             <strong>{totalSubjects}</strong>
           </div>
+
         </div>
 
+
         <div className="subject-stat-card">
+
           <div className="subject-stat-icon active">
             <CheckCircle2 size={21} />
           </div>
@@ -558,9 +616,12 @@ export default function Subject() {
             <span>Active Subjects</span>
             <strong>{activeSubjects}</strong>
           </div>
+
         </div>
 
+
         <div className="subject-stat-card">
+
           <div className="subject-stat-icon inactive">
             <XCircle size={21} />
           </div>
@@ -569,38 +630,65 @@ export default function Subject() {
             <span>Inactive Subjects</span>
             <strong>{inactiveSubjects}</strong>
           </div>
+
         </div>
+
       </div>
 
+
       {/* TOOLBAR */}
+
       <div className="subject-toolbar">
+
         <div className="subject-search">
+
           <Search size={18} />
 
           <input
             type="text"
             placeholder="Search by subject, code, department..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
           />
 
           {searchTerm && (
-            <button onClick={() => setSearchTerm("")}>
+            <button
+              onClick={() => setSearchTerm("")}
+            >
               <X size={16} />
             </button>
           )}
+
         </div>
 
+
         <div className="subject-filter">
+
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) =>
+              setStatusFilter(e.target.value)
+            }
           >
-            <option value="all">All Subjects</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+
+            <option value="all">
+              All Subjects
+            </option>
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="inactive">
+              Inactive
+            </option>
+
           </select>
+
         </div>
+
 
         <button
           className="subject-refresh-btn"
@@ -608,37 +696,75 @@ export default function Subject() {
           disabled={loading}
           title="Refresh"
         >
+
           <RefreshCw
             size={17}
-            className={loading ? "subject-spin" : ""}
+            className={
+              loading
+                ? "subject-spin"
+                : ""
+            }
           />
+
         </button>
+
       </div>
 
+
       {/* TABLE */}
+
       <div className="subject-table-card">
+
         <div className="subject-table-header">
+
           <div>
-            <h2>Subject List</h2>
+
+            <h2>
+              Subject List
+            </h2>
+
             <span>
               {filteredSubjects.length} subject
-              {filteredSubjects.length !== 1 ? "s" : ""}
+              {filteredSubjects.length !== 1
+                ? "s"
+                : ""}
             </span>
+
           </div>
+
         </div>
 
+
         {loading ? (
+
           <div className="subject-loading">
-            <RefreshCw size={28} className="subject-spin" />
-            <p>Loading subjects...</p>
+
+            <div className="subject-spinner-wrapper">
+
+              <FaSpinner
+                className="subject-spinner"
+                size={34}
+              />
+
+            </div>
+
+            <p>
+              Loading subjects...
+            </p>
+
           </div>
+
         ) : filteredSubjects.length === 0 ? (
+
           <div className="subject-empty">
+
             <div className="subject-empty-icon">
               <BookOpen size={30} />
             </div>
 
-            <h3>No subjects found</h3>
+            <h3>
+              No subjects found
+            </h3>
 
             <p>
               {searchTerm
@@ -655,165 +781,346 @@ export default function Subject() {
                 Add Subject
               </button>
             )}
+
           </div>
+
         ) : (
+
           <div className="subject-table-wrapper">
+
             <table className="subject-table">
+
               <thead>
+
                 <tr>
-                  <th>Subject</th>
-                  <th>Code</th>
-                  <th>Department</th>
-                  <th>Degree Class</th>
-                  <th>Credit Hours</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+
+                  <th>
+                    Subject
+                  </th>
+
+                  <th>
+                    Code
+                  </th>
+
+                  <th>
+                    Department
+                  </th>
+
+                  <th>
+                    Degree Class
+                  </th>
+
+                  <th>
+                    Credit Hours
+                  </th>
+
+                  <th>
+                    Status
+                  </th>
+
+                  <th>
+                    Actions
+                  </th>
+
                 </tr>
+
               </thead>
 
+
               <tbody>
-                {filteredSubjects.map((subject) => (
-                  <tr key={getId(subject)}>
-                    <td>
-                      <div className="subject-name-cell">
-                        <div className="subject-row-icon">
-                          <BookOpen size={17} />
+
+                {filteredSubjects.map(
+                  (subject) => (
+
+                    <tr
+                      key={getId(subject)}
+                    >
+
+                      <td>
+
+                        <div className="subject-name-cell">
+
+                          <div className="subject-row-icon">
+
+                            <BookOpen
+                              size={17}
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <strong>
+                              {subject.name ||
+                                "—"}
+                            </strong>
+
+                          </div>
+
                         </div>
 
-                        <div>
-                          <strong>{subject.name || "—"}</strong>
+                      </td>
+
+
+                      <td>
+
+                        <span className="subject-code">
+
+                          {subject.code ||
+                            "—"}
+
+                        </span>
+
+                      </td>
+
+
+                      <td>
+
+                        {getDepartmentName(
+                          subject,
+                          departments
+                        )}
+
+                      </td>
+
+
+                      <td>
+
+                        {getDegreeClassName(
+                          subject,
+                          degreeClasses
+                        )}
+
+                      </td>
+
+
+                      <td>
+
+                        <span className="subject-credit">
+
+                          {subject.creditHours ??
+                            "—"}
+
+                        </span>
+
+                      </td>
+
+
+                      <td>
+
+                        {subject.isActive !==
+                        false ? (
+
+                          <span className="subject-status active">
+
+                            <CheckCircle2
+                              size={14}
+                            />
+
+                            Active
+
+                          </span>
+
+                        ) : (
+
+                          <span className="subject-status inactive">
+
+                            <XCircle
+                              size={14}
+                            />
+
+                            Inactive
+
+                          </span>
+
+                        )}
+
+                      </td>
+
+
+                      <td>
+
+                        <div className="subject-actions">
+
+                          <button
+                            className="subject-action-btn view"
+                            title="View"
+                            onClick={() =>
+                              handleView(
+                                subject
+                              )
+                            }
+                          >
+
+                            <Eye
+                              size={16}
+                            />
+
+                          </button>
+
+
+                          <button
+                            className="subject-action-btn edit"
+                            title="Edit"
+                            onClick={() =>
+                              handleEdit(
+                                subject
+                              )
+                            }
+                          >
+
+                            <Pencil
+                              size={16}
+                            />
+
+                          </button>
+
+
+                          <button
+                            className="subject-action-btn delete"
+                            title="Delete"
+                            onClick={() =>
+                              handleDelete(
+                                subject
+                              )
+                            }
+                          >
+
+                            <Trash2
+                              size={16}
+                            />
+
+                          </button>
+
                         </div>
-                      </div>
-                    </td>
 
-                    <td>
-                      <span className="subject-code">
-                        {subject.code || "—"}
-                      </span>
-                    </td>
+                      </td>
 
-                    <td>
-                      {getDepartmentName(subject, departments)}
-                    </td>
+                    </tr>
 
-                    <td>
-                      {getDegreeClassName(subject, degreeClasses)}
-                    </td>
+                  )
+                )}
 
-                    <td>
-                      <span className="subject-credit">
-                        {subject.creditHours ?? "—"}
-                      </span>
-                    </td>
-
-                    <td>
-                      {subject.isActive !== false ? (
-                        <span className="subject-status active">
-                          <CheckCircle2 size={14} />
-                          Active
-                        </span>
-                      ) : (
-                        <span className="subject-status inactive">
-                          <XCircle size={14} />
-                          Inactive
-                        </span>
-                      )}
-                    </td>
-
-                    <td>
-                      <div className="subject-actions">
-                        <button
-                          className="subject-action-btn view"
-                          title="View"
-                          onClick={() => handleView(subject)}
-                        >
-                          <Eye size={16} />
-                        </button>
-
-                        <button
-                          className="subject-action-btn edit"
-                          title="Edit"
-                          onClick={() => handleEdit(subject)}
-                        >
-                          <Pencil size={16} />
-                        </button>
-
-                        <button
-                          className="subject-action-btn delete"
-                          title="Delete"
-                          onClick={() => handleDelete(subject)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
               </tbody>
+
             </table>
+
           </div>
+
         )}
+
       </div>
+
 
       {/* ==========================================
           ADD / EDIT MODAL
       ========================================== */}
 
       {showModal && (
+
         <div className="subject-modal-overlay">
+
           <div className="subject-modal">
+
             <div className="subject-modal-header">
+
               <div>
+
                 <div className="subject-modal-title">
+
                   <div className="subject-modal-icon">
-                    <BookOpen size={20} />
+
+                    <BookOpen
+                      size={20}
+                    />
+
                   </div>
 
                   <div>
+
                     <h2>
+
                       {editingSubject
                         ? "Edit Subject"
                         : "Add Subject"}
+
                     </h2>
 
                     <p>
+
                       {editingSubject
                         ? "Update subject information."
                         : "Create a new academic subject."}
+
                     </p>
+
                   </div>
+
                 </div>
+
               </div>
+
 
               <button
                 className="subject-modal-close"
                 onClick={closeModal}
                 disabled={formLoading}
               >
+
                 <X size={20} />
+
               </button>
+
             </div>
 
+
             {error && (
+
               <div className="subject-form-error">
+
                 <XCircle size={17} />
+
                 {error}
+
               </div>
+
             )}
 
-            <form onSubmit={handleSubmit}>
+
+            <form
+              onSubmit={handleSubmit}
+            >
+
               <div className="subject-modal-body">
+
+
                 {/* BASIC INFORMATION */}
+
                 <div className="subject-form-section">
+
                   <div className="subject-section-heading">
-                    <BookOpen size={17} />
-                    <span>Basic Information</span>
+
+                    <BookOpen
+                      size={17}
+                    />
+
+                    <span>
+                      Basic Information
+                    </span>
+
                   </div>
 
+
                   <div className="subject-form-grid">
+
+
                     <div className="subject-form-group full">
+
                       <label>
-                        Subject Name <span>*</span>
+
+                        Subject Name{" "}
+                        <span>*</span>
+
                       </label>
 
                       <input
@@ -821,14 +1128,22 @@ export default function Subject() {
                         name="name"
                         placeholder="e.g. Database Management Systems"
                         value={formData.name}
-                        onChange={handleFormChange}
+                        onChange={
+                          handleFormChange
+                        }
                         required
                       />
+
                     </div>
 
+
                     <div className="subject-form-group">
+
                       <label>
-                        Subject Code <span>*</span>
+
+                        Subject Code{" "}
+                        <span>*</span>
+
                       </label>
 
                       <input
@@ -836,14 +1151,22 @@ export default function Subject() {
                         name="code"
                         placeholder="e.g. CS-302"
                         value={formData.code}
-                        onChange={handleFormChange}
+                        onChange={
+                          handleFormChange
+                        }
                         required
                       />
+
                     </div>
 
+
                     <div className="subject-form-group">
+
                       <label>
-                        Credit Hours <span>*</span>
+
+                        Credit Hours{" "}
+                        <span>*</span>
+
                       </label>
 
                       <input
@@ -852,297 +1175,585 @@ export default function Subject() {
                         min="1"
                         max="10"
                         step="1"
-                        value={formData.creditHours}
-                        onChange={handleFormChange}
+                        value={
+                          formData.creditHours
+                        }
+                        onChange={
+                          handleFormChange
+                        }
                         required
                       />
+
                     </div>
+
                   </div>
+
                 </div>
 
+
                 {/* ACADEMIC INFORMATION */}
+
                 <div className="subject-form-section">
+
                   <div className="subject-section-heading">
-                    <GraduationCap size={17} />
-                    <span>Academic Information</span>
+
+                    <GraduationCap
+                      size={17}
+                    />
+
+                    <span>
+                      Academic Information
+                    </span>
+
                   </div>
 
+
                   <div className="subject-form-grid">
+
+
                     <div className="subject-form-group">
+
                       <label>
-                        Department <span>*</span>
+
+                        Department{" "}
+                        <span>*</span>
+
                       </label>
 
+
                       <div className="subject-select-wrapper">
-                        <Building2 size={17} />
+
+                        <Building2
+                          size={17}
+                        />
 
                         <select
                           name="departmentId"
-                          value={formData.departmentId}
-                          onChange={handleFormChange}
+                          value={
+                            formData.departmentId
+                          }
+                          onChange={
+                            handleFormChange
+                          }
                           required
                         >
+
                           <option value="">
+
                             Select Department
+
                           </option>
+
 
                           {departments
                             .filter(
                               (department) =>
-                                department.isActive !== false
+                                department.isActive !==
+                                false
                             )
-                            .map((department) => (
-                              <option
-                                key={getId(department)}
-                                value={getId(department)}
-                              >
-                                {department.name}
-                              </option>
-                            ))}
+                            .map(
+                              (
+                                department
+                              ) => (
+
+                                <option
+                                  key={getId(
+                                    department
+                                  )}
+                                  value={getId(
+                                    department
+                                  )}
+                                >
+
+                                  {
+                                    department.name
+                                  }
+
+                                </option>
+
+                              )
+                            )}
+
                         </select>
+
                       </div>
+
                     </div>
 
+
                     <div className="subject-form-group">
+
                       <label>
-                        Degree Class <span>*</span>
+
+                        Degree Class{" "}
+                        <span>*</span>
+
                       </label>
 
+
                       <div className="subject-select-wrapper">
-                        <GraduationCap size={17} />
+
+                        <GraduationCap
+                          size={17}
+                        />
 
                         <select
                           name="degreeClassId"
-                          value={formData.degreeClassId}
-                          onChange={handleFormChange}
-                          disabled={!formData.departmentId}
+                          value={
+                            formData.degreeClassId
+                          }
+                          onChange={
+                            handleFormChange
+                          }
+                          disabled={
+                            !formData.departmentId
+                          }
                           required
                         >
+
                           <option value="">
+
                             {formData.departmentId
                               ? "Select Degree Class"
                               : "Select Department First"}
+
                           </option>
+
 
                           {filteredDegreeClasses
                             .filter(
-                              (degreeClass) =>
-                                degreeClass.isActive !== false
+                              (
+                                degreeClass
+                              ) =>
+                                degreeClass.isActive !==
+                                false
                             )
-                            .map((degreeClass) => (
-                              <option
-                                key={getId(degreeClass)}
-                                value={getId(degreeClass)}
-                              >
-                                {degreeClass.name}
-                                {degreeClass.code
-                                  ? ` (${degreeClass.code})`
-                                  : ""}
-                              </option>
-                            ))}
+                            .map(
+                              (
+                                degreeClass
+                              ) => (
+
+                                <option
+                                  key={getId(
+                                    degreeClass
+                                  )}
+                                  value={getId(
+                                    degreeClass
+                                  )}
+                                >
+
+                                  {
+                                    degreeClass.name
+                                  }
+
+                                  {degreeClass.code
+                                    ? ` (${degreeClass.code})`
+                                    : ""}
+
+                                </option>
+
+                              )
+                            )}
+
                         </select>
+
                       </div>
+
                     </div>
 
+
                   </div>
+
                 </div>
 
+
                 {/* STATUS */}
+
                 <div className="subject-form-section">
+
                   <div className="subject-section-heading">
-                    <CheckCircle2 size={17} />
-                    <span>Status</span>
+
+                    <CheckCircle2
+                      size={17}
+                    />
+
+                    <span>
+                      Status
+                    </span>
+
                   </div>
 
+
                   <label className="subject-toggle">
+
                     <input
                       type="checkbox"
                       name="isActive"
-                      checked={formData.isActive}
-                      onChange={handleFormChange}
+                      checked={
+                        formData.isActive
+                      }
+                      onChange={
+                        handleFormChange
+                      }
                     />
+
 
                     <span className="subject-toggle-slider"></span>
 
+
                     <span className="subject-toggle-content">
+
                       <strong>
+
                         {formData.isActive
                           ? "Active Subject"
                           : "Inactive Subject"}
+
                       </strong>
 
                       <small>
+
                         {formData.isActive
                           ? "This subject is currently active."
                           : "This subject is currently inactive."}
+
                       </small>
+
                     </span>
+
                   </label>
+
                 </div>
+
               </div>
 
+
               {/* MODAL FOOTER */}
+
               <div className="subject-modal-footer">
+
                 <button
                   type="button"
                   className="subject-cancel-btn"
                   onClick={closeModal}
                   disabled={formLoading}
                 >
+
                   Cancel
+
                 </button>
+
 
                 <button
                   type="submit"
                   className="subject-save-btn"
                   disabled={formLoading}
                 >
+
                   {formLoading ? (
+
                     <>
-                      <RefreshCw
-                        size={17}
-                        className="subject-spin"
+
+                      <FaSpinner
+                        size={18}
+                        className="subject-button-spinner"
                       />
+
                       Saving...
+
                     </>
+
                   ) : (
+
                     <>
-                      <CheckCircle2 size={17} />
+
+                      <CheckCircle2
+                        size={17}
+                      />
+
                       {editingSubject
                         ? "Update Subject"
                         : "Create Subject"}
+
                     </>
+
                   )}
+
                 </button>
+
               </div>
+
             </form>
+
           </div>
+
         </div>
+
       )}
+
 
       {/* ==========================================
           VIEW MODAL
       ========================================== */}
 
-      {showViewModal && selectedSubject && (
-        <div className="subject-modal-overlay">
-          <div className="subject-view-modal">
-            <div className="subject-modal-header">
-              <div className="subject-modal-title">
-                <div className="subject-modal-icon">
-                  <Eye size={20} />
+      {showViewModal &&
+        selectedSubject && (
+
+          <div className="subject-modal-overlay">
+
+            <div className="subject-view-modal">
+
+              <div className="subject-modal-header">
+
+                <div className="subject-modal-title">
+
+                  <div className="subject-modal-icon">
+
+                    <Eye size={20} />
+
+                  </div>
+
+                  <div>
+
+                    <h2>
+                      Subject Details
+                    </h2>
+
+                    <p>
+                      View complete subject
+                      information.
+                    </p>
+
+                  </div>
+
                 </div>
 
-                <div>
-                  <h2>Subject Details</h2>
-                  <p>View complete subject information.</p>
-                </div>
+
+                <button
+                  className="subject-modal-close"
+                  onClick={() => {
+
+                    setShowViewModal(
+                      false
+                    );
+
+                    setSelectedSubject(
+                      null
+                    );
+
+                  }}
+                >
+
+                  <X size={20} />
+
+                </button>
+
               </div>
 
-              <button
-                className="subject-modal-close"
-                onClick={() => {
-                  setShowViewModal(false);
-                  setSelectedSubject(null);
-                }}
-              >
-                <X size={20} />
-              </button>
-            </div>
 
-            <div className="subject-view-body">
-              <div className="subject-profile-card">
-                <div className="subject-profile-icon">
-                  <BookOpen size={28} />
-                </div>
+              <div className="subject-view-body">
 
-                <div>
-                  <h3>{selectedSubject.name}</h3>
 
-                  <span className="subject-code large">
-                    {selectedSubject.code}
-                  </span>
-                </div>
+                <div className="subject-profile-card">
 
-                <div className="subject-profile-status">
-                  {selectedSubject.isActive !== false ? (
-                    <span className="subject-status active">
-                      <CheckCircle2 size={14} />
-                      Active
+                  <div className="subject-profile-icon">
+
+                    <BookOpen
+                      size={28}
+                    />
+
+                  </div>
+
+
+                  <div>
+
+                    <h3>
+                      {
+                        selectedSubject.name
+                      }
+                    </h3>
+
+                    <span className="subject-code large">
+
+                      {
+                        selectedSubject.code
+                      }
+
                     </span>
-                  ) : (
-                    <span className="subject-status inactive">
-                      <XCircle size={14} />
-                      Inactive
-                    </span>
-                  )}
+
+                  </div>
+
+
+                  <div className="subject-profile-status">
+
+                    {selectedSubject.isActive !==
+                    false ? (
+
+                      <span className="subject-status active">
+
+                        <CheckCircle2
+                          size={14}
+                        />
+
+                        Active
+
+                      </span>
+
+                    ) : (
+
+                      <span className="subject-status inactive">
+
+                        <XCircle
+                          size={14}
+                        />
+
+                        Inactive
+
+                      </span>
+
+                    )}
+
+                  </div>
+
                 </div>
+
+
+                <div className="subject-details-grid">
+
+
+                  <div className="subject-detail-card">
+
+                    <Building2
+                      size={19}
+                    />
+
+                    <div>
+
+                      <span>
+                        Department
+                      </span>
+
+                      <strong>
+
+                        {getDepartmentName(
+                          selectedSubject,
+                          departments
+                        )}
+
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="subject-detail-card">
+
+                    <GraduationCap
+                      size={19}
+                    />
+
+                    <div>
+
+                      <span>
+                        Degree Class
+                      </span>
+
+                      <strong>
+
+                        {getDegreeClassName(
+                          selectedSubject,
+                          degreeClasses
+                        )}
+
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="subject-detail-card">
+
+                    <BookOpen
+                      size={19}
+                    />
+
+                    <div>
+
+                      <span>
+                        Credit Hours
+                      </span>
+
+                      <strong>
+
+                        {
+                          selectedSubject.creditHours ??
+                          "—"
+                        }
+
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
               </div>
 
-              <div className="subject-details-grid">
-                <div className="subject-detail-card">
-                  <Building2 size={19} />
-                  <div>
-                    <span>Department</span>
-                    <strong>
-                      {getDepartmentName(
-                        selectedSubject,
-                        departments
-                      )}
-                    </strong>
-                  </div>
-                </div>
 
-                <div className="subject-detail-card">
-                  <GraduationCap size={19} />
-                  <div>
-                    <span>Degree Class</span>
-                    <strong>
-                      {getDegreeClassName(
-                        selectedSubject,
-                        degreeClasses
-                      )}
-                    </strong>
-                  </div>
-                </div>
+              <div className="subject-modal-footer">
 
-                <div className="subject-detail-card">
-                  <BookOpen size={19} />
-                  <div>
-                    <span>Credit Hours</span>
-                    <strong>
-                      {selectedSubject.creditHours ?? "—"}
-                    </strong>
-                  </div>
-                </div>
+                <button
+                  className="subject-cancel-btn"
+                  onClick={() => {
+
+                    setShowViewModal(
+                      false
+                    );
+
+                    setSelectedSubject(
+                      null
+                    );
+
+                  }}
+                >
+
+                  Close
+
+                </button>
+
+
+                <button
+                  className="subject-save-btn"
+                  onClick={() => {
+
+                    setShowViewModal(
+                      false
+                    );
+
+                    handleEdit(
+                      selectedSubject
+                    );
+
+                  }}
+                >
+
+                  <Pencil size={17} />
+
+                  Edit Subject
+
+                </button>
+
               </div>
+
             </div>
 
-            <div className="subject-modal-footer">
-              <button
-                className="subject-cancel-btn"
-                onClick={() => {
-                  setShowViewModal(false);
-                  setSelectedSubject(null);
-                }}
-              >
-                Close
-              </button>
-
-              <button
-                className="subject-save-btn"
-                onClick={() => {
-                  setShowViewModal(false);
-                  handleEdit(selectedSubject);
-                }}
-              >
-                <Pencil size={17} />
-                Edit Subject
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+
+        )}
+
     </div>
   );
 }

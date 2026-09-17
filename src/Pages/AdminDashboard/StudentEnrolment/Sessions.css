@@ -1143,3 +1143,272 @@
         max-height: 95vh;
     }
 }
+/* =========================================================
+   PROFESSIONAL SESSION SPINNER
+========================================================= */
+
+.session-loading {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.session-spinner-wrapper {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid rgba(124, 58, 237, 0.14);
+    border-top-color: #7c3aed;
+    border-right-color: #a855f7;
+
+    border-radius: 50%;
+
+    background: rgba(124, 58, 237, 0.035);
+
+    box-shadow:
+        0 4px 12px rgba(124, 58, 237, 0.10),
+        inset 0 0 0 1px rgba(124, 58, 237, 0.03);
+
+    animation: sessionSpinnerRotate 0.85s linear infinite;
+}
+
+.session-spinner {
+    color: #7c3aed;
+    flex-shrink: 0;
+
+    filter:
+        drop-shadow(
+            0 2px 4px
+            rgba(124, 58, 237, 0.22)
+        );
+}
+
+.session-loading p {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    letter-spacing: 0.1px;
+}
+
+
+/* =========================================================
+   BUTTON SPINNER
+========================================================= */
+
+.session-button-spinner {
+    color: currentColor;
+
+    flex-shrink: 0;
+
+    animation:
+        sessionSpinnerRotate
+        0.75s linear infinite;
+}
+
+
+/* =========================================================
+   CREATED SESSIONS
+========================================================= */
+
+.created-sessions-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+
+    max-width: 650px;
+}
+
+.created-session-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    border: 1px solid transparent;
+}
+
+
+/* Spring */
+
+.created-session-badge.spring {
+    color: #166534;
+
+    background: #f0fdf4;
+
+    border-color: #bbf7d0;
+}
+
+
+/* Fall */
+
+.created-session-badge.fall {
+    color: #92400e;
+
+    background: #fffbeb;
+
+    border-color: #fde68a;
+}
+
+
+/* =========================================================
+   SESSION ACTION BUTTONS
+========================================================= */
+
+.session-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.session-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 8px;
+
+    border: 1px solid transparent;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.session-actions button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* View */
+
+.view-session-btn {
+    color: #2563eb;
+
+    background: #eff6ff;
+
+    border-color: #dbeafe !important;
+}
+
+.view-session-btn:hover {
+    background: #dbeafe;
+}
+
+
+/* Edit */
+
+.edit-session-btn {
+    color: #7c3aed;
+
+    background: #f5f3ff;
+
+    border-color: #ede9fe !important;
+}
+
+.edit-session-btn:hover {
+    background: #ede9fe;
+}
+
+
+/* Delete */
+
+.delete-session-btn {
+    color: #dc2626;
+
+    background: #fef2f2;
+
+    border-color: #fee2e2 !important;
+}
+
+.delete-session-btn:hover {
+    background: #fee2e2;
+}
+
+.delete-session-btn:disabled {
+    opacity: 0.7;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+
+/* =========================================================
+   TABLE IMPROVEMENTS
+========================================================= */
+
+.sessions-table th {
+    white-space: nowrap;
+}
+
+.sessions-table td {
+    vertical-align: middle;
+}
+
+.sessions-table td:nth-child(3) {
+    min-width: 300px;
+}
+
+
+/* =========================================================
+   SPINNER ANIMATION
+========================================================= */
+
+@keyframes sessionSpinnerRotate {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .session-spinner-wrapper {
+        width: 46px;
+        height: 46px;
+    }
+
+    .session-loading {
+        min-height: 180px;
+    }
+
+    .created-sessions-list {
+        max-width: 450px;
+    }
+
+}

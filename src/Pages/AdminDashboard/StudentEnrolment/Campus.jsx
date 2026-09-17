@@ -6,6 +6,18 @@ import {
   deleteCampus,
 } from "../../../services/campusAPI";
 import { toast } from "react-toastify";
+import {
+  FaSpinner,
+  FaUniversity,
+  FaCheckCircle,
+  FaPauseCircle,
+  FaMapMarkerAlt,
+  FaEye,
+  FaEdit,
+  FaTrash,
+  FaTimes,
+  FaPlus,
+} from "react-icons/fa";
 import "./Campus.css";
 
 const initialFormData = {
@@ -48,8 +60,7 @@ export default function Campus() {
       console.error("Fetch campuses error:", error);
 
       toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch campuses"
+        error?.response?.data?.message || "Failed to fetch campuses"
       );
     } finally {
       setLoading(false);
@@ -79,7 +90,7 @@ export default function Campus() {
 
   const handleAdd = () => {
     setEditingCampus(null);
-    setFormData(initialFormData);
+    setFormData({ ...initialFormData });
     setShowModal(true);
   };
 
@@ -110,7 +121,7 @@ export default function Campus() {
 
     setShowModal(false);
     setEditingCampus(null);
-    setFormData(initialFormData);
+    setFormData({ ...initialFormData });
   };
 
   // ==========================================
@@ -150,10 +161,7 @@ export default function Campus() {
 
       // UPDATE
       if (editingCampus) {
-        response = await updateCampus(
-          editingCampus._id,
-          payload
-        );
+        response = await updateCampus(editingCampus._id, payload);
       }
 
       // CREATE
@@ -210,16 +218,13 @@ export default function Campus() {
         toast.success("Campus deleted successfully");
         await fetchCampuses();
       } else {
-        toast.error(
-          response?.message || "Failed to delete campus"
-        );
+        toast.error(response?.message || "Failed to delete campus");
       }
     } catch (error) {
       console.error("Delete campus error:", error);
 
       toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete campus"
+        error?.response?.data?.message || "Failed to delete campus"
       );
     }
   };
@@ -248,7 +253,6 @@ export default function Campus() {
 
   return (
     <div className="campus-page">
-
       {/* ======================================
           HEADER
       ====================================== */}
@@ -257,17 +261,12 @@ export default function Campus() {
         <div>
           <h1>Campus Management</h1>
 
-          <p>
-            Manage university campuses and their information
-          </p>
+          <p>Manage university campuses and their information</p>
         </div>
 
-        <button
-          className="campus-add-btn"
-          onClick={handleAdd}
-        >
-          <span>+</span>
-          Add Campus
+        <button className="campus-add-btn" onClick={handleAdd}>
+          <FaPlus />
+          <span>Add Campus</span>
         </button>
       </div>
 
@@ -276,10 +275,10 @@ export default function Campus() {
       ====================================== */}
 
       <div className="campus-stats">
-
+        {/* Total */}
         <div className="campus-stat-card">
           <div className="campus-stat-icon total">
-            🏫
+            <FaUniversity />
           </div>
 
           <div>
@@ -288,55 +287,47 @@ export default function Campus() {
           </div>
         </div>
 
+        {/* Active */}
         <div className="campus-stat-card">
           <div className="campus-stat-icon active">
-            ✓
+            <FaCheckCircle />
           </div>
 
           <div>
             <span>Active Campuses</span>
+
             <strong>
-              {
-                campuses.filter(
-                  (campus) => campus.isActive
-                ).length
-              }
+              {campuses.filter((campus) => campus.isActive).length}
             </strong>
           </div>
         </div>
 
+        {/* Inactive */}
         <div className="campus-stat-card">
           <div className="campus-stat-icon inactive">
-            ⏸
+            <FaPauseCircle />
           </div>
 
           <div>
             <span>Inactive Campuses</span>
+
             <strong>
-              {
-                campuses.filter(
-                  (campus) => !campus.isActive
-                ).length
-              }
+              {campuses.filter((campus) => !campus.isActive).length}
             </strong>
           </div>
         </div>
-
       </div>
 
       {/* ======================================
-          TABLE
+          TABLE CARD
       ====================================== */}
 
       <div className="campus-card">
-
         <div className="campus-card-header">
           <div>
             <h2>All Campuses</h2>
 
-            <p>
-              View and manage all registered campuses
-            </p>
+            <p>View and manage all registered campuses</p>
           </div>
 
           <div className="campus-count">
@@ -346,35 +337,41 @@ export default function Campus() {
         </div>
 
         <div className="campus-table-wrapper">
+          {/* ==================================
+              LOADING
+          ================================== */}
 
           {loading ? (
             <div className="campus-loading">
-              <div className="campus-spinner"></div>
-              <p>Loading campuses...</p>
+              <FaSpinner className="spinner" size={40} />
+
+              <p className="loading-text">Loading campuses...</p>
             </div>
           ) : campuses.length === 0 ? (
+            /* ==================================
+               EMPTY STATE
+            ================================== */
+
             <div className="campus-empty">
               <div className="campus-empty-icon">
-                🏫
+                <FaUniversity />
               </div>
 
               <h3>No campuses found</h3>
 
-              <p>
-                Add your first campus to get started.
-              </p>
+              <p>Add your first campus to get started.</p>
 
-              <button
-                className="campus-add-btn"
-                onClick={handleAdd}
-              >
-                <span>+</span>
-                Add Campus
+              <button className="campus-add-btn" onClick={handleAdd}>
+                <FaPlus />
+                <span>Add Campus</span>
               </button>
             </div>
           ) : (
-            <table className="campus-table">
+            /* ==================================
+               TABLE
+            ================================== */
 
+            <table className="campus-table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -390,16 +387,16 @@ export default function Campus() {
               <tbody>
                 {campuses.map((campus, index) => (
                   <tr key={campus._id}>
+                    {/* Number */}
 
                     <td>
-                      <span className="campus-number">
-                        {index + 1}
-                      </span>
+                      <span className="campus-number">{index + 1}</span>
                     </td>
+
+                    {/* Campus Name */}
 
                     <td>
                       <div className="campus-name-cell">
-
                         <div className="campus-avatar">
                           {campus.name
                             ?.charAt(0)
@@ -407,17 +404,14 @@ export default function Campus() {
                         </div>
 
                         <div>
-                          <strong>
-                            {campus.name}
-                          </strong>
+                          <strong>{campus.name}</strong>
 
-                          <small>
-                            Campus
-                          </small>
+                          <small>Campus</small>
                         </div>
-
                       </div>
                     </td>
+
+                    {/* Code */}
 
                     <td>
                       <span className="campus-code">
@@ -425,12 +419,16 @@ export default function Campus() {
                       </span>
                     </td>
 
+                    {/* Location */}
+
                     <td>
                       <div className="campus-location">
-                        <span>📍</span>
-                        {campus.location}
+                        <FaMapMarkerAlt />
+                        <span>{campus.location}</span>
                       </div>
                     </td>
+
+                    {/* Description */}
 
                     <td>
                       <span className="campus-description">
@@ -438,65 +436,63 @@ export default function Campus() {
                       </span>
                     </td>
 
+                    {/* Status */}
+
                     <td>
                       <span
                         className={`campus-status ${
-                          campus.isActive
-                            ? "active"
-                            : "inactive"
+                          campus.isActive ? "active" : "inactive"
                         }`}
                       >
                         <span className="status-dot"></span>
 
-                        {campus.isActive
-                          ? "Active"
-                          : "Inactive"}
+                        {campus.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
 
-                    <td>
-                      <div className="campus-actions">
+                   
+{/* Actions */}
 
-                        <button
-                          className="action-btn view"
-                          onClick={() =>
-                            handleView(campus)
-                          }
-                          title="View"
-                        >
-                          👁
-                        </button>
+<td>
+  <div className="campus-actions">
+    <button
+      type="button"
+      className="action-btn view"
+      onClick={() => handleView(campus)}
+      title="View Campus"
+      aria-label={`View ${campus.name}`}
+    >
+      <FaEye size={16} />
+    </button>
 
-                        <button
-                          className="action-btn edit"
-                          onClick={() =>
-                            handleEdit(campus)
-                          }
-                          title="Edit"
-                        >
-                          ✏
-                        </button>
+    <button
+      type="button"
+      className="action-btn edit"
+      onClick={() => handleEdit(campus)}
+      title="Edit Campus"
+      aria-label={`Edit ${campus.name}`}
+    >
+      <FaEdit size={16} />
+    </button>
 
-                        <button
-                          className="action-btn delete"
-                          onClick={() =>
-                            handleDelete(campus)
-                          }
-                          title="Delete"
-                        >
-                          🗑
-                        </button>
+    <button
+      type="button"
+      className="action-btn delete"
+      onClick={() => handleDelete(campus)}
+      title="Delete Campus"
+      aria-label={`Delete ${campus.name}`}
+    >
+      <FaTrash size={16} />
+    </button>
+  </div>
+</td>
 
-                      </div>
-                    </td>
 
                   </tr>
                 ))}
               </tbody>
-
             </table>
           )}
-
         </div>
       </div>
 
@@ -513,16 +509,13 @@ export default function Campus() {
             }
           }}
         >
-
           <div className="campus-modal">
+            {/* Modal Header */}
 
             <div className="campus-modal-header">
-
               <div>
                 <h2>
-                  {editingCampus
-                    ? "Edit Campus"
-                    : "Add New Campus"}
+                  {editingCampus ? "Edit Campus" : "Add New Campus"}
                 </h2>
 
                 <p>
@@ -536,17 +529,16 @@ export default function Campus() {
                 className="campus-close-btn"
                 onClick={handleCloseModal}
                 disabled={submitting}
+                type="button"
+                title="Close"
               >
-                ×
+                <FaTimes />
               </button>
-
             </div>
 
-            <form
-              className="campus-form"
-              onSubmit={handleSubmit}
-            >
+            {/* Form */}
 
+            <form className="campus-form" onSubmit={handleSubmit}>
               {/* Name */}
 
               <div className="campus-form-group">
@@ -612,9 +604,7 @@ export default function Campus() {
               {/* Description */}
 
               <div className="campus-form-group">
-                <label>
-                  Description
-                </label>
+                <label>Description</label>
 
                 <textarea
                   name="description"
@@ -629,20 +619,17 @@ export default function Campus() {
               {/* Status */}
 
               <div className="campus-status-field">
-
                 <div>
                   <label className="status-label">
                     Campus Status
                   </label>
 
                   <p>
-                    Set whether this campus is currently
-                    active.
+                    Set whether this campus is currently active.
                   </p>
                 </div>
 
                 <label className="campus-switch">
-
                   <input
                     type="checkbox"
                     name="isActive"
@@ -652,27 +639,20 @@ export default function Campus() {
                   />
 
                   <span className="campus-slider"></span>
-
                 </label>
 
                 <span
                   className={`switch-text ${
-                    formData.isActive
-                      ? "active"
-                      : "inactive"
+                    formData.isActive ? "active" : "inactive"
                   }`}
                 >
-                  {formData.isActive
-                    ? "Active"
-                    : "Inactive"}
+                  {formData.isActive ? "Active" : "Inactive"}
                 </span>
-
               </div>
 
               {/* Buttons */}
 
               <div className="campus-modal-footer">
-
                 <button
                   type="button"
                   className="campus-cancel-btn"
@@ -689,25 +669,31 @@ export default function Campus() {
                 >
                   {submitting ? (
                     <>
-                      <span className="button-spinner"></span>
+                      <FaSpinner className="button-spinner-icon" />
 
                       {editingCampus
                         ? "Updating..."
                         : "Creating..."}
                     </>
                   ) : (
-                    editingCampus
-                      ? "Update Campus"
-                      : "Create Campus"
+                    <>
+                      {editingCampus ? (
+                        <>
+                          <FaEdit />
+                          Update Campus
+                        </>
+                      ) : (
+                        <>
+                          <FaPlus />
+                          Create Campus
+                        </>
+                      )}
+                    </>
                   )}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
       )}
 
@@ -724,34 +710,30 @@ export default function Campus() {
             }
           }}
         >
-
           <div className="campus-view-modal">
+            {/* Header */}
 
             <div className="campus-modal-header">
-
               <div>
                 <h2>Campus Details</h2>
 
-                <p>
-                  View complete campus information
-                </p>
+                <p>View complete campus information</p>
               </div>
 
               <button
                 className="campus-close-btn"
                 onClick={handleCloseViewModal}
+                type="button"
+                title="Close"
               >
-                ×
+                <FaTimes />
               </button>
-
             </div>
 
             <div className="campus-view-content">
-
               {/* Profile */}
 
               <div className="campus-profile">
-
                 <div className="campus-profile-avatar">
                   {viewingCampus.name
                     ?.charAt(0)
@@ -759,21 +741,17 @@ export default function Campus() {
                 </div>
 
                 <div>
-                  <h3>
-                    {viewingCampus.name}
-                  </h3>
+                  <h3>{viewingCampus.name}</h3>
 
                   <span className="campus-code">
                     {viewingCampus.code}
                   </span>
                 </div>
-
               </div>
 
               {/* Details */}
 
               <div className="campus-details-grid">
-
                 <div className="campus-detail-item">
                   <span className="detail-label">
                     Campus Name
@@ -823,13 +801,11 @@ export default function Campus() {
                       : "Inactive"}
                   </span>
                 </div>
-
               </div>
 
               {/* Description */}
 
               <div className="campus-description-box">
-
                 <span className="detail-label">
                   Description
                 </span>
@@ -838,17 +814,13 @@ export default function Campus() {
                   {viewingCampus.description ||
                     "No description available."}
                 </p>
-
               </div>
 
               {/* Dates */}
 
               <div className="campus-dates">
-
                 <div>
-                  <span>
-                    Created
-                  </span>
+                  <span>Created</span>
 
                   <strong>
                     {viewingCampus.createdAt
@@ -860,9 +832,7 @@ export default function Campus() {
                 </div>
 
                 <div>
-                  <span>
-                    Last Updated
-                  </span>
+                  <span>Last Updated</span>
 
                   <strong>
                     {viewingCampus.updatedAt
@@ -872,16 +842,16 @@ export default function Campus() {
                       : "—"}
                   </strong>
                 </div>
-
               </div>
-
             </div>
 
-            <div className="campus-view-footer">
+            {/* Footer */}
 
+            <div className="campus-view-footer">
               <button
                 className="campus-cancel-btn"
                 onClick={handleCloseViewModal}
+                type="button"
               >
                 Close
               </button>
@@ -892,17 +862,15 @@ export default function Campus() {
                   handleCloseViewModal();
                   handleEdit(viewingCampus);
                 }}
+                type="button"
               >
-                ✏ Edit Campus
+                <FaEdit />
+                Edit Campus
               </button>
-
             </div>
-
           </div>
-
         </div>
       )}
-
     </div>
   );
 }

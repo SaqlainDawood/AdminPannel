@@ -21,6 +21,8 @@ import {
     AlertCircle,
 } from "lucide-react";
 
+import { FaSpinner } from "react-icons/fa";
+
 import {
     getSessions,
     createSession,
@@ -78,15 +80,10 @@ const Sessions = () => {
         useState(false);
 
     // Holds { message, created, skipped } after a successful Generate
-    // call, so we can show the user exactly which sessions were made
-    // vs already existed — cleared when the modal is closed.
     const [generateResult, setGenerateResult] =
         useState(null);
 
-    // Info panel shown when a Degree Class is picked in the Generate
-    // form: which sessions its batch(es) have used, which is current,
-    // which is next expected. Purely informational — does not affect
-    // what gets generated.
+    // Informational class/session information
     const [classSessionInfo, setClassSessionInfo] =
         useState(null);
 
@@ -177,7 +174,6 @@ const Sessions = () => {
                 sessionsResponse ||
                 [];
 
-
             setSessions(
                 Array.isArray(sessionData)
                     ? sessionData
@@ -194,7 +190,6 @@ const Sessions = () => {
                 statusResponse ||
                 null;
 
-
             setSessionStatus(statusData);
 
 
@@ -206,7 +201,6 @@ const Sessions = () => {
                 degreeClassesResponse?.data ||
                 degreeClassesResponse ||
                 [];
-
 
             setDegreeClasses(
                 Array.isArray(degreeClassData)
@@ -247,9 +241,6 @@ const Sessions = () => {
 
     // =====================================================
     // GET STATUS FOR SESSION
-    //
-    // Uses backend status response.
-    // If not found, calculates fallback.
     // =====================================================
 
     const getStatus = (session) => {
@@ -366,6 +357,119 @@ const Sessions = () => {
 
 
     // =====================================================
+    // GROUP SESSIONS BY DEGREE CLASS
+    // =====================================================
+
+    const groupedSessions = useMemo(() => {
+
+        const groups = {};
+
+        filteredSessions.forEach((session) => {
+
+            const degreeClassId =
+                session.degreeClassId?._id ||
+                session.degreeClassId?.id ||
+                session.degreeClassId;
+
+            const normalizedId =
+                degreeClassId
+                    ? String(degreeClassId)
+                    : "unknown";
+
+
+            if (!groups[normalizedId]) {
+
+                const degreeClass =
+                    degreeClasses.find(
+                        (item) =>
+                            String(getId(item)) ===
+                            normalizedId
+                    );
+
+
+                groups[normalizedId] = {
+
+                    degreeClassId:
+                        degreeClassId || null,
+
+                    degreeClassName:
+                        session.degreeClassId?.name ||
+                        degreeClass?.name ||
+                        "Unknown Degree Class",
+
+                    degreeClassCode:
+                        session.degreeClassId?.code ||
+                        degreeClass?.code ||
+                        "",
+
+                    totalSemesters:
+                        Number(
+                            session.degreeClassId?.duration ||
+                            degreeClass?.duration ||
+                            0
+                        ) * 2,
+
+                    sessions: [],
+                };
+            }
+
+
+            groups[normalizedId].sessions.push(
+                session
+            );
+        });
+
+
+        return Object.values(groups)
+            .sort((a, b) =>
+                a.degreeClassName.localeCompare(
+                    b.degreeClassName
+                )
+            )
+            .map((group) => ({
+
+                ...group,
+
+                sessions:
+                    [...group.sessions].sort(
+                        (a, b) => {
+
+                            if (
+                                Number(a.year) !==
+                                Number(b.year)
+                            ) {
+                                return (
+                                    Number(a.year) -
+                                    Number(b.year)
+                                );
+                            }
+
+                            if (
+                                a.term === "Spring" &&
+                                b.term === "Fall"
+                            ) {
+                                return -1;
+                            }
+
+                            if (
+                                a.term === "Fall" &&
+                                b.term === "Spring"
+                            ) {
+                                return 1;
+                            }
+
+                            return 0;
+                        }
+                    ),
+            }));
+
+    }, [
+        filteredSessions,
+        degreeClasses,
+    ]);
+
+
+    // =====================================================
     // AVAILABLE YEARS
     // =====================================================
 
@@ -418,11 +522,6 @@ const Sessions = () => {
 
     // =====================================================
     // CLASS SESSION INFO
-    //
-    // Informational only — for the selected Degree Class,
-    // find its batch(es), and for each show which sessions
-    // it has used so far (history), which one is current,
-    // and which one is next expected (from batch advance logic).
     // =====================================================
 
     const fetchClassSessionInfo = async (
@@ -467,6 +566,7 @@ const Sessions = () => {
                 );
             });
 
+
             if (classBatches.length === 0) {
 
                 setClassSessionInfo({
@@ -475,6 +575,7 @@ const Sessions = () => {
 
                 return;
             }
+
 
             const batchSummaries =
                 await Promise.all(
@@ -619,57 +720,108 @@ const Sessions = () => {
         setShowGenerateModal(true);
     };
 
+
     const handleOpenAddSession = () => {
+
         setError("");
+
         setAddForm({
             name: "",
             term: "",
             year: new Date().getFullYear(),
             isActive: true,
         });
+
         setShowAddModal(true);
     };
 
+
+    // =====================================================
+    // ADD SESSION
+    // =====================================================
+
     const handleAddSession = async (e) => {
+
         e.preventDefault();
+
         setError("");
 
+
         if (!addForm.name.trim()) {
-            setError("Session name is required.");
+
+            setError(
+                "Session name is required."
+            );
+
             return;
         }
+
 
         if (!addForm.term) {
-            setError("Please select a term.");
+
+            setError(
+                "Please select a term."
+            );
+
             return;
         }
+
 
         if (!addForm.year) {
-            setError("Year is required.");
+
+            setError(
+                "Year is required."
+            );
+
             return;
         }
 
+
         try {
+
             setGenerating(true);
 
             const payload = {
-                name: addForm.name.trim(),
-                term: addForm.term,
-                year: Number(addForm.year),
-                isActive: Boolean(addForm.isActive),
+
+                name:
+                    addForm.name.trim(),
+
+                term:
+                    addForm.term,
+
+                year:
+                    Number(addForm.year),
+
+                isActive:
+                    Boolean(
+                        addForm.isActive
+                    ),
             };
 
-            await createSession(payload);
+
+            await createSession(
+                payload
+            );
+
             setShowAddModal(false);
+
             await fetchData();
+
         } catch (err) {
-            console.error("Create session error:", err);
+
+            console.error(
+                "Create session error:",
+                err
+            );
+
             setError(
                 err?.response?.data?.message ||
                 err?.message ||
                 "Failed to create session."
             );
+
         } finally {
+
             setGenerating(false);
         }
     };
@@ -685,46 +837,83 @@ const Sessions = () => {
 
         setError("");
 
+
         if (!generateForm.degreeClassId) {
-            setError("Please select a degree class.");
+
+            setError(
+                "Please select a degree class."
+            );
+
             return;
         }
 
+
         if (!generateForm.startYear) {
-            setError("Please enter a start year.");
+
+            setError(
+                "Please enter a start year."
+            );
+
             return;
         }
+
 
         try {
 
             setGenerating(true);
 
+
             const payload = {
-                degreeClassId: generateForm.degreeClassId,
-                startYear: Number(generateForm.startYear),
+
+                degreeClassId:
+                    generateForm.degreeClassId,
+
+                startYear:
+                    Number(
+                        generateForm.startYear
+                    ),
             };
 
-            const response = await generateSessions(payload);
 
-            const result = response?.data || response || {};
+            const response =
+                await generateSessions(
+                    payload
+                );
+
+
+            const result =
+                response?.data ||
+                response ||
+                {};
+
 
             setGenerateResult({
+
                 message:
                     response?.message ||
-                    `${result?.created?.length || 0} session(s) created, ${
-                        result?.skipped?.length || 0
+                    `${
+                        result?.created?.length ||
+                        0
+                    } session(s) created, ${
+                        result?.skipped?.length ||
+                        0
                     } skipped`,
 
                 created:
-                    Array.isArray(result?.created)
+                    Array.isArray(
+                        result?.created
+                    )
                         ? result.created
                         : [],
 
                 skipped:
-                    Array.isArray(result?.skipped)
+                    Array.isArray(
+                        result?.skipped
+                    )
                         ? result.skipped
                         : [],
             });
+
 
             await fetchData();
 
@@ -750,9 +939,6 @@ const Sessions = () => {
 
     // =====================================================
     // EDIT SESSION
-    //
-    // This is only for correction/admin maintenance.
-    // Normal creation should use Generate.
     // =====================================================
 
     const handleEdit = (session) => {
@@ -1110,13 +1296,18 @@ const Sessions = () => {
         });
     };
 
+
     const closeAddModal = () => {
+
         if (generating) {
             return;
         }
 
+
         setShowAddModal(false);
+
         setError("");
+
         setAddForm({
             name: "",
             term: "",
@@ -1289,17 +1480,30 @@ const Sessions = () => {
                 </div>
 
 
-                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div
+                    style={{
+                        display: "flex",
+                        gap: 12,
+                        alignItems: "center",
+                    }}
+                >
+
                     <button
                         className="add-session-btn"
                         onClick={
                             handleOpenAddSession
                         }
-                        style={{ background: "#3b82f6" }}
+                        style={{
+                            background: "#3b82f6",
+                        }}
                     >
+
                         <Plus size={18} />
+
                         Add Session
+
                     </button>
+
 
                     <button
                         className="add-session-btn"
@@ -1315,6 +1519,7 @@ const Sessions = () => {
                         Generate Sessions
 
                     </button>
+
                 </div>
 
             </div>
@@ -1506,7 +1711,6 @@ const Sessions = () => {
 
             <div className="sessions-toolbar">
 
-
                 <div className="session-search">
 
                     <Search
@@ -1631,7 +1835,7 @@ const Sessions = () => {
 
 
             {/* =================================================
-                TABLE
+                UPDATED DEGREE CLASS TABLE
             ================================================= */}
 
             <div className="sessions-table-card">
@@ -1645,27 +1849,15 @@ const Sessions = () => {
                             <tr>
 
                                 <th>
-                                    SESSION
+                                    DEGREE CLASS
                                 </th>
 
                                 <th>
-                                    TERM
+                                    TOTAL SEMESTERS
                                 </th>
 
                                 <th>
-                                    YEAR
-                                </th>
-
-                                <th>
-                                    START DATE
-                                </th>
-
-                                <th>
-                                    END DATE
-                                </th>
-
-                                <th>
-                                    STATUS
+                                    CREATED SESSIONS
                                 </th>
 
                                 <th>
@@ -1684,12 +1876,19 @@ const Sessions = () => {
                                 <tr>
 
                                     <td
-                                        colSpan="7"
+                                        colSpan="4"
                                     >
 
                                         <div className="session-loading">
 
-                                            <div className="session-spinner" />
+                                            <div className="session-spinner-wrapper">
+
+                                                <FaSpinner
+                                                    className="session-spinner"
+                                                    size={32}
+                                                />
+
+                                            </div>
 
                                             <p>
                                                 Loading sessions...
@@ -1701,253 +1900,217 @@ const Sessions = () => {
 
                                 </tr>
 
-                            ) : filteredSessions.length >
-                              0 ? (
+                            ) : groupedSessions.length > 0 ? (
 
-                                filteredSessions.map(
-                                    (session) => {
+                                groupedSessions.map(
+                                    (group) => (
 
-                                        const sessionId =
-                                            getId(
-                                                session
-                                            );
+                                        <tr
+                                            key={
+                                                group.degreeClassId ||
+                                                group.degreeClassName
+                                            }
+                                        >
 
-                                        const status =
-                                            getStatus(
-                                                session
-                                            );
+                                            {/* DEGREE CLASS */}
 
+                                            <td>
 
-                                        return (
+                                                <div className="session-name-cell">
 
-                                            <tr
-                                                key={
-                                                    sessionId
-                                                }
-                                            >
+                                                    <div className="session-avatar">
 
-                                                {/* SESSION */}
+                                                        {group.degreeClassCode
+                                                            ? group.degreeClassCode
+                                                                .substring(0, 3)
+                                                                .toUpperCase()
+                                                            : "DC"}
 
-                                                <td>
+                                                    </div>
 
-                                                    <div className="session-name-cell">
+                                                    <div>
 
-                                                        <div
-                                                            className={`session-avatar ${
-                                                                session.term?.toLowerCase()
-                                                            }`}
-                                                        >
+                                                        <strong>
+                                                            {
+                                                                group.degreeClassName
+                                                            }
+                                                        </strong>
 
-                                                            {session.term ===
-                                                            "Spring"
-                                                                ? "SP"
-                                                                : "FA"}
-
-                                                        </div>
-
-                                                        <div>
-
-                                                            <strong>
-                                                                {
-                                                                    session.name
-                                                                }
-                                                            </strong>
-
+                                                        {group.degreeClassCode && (
                                                             <small>
+                                                                Code:{" "}
                                                                 {
-                                                                    sessionId
+                                                                    group.degreeClassCode
                                                                 }
                                                             </small>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </td>
-
-
-                                                {/* TERM */}
-
-                                                <td>
-
-                                                    <span
-                                                        className={`term-badge ${
-                                                            session.term ===
-                                                            "Spring"
-                                                                ? "spring"
-                                                                : "fall"
-                                                        }`}
-                                                    >
-                                                        {
-                                                            session.term
-                                                        }
-                                                    </span>
-
-                                                </td>
-
-
-                                                {/* YEAR */}
-
-                                                <td>
-
-                                                    <span className="session-year">
-
-                                                        {
-                                                            session.year
-                                                        }
-
-                                                    </span>
-
-                                                </td>
-
-
-                                                {/* START */}
-
-                                                <td>
-
-                                                    <div className="session-date">
-
-                                                        <CalendarDays
-                                                            size={14}
-                                                        />
-
-                                                        <span>
-                                                            {formatDate(
-                                                                session.startDate
-                                                            )}
-                                                        </span>
-
-                                                    </div>
-
-                                                </td>
-
-
-                                                {/* END */}
-
-                                                <td>
-
-                                                    <div className="session-date">
-
-                                                        <CalendarDays
-                                                            size={14}
-                                                        />
-
-                                                        <span>
-                                                            {formatDate(
-                                                                session.endDate
-                                                            )}
-                                                        </span>
-
-                                                    </div>
-
-                                                </td>
-
-
-                                                {/* STATUS */}
-
-                                                <td>
-
-                                                    <span
-                                                        className={`session-status ${status}`}
-                                                    >
-
-                                                        {status ===
-                                                            "ongoing" && (
-                                                            <span className="status-dot" />
                                                         )}
 
-                                                        {getStatusLabel(
-                                                            status
-                                                        )}
+                                                    </div>
 
-                                                    </span>
+                                                </div>
 
-                                                </td>
+                                            </td>
 
 
-                                                {/* ACTIONS */}
+                                            {/* TOTAL SEMESTERS */}
 
-                                                <td>
+                                            <td>
 
-                                                    <div className="session-actions">
+                                                <span className="session-year">
+
+                                                    {
+                                                        group.totalSemesters
+                                                    }
+
+                                                    {" "}
+
+                                                    {group.totalSemesters === 1
+                                                        ? "Semester"
+                                                        : "Semesters"}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            {/* CREATED SESSIONS */}
+
+                                            <td>
+
+                                                <div className="created-sessions-list">
+
+                                                    {group.sessions.map(
+                                                        (session) => (
+
+                                                            <span
+                                                                key={
+                                                                    getId(session)
+                                                                }
+                                                                className={`created-session-badge ${
+                                                                    session.term?.toLowerCase() ===
+                                                                    "spring"
+                                                                        ? "spring"
+                                                                        : "fall"
+                                                                }`}
+                                                            >
+
+                                                                {session.name}
+
+                                                            </span>
+
+                                                        )
+                                                    )}
+
+                                                </div>
+
+                                            </td>
+
+
+                                            {/* ACTIONS */}
+
+                                            <td>
+
+                                                <div className="session-actions">
+
+                                                    {group.sessions.length > 0 && (
 
                                                         <button
                                                             className="view-session-btn"
                                                             title="View"
                                                             onClick={() =>
                                                                 setViewingSession(
-                                                                    session
+                                                                    group.sessions[0]
                                                                 )
                                                             }
                                                         >
 
                                                             <Eye
-                                                                size={
-                                                                    16
-                                                                }
+                                                                size={16}
                                                             />
 
                                                         </button>
 
+                                                    )}
+
+                                                    {group.sessions.length > 0 && (
 
                                                         <button
                                                             className="edit-session-btn"
-                                                            title="Edit"
+                                                            title="Edit latest session"
                                                             onClick={() =>
                                                                 handleEdit(
-                                                                    session
+                                                                    group.sessions[
+                                                                        group.sessions.length -
+                                                                            1
+                                                                    ]
                                                                 )
                                                             }
                                                         >
 
                                                             <Pencil
-                                                                size={
-                                                                    16
-                                                                }
+                                                                size={16}
                                                             />
 
                                                         </button>
 
+                                                    )}
+
+                                                    {group.sessions.length > 0 && (
 
                                                         <button
                                                             className="delete-session-btn"
-                                                            title="Delete"
+                                                            title="Delete latest session"
                                                             disabled={
                                                                 deletingId ===
-                                                                sessionId
+                                                                getId(
+                                                                    group.sessions[
+                                                                        group.sessions.length -
+                                                                            1
+                                                                    ]
+                                                                )
                                                             }
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    session
+                                                                    group.sessions[
+                                                                        group.sessions.length -
+                                                                            1
+                                                                    ]
                                                                 )
                                                             }
                                                         >
 
                                                             {deletingId ===
-                                                            sessionId ? (
+                                                            getId(
+                                                                group.sessions[
+                                                                    group.sessions.length -
+                                                                        1
+                                                                ]
+                                                            ) ? (
 
-                                                                <span className="mini-spinner" />
+                                                                <FaSpinner
+                                                                    className="session-button-spinner"
+                                                                    size={15}
+                                                                />
 
                                                             ) : (
 
                                                                 <Trash2
-                                                                    size={
-                                                                        16
-                                                                    }
+                                                                    size={16}
                                                                 />
 
                                                             )}
 
                                                         </button>
 
-                                                    </div>
+                                                    )}
 
-                                                </td>
+                                                </div>
 
-                                            </tr>
+                                            </td>
 
-                                        );
-                                    }
+                                        </tr>
+
+                                    )
                                 )
 
                             ) : (
@@ -1955,7 +2118,7 @@ const Sessions = () => {
                                 <tr>
 
                                     <td
-                                        colSpan="7"
+                                        colSpan="4"
                                     >
 
                                         <div className="session-empty">
@@ -1999,135 +2162,258 @@ const Sessions = () => {
             </div>
 
 
+            {/* =================================================
+                ADD SESSION MODAL
+            ================================================= */}
+
             {showAddModal && (
+
                 <div className="session-modal-overlay">
+
                     <div className="session-modal generate-session-modal">
+
                         <div className="session-modal-header">
+
                             <div>
+
                                 <div className="generate-modal-title">
+
                                     <div className="generate-icon">
-                                        <Plus size={20} />
+
+                                        <Plus
+                                            size={20}
+                                        />
+
                                     </div>
+
                                     <div>
-                                        <h2>Add Session</h2>
-                                        <p>Create a single session manually</p>
+
+                                        <h2>
+                                            Add Session
+                                        </h2>
+
+                                        <p>
+                                            Create a single session manually
+                                        </p>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
 
                             <button
                                 className="session-close-btn"
-                                onClick={closeAddModal}
+                                onClick={
+                                    closeAddModal
+                                }
                             >
-                                <X size={19} />
+
+                                <X
+                                    size={19}
+                                />
+
                             </button>
+
                         </div>
 
-                        <form onSubmit={handleAddSession}>
+
+                        <form
+                            onSubmit={
+                                handleAddSession
+                            }
+                        >
+
                             {error && (
+
                                 <div className="session-form-error">
-                                    <AlertCircle size={17} />
+
+                                    <AlertCircle
+                                        size={17}
+                                    />
+
                                     {error}
+
                                 </div>
+
                             )}
 
+
                             <div className="session-form-group">
+
                                 <label>
-                                    Session Name <span>*</span>
+                                    Session Name{" "}
+                                    <span>*</span>
                                 </label>
+
                                 <input
                                     type="text"
                                     name="name"
-                                    value={addForm.name}
+                                    value={
+                                        addForm.name
+                                    }
                                     onChange={(e) =>
-                                        setAddForm((prev) => ({
-                                            ...prev,
-                                            name: e.target.value,
-                                        }))
+                                        setAddForm(
+                                            (prev) => ({
+                                                ...prev,
+                                                name: e.target.value,
+                                            })
+                                        )
                                     }
                                     placeholder="Spring 2026"
                                     required
                                 />
+
                             </div>
 
+
                             <div className="session-form-group">
+
                                 <label>
-                                    Term <span>*</span>
+                                    Term{" "}
+                                    <span>*</span>
                                 </label>
+
                                 <select
                                     name="term"
-                                    value={addForm.term}
+                                    value={
+                                        addForm.term
+                                    }
                                     onChange={(e) =>
-                                        setAddForm((prev) => ({
-                                            ...prev,
-                                            term: e.target.value,
-                                        }))
+                                        setAddForm(
+                                            (prev) => ({
+                                                ...prev,
+                                                term: e.target.value,
+                                            })
+                                        )
                                     }
                                     required
                                 >
-                                    <option value="">Select Term</option>
-                                    <option value="Spring">Spring</option>
-                                    <option value="Fall">Fall</option>
+
+                                    <option value="">
+                                        Select Term
+                                    </option>
+
+                                    <option value="Spring">
+                                        Spring
+                                    </option>
+
+                                    <option value="Fall">
+                                        Fall
+                                    </option>
+
                                 </select>
+
                             </div>
 
+
                             <div className="session-form-group">
+
                                 <label>
-                                    Year <span>*</span>
+                                    Year{" "}
+                                    <span>*</span>
                                 </label>
+
                                 <input
                                     type="number"
                                     name="year"
                                     min="2020"
                                     max="2100"
-                                    value={addForm.year}
+                                    value={
+                                        addForm.year
+                                    }
                                     onChange={(e) =>
-                                        setAddForm((prev) => ({
-                                            ...prev,
-                                            year: e.target.value,
-                                        }))
+                                        setAddForm(
+                                            (prev) => ({
+                                                ...prev,
+                                                year: e.target.value,
+                                            })
+                                        )
                                     }
                                     required
                                 />
+
                             </div>
+
 
                             <div className="session-form-group">
+
                                 <label className="session-toggle-label">
+
                                     <input
                                         type="checkbox"
-                                        checked={addForm.isActive}
+                                        checked={
+                                            addForm.isActive
+                                        }
                                         onChange={(e) =>
-                                            setAddForm((prev) => ({
-                                                ...prev,
-                                                isActive: e.target.checked,
-                                            }))
+                                            setAddForm(
+                                                (prev) => ({
+                                                    ...prev,
+                                                    isActive:
+                                                        e.target.checked,
+                                                })
+                                            )
                                         }
                                     />
+
                                     Active session
+
                                 </label>
+
                             </div>
 
+
                             <div className="session-modal-footer">
+
                                 <button
                                     type="button"
                                     className="session-cancel-btn"
-                                    onClick={closeAddModal}
+                                    onClick={
+                                        closeAddModal
+                                    }
                                 >
                                     Cancel
                                 </button>
 
+
                                 <button
                                     type="submit"
                                     className="session-save-btn"
-                                    disabled={generating}
+                                    disabled={
+                                        generating
+                                    }
                                 >
-                                    {generating ? "Saving..." : "Create Session"}
+
+                                    {generating ? (
+
+                                        <>
+                                            <FaSpinner
+                                                className="session-button-spinner"
+                                                size={15}
+                                            />
+
+                                            Saving...
+                                        </>
+
+                                    ) : (
+
+                                        "Create Session"
+
+                                    )}
+
                                 </button>
+
                             </div>
+
                         </form>
+
                     </div>
+
                 </div>
+
             )}
+
 
             {/* =================================================
                 GENERATE MODAL
@@ -2196,458 +2482,593 @@ const Sessions = () => {
                             }
                         >
 
-                        {!generateResult && (
-                        <>
+                            {!generateResult && (
+                                <>
 
-                            {error && (
+                                    {error && (
 
-                                <div className="session-form-error">
+                                        <div className="session-form-error">
 
-                                    <AlertCircle
-                                        size={17}
-                                    />
+                                            <AlertCircle
+                                                size={17}
+                                            />
 
-                                    {error}
+                                            {error}
 
-                                </div>
-
-                            )}
-
-
-                            {/* INFO */}
-
-                            <div className="generate-info-box">
-
-                                <strong>
-                                    Bulk generation
-                                </strong>
-
-                                <p>
-                                    Select a degree class and enter the
-                                    start year. The backend will generate
-                                    the related session records for that class.
-                                </p>
-
-                            </div>
-
-
-                            {/* DEGREE CLASS */}
-
-                            <div className="session-form-group">
-
-                                <label>
-                                    Degree Class <span>*</span>
-                                </label>
-
-                                <select
-                                    name="degreeClassId"
-                                    value={
-                                        generateForm.degreeClassId
-                                    }
-                                    onChange={
-                                        handleGenerateChange
-                                    }
-                                    required
-                                >
-
-                                    <option value="">
-                                        Select Degree Class
-                                    </option>
-
-                                    {degreeClasses.map(
-                                        (item) => {
-
-                                            const id =
-                                                getId(
-                                                    item
-                                                );
-
-                                            const department =
-                                                item.departmentId?.name ||
-                                                item.departmentName ||
-                                                "";
-
-                                            return (
-
-                                                <option
-                                                    key={id}
-                                                    value={id}
-                                                >
-
-                                                    {item.name}
-
-                                                    {department
-                                                        ? ` — ${department}`
-                                                        : ""}
-
-                                                </option>
-
-                                            );
-                                        }
-                                    )}
-
-                                </select>
-
-                            </div>
-
-                            <div className="session-form-group">
-                                <label>
-                                    Start Year <span>*</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    name="startYear"
-                                    min="2020"
-                                    max="2100"
-                                    value={generateForm.startYear}
-                                    onChange={handleGenerateChange}
-                                    required
-                                />
-                            </div>
-
-
-                            {/* CLASS SESSION INFO — informational only */}
-
-                            {generateForm.degreeClassId && (
-
-                                <div
-                                    className="class-session-info"
-                                    style={{
-                                        border: "1px solid #e5e7eb",
-                                        borderRadius: 8,
-                                        padding: "10px 12px",
-                                        marginBottom: 16,
-                                        background: "#f9fafb",
-                                    }}
-                                >
-
-                                    {loadingClassInfo && (
-
-                                        <div style={{ fontSize: 13, opacity: 0.7 }}>
-                                            Loading session info for this class...
                                         </div>
 
                                     )}
 
 
-                                    {!loadingClassInfo &&
-                                        classSessionInfo?.error && (
+                                    {/* INFO */}
 
-                                        <div style={{ fontSize: 13, color: "#b91c1c" }}>
-                                            {classSessionInfo.error}
-                                        </div>
+                                    <div className="generate-info-box">
 
-                                    )}
+                                        <strong>
+                                            Bulk generation
+                                        </strong>
 
+                                        <p>
+                                            Select a degree class and enter the
+                                            start year. The backend will generate
+                                            the related session records for that class.
+                                        </p>
 
-                                    {!loadingClassInfo &&
-                                        classSessionInfo &&
-                                        !classSessionInfo.error &&
-                                        classSessionInfo.batches.length === 0 && (
-
-                                        <div style={{ fontSize: 13, opacity: 0.7 }}>
-                                            No batches exist yet for this class — nothing to check.
-                                        </div>
-
-                                    )}
+                                    </div>
 
 
-                                    {!loadingClassInfo &&
-                                        classSessionInfo?.batches?.map(
-                                            (summary) => (
+                                    {/* DEGREE CLASS */}
+
+                                    <div className="session-form-group">
+
+                                        <label>
+                                            Degree Class{" "}
+                                            <span>*</span>
+                                        </label>
+
+                                        <select
+                                            name="degreeClassId"
+                                            value={
+                                                generateForm.degreeClassId
+                                            }
+                                            onChange={
+                                                handleGenerateChange
+                                            }
+                                            required
+                                        >
+
+                                            <option value="">
+                                                Select Degree Class
+                                            </option>
+
+                                            {degreeClasses.map(
+                                                (item) => {
+
+                                                    const id =
+                                                        getId(
+                                                            item
+                                                        );
+
+                                                    const department =
+                                                        item.departmentId?.name ||
+                                                        item.departmentName ||
+                                                        "";
+
+                                                    return (
+
+                                                        <option
+                                                            key={id}
+                                                            value={id}
+                                                        >
+
+                                                            {item.name}
+
+                                                            {department
+                                                                ? ` — ${department}`
+                                                                : ""}
+
+                                                        </option>
+
+                                                    );
+
+                                                }
+                                            )}
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div className="session-form-group">
+
+                                        <label>
+                                            Start Year{" "}
+                                            <span>*</span>
+                                        </label>
+
+                                        <input
+                                            type="number"
+                                            name="startYear"
+                                            min="2020"
+                                            max="2100"
+                                            value={
+                                                generateForm.startYear
+                                            }
+                                            onChange={
+                                                handleGenerateChange
+                                            }
+                                            required
+                                        />
+
+                                    </div>
+
+
+                                    {/* CLASS SESSION INFO */}
+
+                                    {generateForm.degreeClassId && (
+
+                                        <div
+                                            className="class-session-info"
+                                            style={{
+                                                border: "1px solid #e5e7eb",
+                                                borderRadius: 8,
+                                                padding: "10px 12px",
+                                                marginBottom: 16,
+                                                background: "#f9fafb",
+                                            }}
+                                        >
+
+                                            {loadingClassInfo && (
 
                                                 <div
-                                                    key={summary.batchId}
                                                     style={{
-                                                        marginBottom: 10,
-                                                        paddingBottom: 10,
-                                                        borderBottom:
-                                                            "1px dashed #e5e7eb",
+                                                        fontSize: 13,
+                                                        opacity: 0.7,
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: 8,
                                                     }}
                                                 >
 
-                                                    <strong style={{ fontSize: 13 }}>
-                                                        {summary.batchName}
-                                                    </strong>
+                                                    <FaSpinner
+                                                        className="session-button-spinner"
+                                                        size={14}
+                                                    />
 
-                                                    {summary.error ? (
+                                                    Loading session info for this class...
+
+                                                </div>
+
+                                            )}
+
+
+                                            {!loadingClassInfo &&
+                                                classSessionInfo?.error && (
+
+                                                    <div
+                                                        style={{
+                                                            fontSize: 13,
+                                                            color: "#b91c1c",
+                                                        }}
+                                                    >
+                                                        {classSessionInfo.error}
+                                                    </div>
+
+                                                )}
+
+
+                                            {!loadingClassInfo &&
+                                                classSessionInfo &&
+                                                !classSessionInfo.error &&
+                                                classSessionInfo.batches.length === 0 && (
+
+                                                    <div
+                                                        style={{
+                                                            fontSize: 13,
+                                                            opacity: 0.7,
+                                                        }}
+                                                    >
+                                                        No batches exist yet for this class — nothing to check.
+                                                    </div>
+
+                                                )}
+
+
+                                            {!loadingClassInfo &&
+                                                classSessionInfo?.batches?.map(
+                                                    (summary) => (
 
                                                         <div
+                                                            key={
+                                                                summary.batchId
+                                                            }
                                                             style={{
-                                                                fontSize: 12,
-                                                                color: "#b91c1c",
-                                                                marginTop: 4,
+                                                                marginBottom: 10,
+                                                                paddingBottom: 10,
+                                                                borderBottom:
+                                                                    "1px dashed #e5e7eb",
                                                             }}
                                                         >
-                                                            {summary.error}
-                                                        </div>
 
-                                                    ) : (
-
-                                                        <>
-
-                                                            <div
+                                                            <strong
                                                                 style={{
-                                                                    fontSize: 12,
-                                                                    marginTop: 4,
+                                                                    fontSize: 13,
                                                                 }}
                                                             >
-                                                                <span style={{ opacity: 0.7 }}>
-                                                                    Sessions used so far:
-                                                                </span>{" "}
-                                                                {summary.usedSessions
-                                                                    .length > 0
-                                                                    ? summary.usedSessions
-                                                                          .map(
-                                                                              (u) =>
-                                                                                  `Sem ${u.semester} → ${u.sessionName}`
-                                                                          )
-                                                                          .join(
-                                                                              "  •  "
-                                                                          )
-                                                                    : "None yet"}
-                                                            </div>
+                                                                {
+                                                                    summary.batchName
+                                                                }
+                                                            </strong>
 
-                                                            <div
-                                                                style={{
-                                                                    fontSize: 12,
-                                                                    marginTop: 4,
-                                                                }}
-                                                            >
-                                                                <span style={{ opacity: 0.7 }}>
-                                                                    Current:
-                                                                </span>{" "}
-                                                                {summary.status ===
-                                                                "completed"
-                                                                    ? "Completed"
-                                                                    : summary.currentSessionName
-                                                                    ? `Semester ${summary.currentSemester} — ${summary.currentSessionName}`
-                                                                    : "-"}
-                                                            </div>
 
-                                                            {summary.status !==
-                                                                "completed" && (
+                                                            {summary.error ? (
 
                                                                 <div
                                                                     style={{
                                                                         fontSize: 12,
+                                                                        color: "#b91c1c",
                                                                         marginTop: 4,
                                                                     }}
                                                                 >
-                                                                    <span style={{ opacity: 0.7 }}>
-                                                                        Next needed:
-                                                                    </span>{" "}
-                                                                    {summary.nextExpectedSessionName ||
-                                                                        "Not created yet — generate it below"}
+                                                                    {
+                                                                        summary.error
+                                                                    }
                                                                 </div>
+
+                                                            ) : (
+
+                                                                <>
+
+                                                                    <div
+                                                                        style={{
+                                                                            fontSize: 12,
+                                                                            marginTop: 4,
+                                                                        }}
+                                                                    >
+
+                                                                        <span
+                                                                            style={{
+                                                                                opacity: 0.7,
+                                                                            }}
+                                                                        >
+                                                                            Sessions used so far:
+                                                                        </span>{" "}
+
+                                                                        {summary.usedSessions
+                                                                            .length >
+                                                                        0
+                                                                            ? summary.usedSessions
+                                                                                  .map(
+                                                                                      (
+                                                                                          u
+                                                                                      ) =>
+                                                                                          `Sem ${u.semester} → ${u.sessionName}`
+                                                                                  )
+                                                                                  .join(
+                                                                                      "  •  "
+                                                                                  )
+                                                                            : "None yet"}
+
+                                                                    </div>
+
+
+                                                                    <div
+                                                                        style={{
+                                                                            fontSize: 12,
+                                                                            marginTop: 4,
+                                                                        }}
+                                                                    >
+
+                                                                        <span
+                                                                            style={{
+                                                                                opacity: 0.7,
+                                                                            }}
+                                                                        >
+                                                                            Current:
+                                                                        </span>{" "}
+
+                                                                        {summary.status ===
+                                                                        "completed"
+                                                                            ? "Completed"
+                                                                            : summary.currentSessionName
+                                                                            ? `Semester ${summary.currentSemester} — ${summary.currentSessionName}`
+                                                                            : "-"}
+
+                                                                    </div>
+
+
+                                                                    {summary.status !==
+                                                                        "completed" && (
+
+                                                                        <div
+                                                                            style={{
+                                                                                fontSize: 12,
+                                                                                marginTop: 4,
+                                                                            }}
+                                                                        >
+
+                                                                            <span
+                                                                                style={{
+                                                                                    opacity: 0.7,
+                                                                                }}
+                                                                            >
+                                                                                Next needed:
+                                                                            </span>{" "}
+
+                                                                            {
+                                                                                summary.nextExpectedSessionName ||
+                                                                                "Not created yet — generate it below"
+                                                                            }
+
+                                                                        </div>
+
+                                                                    )}
+
+                                                                </>
 
                                                             )}
 
-                                                        </>
+                                                        </div>
 
-                                                    )}
+                                                    )
+                                                )}
 
-                                                </div>
+                                        </div>
 
-                                            )
-                                        )}
+                                    )}
 
-                                </div>
+
+                                    {/* ACTIONS */}
+
+                                    <div className="session-modal-actions">
+
+                                        <button
+                                            type="button"
+                                            className="session-cancel-btn"
+                                            onClick={
+                                                closeGenerateModal
+                                            }
+                                            disabled={
+                                                generating
+                                            }
+                                        >
+                                            Cancel
+                                        </button>
+
+
+                                        <button
+                                            type="submit"
+                                            className="session-save-btn"
+                                            disabled={
+                                                generating
+                                            }
+                                        >
+
+                                            {generating ? (
+
+                                                <>
+
+                                                    <FaSpinner
+                                                        className="session-button-spinner"
+                                                        size={15}
+                                                    />
+
+                                                    Generating...
+
+                                                </>
+
+                                            ) : (
+
+                                                <>
+
+                                                    <Sparkles
+                                                        size={17}
+                                                    />
+
+                                                    Generate Sessions
+
+                                                </>
+
+                                            )}
+
+                                        </button>
+
+                                    </div>
+
+                                </>
 
                             )}
 
 
-                            <div className="session-form-group">
-                                <label>
-                                    Start Year <span>*</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    name="startYear"
-                                    min="2020"
-                                    max="2100"
-                                    value={generateForm.startYear}
-                                    onChange={handleGenerateChange}
-                                    required
-                                />
-                            </div>
+                            {/* =================================================
+                                RESULT SUMMARY
+                            ================================================= */}
 
-                            {/* ACTIONS */}
-
-                            <div className="session-modal-actions">
-
-                                <button
-                                    type="button"
-                                    className="session-cancel-btn"
-                                    onClick={
-                                        closeGenerateModal
-                                    }
-                                    disabled={
-                                        generating
-                                    }
-                                >
-                                    Cancel
-                                </button>
-
-
-                                <button
-                                    type="submit"
-                                    className="session-save-btn"
-                                    disabled={
-                                        generating
-                                    }
-                                >
-
-                                    {generating ? (
-
-                                        <>
-                                            <span className="mini-spinner" />
-                                            Generating...
-                                        </>
-
-                                    ) : (
-
-                                        <>
-                                            <Sparkles
-                                                size={17}
-                                            />
-                                            Generate Sessions
-                                        </>
-
-                                    )}
-
-                                </button>
-
-                            </div>
-
-                        </>
-                        )}
-
-
-                        {/* =====================================================
-                            RESULT SUMMARY — shown after a successful Generate
-                        ===================================================== */}
-
-                        {generateResult && (
-
-                            <div
-                                className="generate-result-panel"
-                                style={{
-                                    padding: "4px 2px 2px",
-                                }}
-                            >
+                            {generateResult && (
 
                                 <div
-                                    className="session-form-success"
+                                    className="generate-result-panel"
                                     style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 8,
-                                        padding: "10px 12px",
-                                        borderRadius: 8,
-                                        background: "#ecfdf5",
-                                        color: "#065f46",
-                                        fontWeight: 600,
-                                        marginBottom: 14,
+                                        padding: "4px 2px 2px",
                                     }}
                                 >
 
-                                    <CheckCircle2
-                                        size={17}
-                                    />
-
-                                    {generateResult.message}
-
-                                </div>
-
-
-                                {generateResult.created.length > 0 && (
-
                                     <div
-                                        className="generate-result-group"
-                                        style={{ marginBottom: 14 }}
+                                        className="session-form-success"
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                            padding: "10px 12px",
+                                            borderRadius: 8,
+                                            background: "#ecfdf5",
+                                            color: "#065f46",
+                                            fontWeight: 600,
+                                            marginBottom: 14,
+                                        }}
                                     >
 
-                                        <h4 style={{ margin: "0 0 6px" }}>
-                                            Newly Created (
-                                            {generateResult.created.length}
-                                            )
-                                        </h4>
+                                        <CheckCircle2
+                                            size={17}
+                                        />
 
-                                        <ul style={{ margin: 0, paddingLeft: 18 }}>
-                                            {generateResult.created.map(
-                                                (session) => (
-                                                    <li
-                                                        key={
-                                                            getId(session) ||
-                                                            session.name
-                                                        }
-                                                        className="generate-result-created"
-                                                        style={{ color: "#065f46" }}
-                                                    >
-                                                        {session.name}
-                                                        {" — "}
-                                                        {session.term}{" "}
-                                                        {session.year}
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-
-                                    </div>
-
-                                )}
-
-
-                                {generateResult.skipped.length > 0 && (
-
-                                    <div
-                                        className="generate-result-group"
-                                        style={{ marginBottom: 14 }}
-                                    >
-
-                                        <h4 style={{ margin: "0 0 6px" }}>
-                                            Already Existed — Skipped (
-                                            {generateResult.skipped.length}
-                                            )
-                                        </h4>
-
-                                        <ul style={{ margin: 0, paddingLeft: 18 }}>
-                                            {generateResult.skipped.map(
-                                                (name) => (
-                                                    <li
-                                                        key={name}
-                                                        className="generate-result-skipped"
-                                                        style={{ color: "#92400e" }}
-                                                    >
-                                                        {name}
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-
-                                    </div>
-
-                                )}
-
-
-                                <div className="session-modal-actions">
-
-                                    <button
-                                        type="button"
-                                        className="session-save-btn"
-                                        onClick={
-                                            closeGenerateModal
+                                        {
+                                            generateResult.message
                                         }
-                                    >
-                                        Done
-                                    </button>
+
+                                    </div>
+
+
+                                    {generateResult.created.length > 0 && (
+
+                                        <div
+                                            className="generate-result-group"
+                                            style={{
+                                                marginBottom: 14,
+                                            }}
+                                        >
+
+                                            <h4
+                                                style={{
+                                                    margin: "0 0 6px",
+                                                }}
+                                            >
+                                                Newly Created (
+                                                {
+                                                    generateResult.created.length
+                                                }
+                                                )
+                                            </h4>
+
+
+                                            <ul
+                                                style={{
+                                                    margin: 0,
+                                                    paddingLeft: 18,
+                                                }}
+                                            >
+
+                                                {generateResult.created.map(
+                                                    (createdItem) => {
+
+                                                        const session =
+                                                            createdItem?.session ||
+                                                            createdItem;
+
+                                                        return (
+
+                                                            <li
+                                                                key={
+                                                                    getId(
+                                                                        session
+                                                                    ) ||
+                                                                    session.name
+                                                                }
+                                                                className="generate-result-created"
+                                                                style={{
+                                                                    color: "#065f46",
+                                                                }}
+                                                            >
+
+                                                                {
+                                                                    session.name
+                                                                }
+
+                                                                {" — "}
+
+                                                                {
+                                                                    session.term
+                                                                }
+
+                                                                {" "}
+
+                                                                {
+                                                                    session.year
+                                                                }
+
+                                                            </li>
+
+                                                        );
+
+                                                    }
+                                                )}
+
+                                            </ul>
+
+                                        </div>
+
+                                    )}
+
+
+                                    {generateResult.skipped.length > 0 && (
+
+                                        <div
+                                            className="generate-result-group"
+                                            style={{
+                                                marginBottom: 14,
+                                            }}
+                                        >
+
+                                            <h4
+                                                style={{
+                                                    margin: "0 0 6px",
+                                                }}
+                                            >
+                                                Already Existed — Skipped (
+                                                {
+                                                    generateResult.skipped.length
+                                                }
+                                                )
+                                            </h4>
+
+
+                                            <ul
+                                                style={{
+                                                    margin: 0,
+                                                    paddingLeft: 18,
+                                                }}
+                                            >
+
+                                                {generateResult.skipped.map(
+                                                    (name) => (
+
+                                                        <li
+                                                            key={name}
+                                                            className="generate-result-skipped"
+                                                            style={{
+                                                                color: "#92400e",
+                                                            }}
+                                                        >
+                                                            {name}
+                                                        </li>
+
+                                                    )
+                                                )}
+
+                                            </ul>
+
+                                        </div>
+
+                                    )}
+
+
+                                    <div className="session-modal-actions">
+
+                                        <button
+                                            type="button"
+                                            className="session-save-btn"
+                                            onClick={
+                                                closeGenerateModal
+                                            }
+                                        >
+                                            Done
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
-                            </div>
-
-                        )}
+                            )}
 
                         </form>
 
@@ -2689,9 +3110,11 @@ const Sessions = () => {
                                         closeEditModal
                                     }
                                 >
+
                                     <X
                                         size={19}
                                     />
+
                                 </button>
 
                             </div>
@@ -2706,7 +3129,9 @@ const Sessions = () => {
                                 {error && (
 
                                     <div className="session-form-error">
+
                                         {error}
+
                                     </div>
 
                                 )}
@@ -2912,17 +3337,26 @@ const Sessions = () => {
                                         {generating ? (
 
                                             <>
-                                                <span className="mini-spinner" />
+
+                                                <FaSpinner
+                                                    className="session-button-spinner"
+                                                    size={15}
+                                                />
+
                                                 Updating...
+
                                             </>
 
                                         ) : (
 
                                             <>
+
                                                 <Pencil
                                                     size={17}
                                                 />
+
                                                 Update Session
+
                                             </>
 
                                         )}
@@ -2936,6 +3370,7 @@ const Sessions = () => {
                         </div>
 
                     </div>
+
                 )}
 
 
@@ -2972,9 +3407,11 @@ const Sessions = () => {
                                     )
                                 }
                             >
+
                                 <X
                                     size={19}
                                 />
+
                             </button>
 
                         </div>
@@ -3006,13 +3443,17 @@ const Sessions = () => {
                                     </h3>
 
                                     <span>
+
                                         {
                                             viewingSession.term
                                         }
+
                                         {" • "}
+
                                         {
                                             viewingSession.year
                                         }
+
                                     </span>
 
                                 </div>
@@ -3111,11 +3552,13 @@ const Sessions = () => {
                                             viewingSession
                                         )}`}
                                     >
+
                                         {getStatusLabel(
                                             getStatus(
                                                 viewingSession
                                             )
                                         )}
+
                                     </strong>
 
                                 </div>

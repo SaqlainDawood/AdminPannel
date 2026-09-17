@@ -1131,3 +1131,80 @@
         width: 100%;
     }
 }
+/* ================================
+   PROFESSIONAL PURPLE SPINNERS
+================================ */
+
+.batch-spinner-icon {
+  color: #7c3aed;
+  animation: batchSpinnerRotate 0.8s linear infinite;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(124, 58, 237, 0.18));
+}
+
+/* Large loading spinner with border ring */
+.batch-loading .batch-spinner-icon,
+.batch-form-loading .batch-spinner-icon,
+.advance-loading .batch-spinner-icon {
+  padding: 7px;
+  border: 2px solid rgba(124, 58, 237, 0.15);
+  border-top-color: #7c3aed;
+  border-right-color: #a855f7;
+  border-radius: 50%;
+  box-sizing: content-box;
+}
+
+/* Button spinner */
+.button-spinner-icon {
+  color: #7c3aed;
+  animation: batchSpinnerRotate 0.8s linear infinite;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* Spinner animation */
+@keyframes batchSpinnerRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading containers */
+.batch-loading,
+.batch-form-loading,
+.advance-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.batch-loading {
+  flex-direction: column;
+  min-height: 220px;
+}
+
+.batch-loading p,
+.batch-form-loading span,
+.advance-loading span {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Button loading state */
+button:has(.button-spinner-icon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Disabled loading buttons */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}

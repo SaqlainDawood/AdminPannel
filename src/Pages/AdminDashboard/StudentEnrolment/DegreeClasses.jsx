@@ -19,6 +19,8 @@ import {
     Moon,
 } from "lucide-react";
 
+import { FaSpinner } from "react-icons/fa";
+
 import { getDepartments } from "../../../services/departmentAPI";
 
 import {
@@ -910,10 +912,18 @@ const DegreeClasses = () => {
                                         colSpan="7"
                                     >
                                         <div className="degree-loading">
-                                            <div className="degree-spinner" />
+
+                                            <div className="degree-spinner-wrapper">
+                                                <FaSpinner
+                                                    className="degree-spinner"
+                                                    size={30}
+                                                />
+                                            </div>
+
                                             <p>
                                                 Loading degree classes...
                                             </p>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -1320,6 +1330,7 @@ const DegreeClasses = () => {
                             </div>
 
                             {/* ONLY CREATE */}
+
                             {!editingClass && (
 
                                 <div className="degree-form-group shift-form-section">
@@ -1410,7 +1421,10 @@ const DegreeClasses = () => {
 
                                     {saving ? (
                                         <>
-                                            <span className="button-spinner" />
+                                            <FaSpinner
+                                                className="degree-button-spinner"
+                                                size={15}
+                                            />
                                             Saving...
                                         </>
                                     ) : (
