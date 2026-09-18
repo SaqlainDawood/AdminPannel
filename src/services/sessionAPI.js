@@ -11,9 +11,12 @@ const SessionAPI = axios.create({
 // =====================================================
 
 export const getSessions = async (params = {}) => {
-    const response = await SessionAPI.get("/api/sessions", {
-        params,
-    });
+    const response = await SessionAPI.get(
+        "/api/sessions",
+        {
+            params,
+        }
+    );
 
     return response.data;
 };
@@ -62,34 +65,23 @@ export const getSessionById = async (id) => {
 
 
 // =====================================================
-// CREATE SINGLE SESSION
-// POST /api/sessions
-//
-// NOTE:
-// Main UI generation flow uses generateSessions().
-// This function is kept for manual/admin use.
-// =====================================================
-
-export const createSession = async (payload) => {
-    const response = await SessionAPI.post(
-        "/api/sessions",
-        payload
-    );
-
-    return response.data;
-};
-
-
-// =====================================================
-// GENERATE SPRING + FALL
-//
+// GENERATE DEGREE CLASS SESSIONS
 // POST /api/sessions/generate
 //
 // Backend expects:
+//
 // {
-//   degreeClassId,
-//   springStartDate,
-//   semesterMonths
+//     degreeClassId,
+//     startYear,
+//     startTerm
+// }
+//
+// Example:
+//
+// {
+//     degreeClassId: "68c123456789abcdef123456",
+//     startYear: 2026,
+//     startTerm: "Fall"
 // }
 // =====================================================
 
@@ -104,11 +96,14 @@ export const generateSessions = async (payload) => {
 
 
 // =====================================================
-// UPDATE SESSION
+// UPDATE EXISTING SESSION
 // PUT /api/sessions/:id
 // =====================================================
 
-export const updateSession = async (id, payload) => {
+export const updateSession = async (
+    id,
+    payload
+) => {
     const response = await SessionAPI.put(
         `/api/sessions/${id}`,
         payload
@@ -119,16 +114,19 @@ export const updateSession = async (id, payload) => {
 
 
 // =====================================================
-// DELETE SESSION
-// DELETE /api/sessions/:id
+// DELETE ALL SESSIONS OF DEGREE CLASS
+// DELETE /api/sessions/bulk/:degreeClassId
 // =====================================================
 
-export const deleteSession = async (id) => {
+export const deleteSessionsByDegreeClass = async (
+    degreeClassId
+) => {
     const response = await SessionAPI.delete(
-        `/api/sessions/${id}`
+        `/api/sessions/bulk/${degreeClassId}`
     );
 
     return response.data;
 };
+
 
 export default SessionAPI;

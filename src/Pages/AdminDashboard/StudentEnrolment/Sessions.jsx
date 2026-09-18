@@ -5,39 +5,31 @@ import React, {
 } from "react";
 
 import {
-    Plus,
     Search,
     Pencil,
     Trash2,
     CalendarDays,
     Clock3,
     CheckCircle2,
-    XCircle,
     Eye,
     X,
     CalendarRange,
-    RefreshCw,
     Sparkles,
     AlertCircle,
+    RefreshCw,
 } from "lucide-react";
 
 import { FaSpinner } from "react-icons/fa";
 
 import {
     getSessions,
-    createSession,
     generateSessions,
     updateSession,
-    deleteSession,
+    deleteSessionsByDegreeClass,
     getSessionStatus,
 } from "../../../services/sessionAPI";
 
 import { getDegreeClasses } from "../../../services/degreeClassAPI";
-
-import {
-    getBatches,
-    getBatchSemesters,
-} from "../../../services/batchAPI";
 
 import "./Sessions.css";
 
@@ -52,13 +44,16 @@ const Sessions = () => {
 
     const [degreeClasses, setDegreeClasses] = useState([]);
 
-    const [sessionStatus, setSessionStatus] = useState(null);
+    const [sessionStatus, setSessionStatus] =
+        useState(null);
 
     const [loading, setLoading] = useState(true);
 
-    const [generating, setGenerating] = useState(false);
+    const [generating, setGenerating] =
+        useState(false);
 
-    const [deletingId, setDeletingId] = useState(null);
+    const [deletingId, setDeletingId] =
+        useState(null);
 
     const [error, setError] = useState("");
 
@@ -76,22 +71,14 @@ const Sessions = () => {
     const [showGenerateModal, setShowGenerateModal] =
         useState(false);
 
-    const [showAddModal, setShowAddModal] =
-        useState(false);
-
-    // Holds { message, created, skipped } after a successful Generate
-    const [generateResult, setGenerateResult] =
-        useState(null);
-
-    // Informational class/session information
-    const [classSessionInfo, setClassSessionInfo] =
-        useState(null);
-
-    const [loadingClassInfo, setLoadingClassInfo] =
-        useState(false);
-
     const [showEditModal, setShowEditModal] =
         useState(false);
+
+    const [showViewModal, setShowViewModal] =
+        useState(false);
+
+    const [generateResult, setGenerateResult] =
+        useState(null);
 
     const [viewingSession, setViewingSession] =
         useState(null);
@@ -108,14 +95,8 @@ const Sessions = () => {
         useState({
             degreeClassId: "",
             startYear: new Date().getFullYear(),
+            startTerm: "Fall",
         });
-
-    const [addForm, setAddForm] = useState({
-        name: "",
-        term: "",
-        year: new Date().getFullYear(),
-        isActive: true,
-    });
 
 
     // =====================================================
@@ -143,7 +124,40 @@ const Sessions = () => {
 
 
     // =====================================================
-    // FETCH ALL DATA
+    // GET DEGREE CLASS
+    // =====================================================
+
+    const getDegreeClass = (session) => {
+
+        const embedded =
+            session?.degreeClassId;
+
+        if (
+            embedded &&
+            typeof embedded === "object"
+        ) {
+            return embedded;
+        }
+
+        const id =
+            embedded ||
+            session?.degreeClass?._id ||
+            session?.degreeClass?.id;
+
+        if (!id) {
+            return null;
+        }
+
+        return degreeClasses.find(
+            (item) =>
+                String(getId(item)) ===
+                String(id)
+        ) || null;
+    };
+
+
+    // =====================================================
+    // FETCH DATA
     // =====================================================
 
     const fetchData = async () => {
@@ -151,7 +165,6 @@ const Sessions = () => {
         try {
 
             setLoading(true);
-
             setError("");
 
             const [
@@ -165,9 +178,9 @@ const Sessions = () => {
             ]);
 
 
-            // -------------------------------
-            // Sessions
-            // -------------------------------
+            // ---------------------------------------------
+            // SESSIONS
+            // ---------------------------------------------
 
             const sessionData =
                 sessionsResponse?.data ||
@@ -181,9 +194,9 @@ const Sessions = () => {
             );
 
 
-            // -------------------------------
-            // Status
-            // -------------------------------
+            // ---------------------------------------------
+            // STATUS
+            // ---------------------------------------------
 
             const statusData =
                 statusResponse?.data ||
@@ -193,9 +206,9 @@ const Sessions = () => {
             setSessionStatus(statusData);
 
 
-            // -------------------------------
-            // Degree Classes
-            // -------------------------------
+            // ---------------------------------------------
+            // DEGREE CLASSES
+            // ---------------------------------------------
 
             const degreeClassData =
                 degreeClassesResponse?.data ||
@@ -240,7 +253,7 @@ const Sessions = () => {
 
 
     // =====================================================
-    // GET STATUS FOR SESSION
+    // SESSION STATUS
     // =====================================================
 
     const getStatus = (session) => {
@@ -257,20 +270,52 @@ const Sessions = () => {
         }
 
 
+        if (
+            session?.status &&
+            [
+                "ongoing",
+                "completed",
+                "upcoming",
+            ].includes(
+                String(session.status).toLowerCase()
+            )
+        ) {
+            return String(
+                session.status
+            ).toLowerCase();
+        }
+
+
+        const start =
+            session?.startDate
+                ? new Date(session.startDate)
+                : null;
+
+        const end =
+            session?.endDate
+                ? new Date(session.endDate)
+                : null;
+
+
+        if (
+            !start ||
+            !end ||
+            Number.isNaN(start.getTime()) ||
+            Number.isNaN(end.getTime())
+        ) {
+            return session?.isActive
+                ? "ongoing"
+                : "upcoming";
+        }
+
+
         const today = new Date();
-
-        const start = new Date(
-            session.startDate
-        );
-
-        const end = new Date(
-            session.endDate
-        );
 
 
         if (today > end) {
             return "completed";
         }
+
 
         if (
             today >= start &&
@@ -278,6 +323,7 @@ const Sessions = () => {
         ) {
             return "ongoing";
         }
+
 
         return "upcoming";
     };
@@ -298,33 +344,59 @@ const Sessions = () => {
         return sessions.filter(
             (session) => {
 
+                const degreeClass =
+                    getDegreeClass(session);
+
+
                 const status =
                     getStatus(session);
 
 
+                const degreeClassName =
+                    degreeClass?.name ||
+                    session?.degreeClassId?.name ||
+                    "";
+
+
+                const degreeClassCode =
+                    degreeClass?.code ||
+                    session?.degreeClassId?.code ||
+                    "";
+
+
                 const matchesSearch =
                     !value ||
-                    session.name
+                    session?.name
                         ?.toLowerCase()
                         .includes(value) ||
-                    session.term
+
+                    session?.term
                         ?.toLowerCase()
                         .includes(value) ||
+
                     String(
-                        session.year || ""
-                    ).includes(value);
+                        session?.year || ""
+                    ).includes(value) ||
+
+                    degreeClassName
+                        .toLowerCase()
+                        .includes(value) ||
+
+                    degreeClassCode
+                        .toLowerCase()
+                        .includes(value);
 
 
                 const matchesTerm =
                     termFilter === "all" ||
-                    session.term ===
+                    session?.term ===
                         termFilter;
 
 
                 const matchesYear =
                     yearFilter === "all" ||
                     String(
-                        session.year
+                        session?.year
                     ) ===
                         String(
                             yearFilter
@@ -353,115 +425,152 @@ const Sessions = () => {
         yearFilter,
         statusFilter,
         sessionStatus,
+        degreeClasses,
     ]);
 
 
     // =====================================================
-    // GROUP SESSIONS BY DEGREE CLASS
+    // GROUP BY DEGREE CLASS
     // =====================================================
 
     const groupedSessions = useMemo(() => {
 
         const groups = {};
 
-        filteredSessions.forEach((session) => {
 
-            const degreeClassId =
-                session.degreeClassId?._id ||
-                session.degreeClassId?.id ||
-                session.degreeClassId;
-
-            const normalizedId =
-                degreeClassId
-                    ? String(degreeClassId)
-                    : "unknown";
-
-
-            if (!groups[normalizedId]) {
+        filteredSessions.forEach(
+            (session) => {
 
                 const degreeClass =
-                    degreeClasses.find(
-                        (item) =>
-                            String(getId(item)) ===
-                            normalizedId
-                    );
+                    getDegreeClass(session);
 
 
-                groups[normalizedId] = {
+                const rawId =
+                    session?.degreeClassId?._id ||
+                    session?.degreeClassId?.id ||
+                    session?.degreeClassId ||
+                    degreeClass?._id ||
+                    degreeClass?.id;
 
-                    degreeClassId:
-                        degreeClassId || null,
 
-                    degreeClassName:
-                        session.degreeClassId?.name ||
-                        degreeClass?.name ||
-                        "Unknown Degree Class",
+                const normalizedId =
+                    rawId
+                        ? String(rawId)
+                        : "unknown";
 
-                    degreeClassCode:
-                        session.degreeClassId?.code ||
-                        degreeClass?.code ||
-                        "",
 
-                    totalSemesters:
+                if (!groups[normalizedId]) {
+
+                    const startSemester =
                         Number(
-                            session.degreeClassId?.duration ||
-                            degreeClass?.duration ||
-                            0
-                        ) * 2,
+                            degreeClass?.startSemester ||
+                            session?.degreeClassId?.startSemester ||
+                            1
+                        );
 
-                    sessions: [],
-                };
+
+                    const endSemester =
+                        Number(
+                            degreeClass?.endSemester ||
+                            session?.degreeClassId?.endSemester ||
+                            startSemester
+                        );
+
+
+                    const totalSemesters =
+                        endSemester >= startSemester
+                            ? endSemester -
+                              startSemester +
+                              1
+                            : 0;
+
+
+                    groups[normalizedId] = {
+
+                        degreeClassId:
+                            rawId || null,
+
+                        degreeClassName:
+                            degreeClass?.name ||
+                            session?.degreeClassId?.name ||
+                            "Unknown Degree Class",
+
+                        degreeClassCode:
+                            degreeClass?.code ||
+                            session?.degreeClassId?.code ||
+                            "",
+
+                        programType:
+                            degreeClass?.programType ||
+                            session?.degreeClassId?.programType ||
+                            "",
+
+                        startSemester,
+
+                        endSemester,
+
+                        totalSemesters,
+
+                        sessions: [],
+                    };
+                }
+
+
+                groups[
+                    normalizedId
+                ].sessions.push(session);
             }
-
-
-            groups[normalizedId].sessions.push(
-                session
-            );
-        });
+        );
 
 
         return Object.values(groups)
-            .sort((a, b) =>
-                a.degreeClassName.localeCompare(
-                    b.degreeClassName
-                )
+            .sort(
+                (a, b) =>
+                    a.degreeClassName.localeCompare(
+                        b.degreeClassName
+                    )
             )
-            .map((group) => ({
+            .map(
+                (group) => ({
 
-                ...group,
+                    ...group,
 
-                sessions:
-                    [...group.sessions].sort(
-                        (a, b) => {
+                    sessions:
+                        [...group.sessions].sort(
+                            (a, b) => {
 
-                            if (
-                                Number(a.year) !==
-                                Number(b.year)
-                            ) {
-                                return (
-                                    Number(a.year) -
+                                if (
+                                    Number(a.year) !==
                                     Number(b.year)
-                                );
-                            }
+                                ) {
+                                    return (
+                                        Number(a.year) -
+                                        Number(b.year)
+                                    );
+                                }
 
-                            if (
-                                a.term === "Spring" &&
-                                b.term === "Fall"
-                            ) {
-                                return -1;
-                            }
 
-                            if (
-                                a.term === "Fall" &&
-                                b.term === "Spring"
-                            ) {
-                                return 1;
-                            }
+                                if (
+                                    a.term === "Spring" &&
+                                    b.term === "Fall"
+                                ) {
+                                    return -1;
+                                }
 
-                            return 0;
-                        }
-                    ),
-            }));
+
+                                if (
+                                    a.term === "Fall" &&
+                                    b.term === "Spring"
+                                ) {
+                                    return 1;
+                                }
+
+
+                                return 0;
+                            }
+                        ),
+                })
+            );
 
     }, [
         filteredSessions,
@@ -479,7 +588,7 @@ const Sessions = () => {
             sessions
                 .map(
                     (session) =>
-                        session.year
+                        session?.year
                 )
                 .filter(Boolean);
 
@@ -513,187 +622,6 @@ const Sessions = () => {
                 [name]: value,
             })
         );
-
-        if (name === "degreeClassId") {
-            fetchClassSessionInfo(value);
-        }
-    };
-
-
-    // =====================================================
-    // CLASS SESSION INFO
-    // =====================================================
-
-    const fetchClassSessionInfo = async (
-        degreeClassId
-    ) => {
-
-        if (!degreeClassId) {
-
-            setClassSessionInfo(null);
-
-            return;
-        }
-
-        try {
-
-            setLoadingClassInfo(true);
-
-            setClassSessionInfo(null);
-
-            const batchesResponse =
-                await getBatches();
-
-            const allBatches =
-                batchesResponse?.data ||
-                batchesResponse ||
-                [];
-
-            const classBatches = (
-                Array.isArray(allBatches)
-                    ? allBatches
-                    : []
-            ).filter((batch) => {
-
-                const batchClassId =
-                    batch.degreeClassId?._id ||
-                    batch.degreeClassId?.id ||
-                    batch.degreeClassId;
-
-                return (
-                    String(batchClassId) ===
-                    String(degreeClassId)
-                );
-            });
-
-
-            if (classBatches.length === 0) {
-
-                setClassSessionInfo({
-                    batches: [],
-                });
-
-                return;
-            }
-
-
-            const batchSummaries =
-                await Promise.all(
-                    classBatches.map(
-                        async (batch) => {
-
-                            const batchId =
-                                getId(batch);
-
-                            try {
-
-                                const semResponse =
-                                    await getBatchSemesters(
-                                        batchId
-                                    );
-
-                                const semData =
-                                    semResponse?.data ||
-                                    semResponse ||
-                                    {};
-
-                                const history =
-                                    Array.isArray(
-                                        semData.history
-                                    )
-                                        ? semData.history
-                                        : [];
-
-                                const currentLog =
-                                    history.find(
-                                        (log) =>
-                                            log.semester ===
-                                            semData.current
-                                    );
-
-                                return {
-                                    batchId,
-
-                                    batchName:
-                                        batch.name ||
-                                        `${
-                                            batch.degreeClassId
-                                                ?.code ||
-                                            "Batch"
-                                        }-${
-                                            batch
-                                                .startSessionId
-                                                ?.year || ""
-                                        }`,
-
-                                    status: semData.status,
-
-                                    usedSessions:
-                                        history.map(
-                                            (log) => ({
-                                                semester:
-                                                    log.semester,
-                                                sessionName:
-                                                    log.sessionId
-                                                        ?.name ||
-                                                    "-",
-                                            })
-                                        ),
-
-                                    currentSessionName:
-                                        currentLog
-                                            ?.sessionId
-                                            ?.name ||
-                                        null,
-
-                                    currentSemester:
-                                        semData.current ||
-                                        null,
-
-                                    nextExpectedSessionName:
-                                        semData
-                                            .nextExpectedSession
-                                            ?.name ||
-                                        null,
-                                };
-
-                            } catch (err) {
-
-                                return {
-                                    batchId,
-
-                                    batchName:
-                                        batch.name ||
-                                        "Batch",
-
-                                    error:
-                                        "Could not load semester history for this batch.",
-                                };
-                            }
-                        }
-                    )
-                );
-
-            setClassSessionInfo({
-                batches: batchSummaries,
-            });
-
-        } catch (err) {
-
-            console.error(
-                "Class session info fetch error:",
-                err
-            );
-
-            setClassSessionInfo({
-                error:
-                    "Could not load session info for this class.",
-            });
-
-        } finally {
-
-            setLoadingClassInfo(false);
-        }
     };
 
 
@@ -704,8 +632,7 @@ const Sessions = () => {
     const handleOpenGenerate = () => {
 
         setError("");
-
-        setClassSessionInfo(null);
+        setGenerateResult(null);
 
         setGenerateForm({
             degreeClassId:
@@ -714,116 +641,14 @@ const Sessions = () => {
                           degreeClasses[0]
                       )
                     : "",
-            startYear: new Date().getFullYear(),
+
+            startYear:
+                new Date().getFullYear(),
+
+            startTerm: "Fall",
         });
 
         setShowGenerateModal(true);
-    };
-
-
-    const handleOpenAddSession = () => {
-
-        setError("");
-
-        setAddForm({
-            name: "",
-            term: "",
-            year: new Date().getFullYear(),
-            isActive: true,
-        });
-
-        setShowAddModal(true);
-    };
-
-
-    // =====================================================
-    // ADD SESSION
-    // =====================================================
-
-    const handleAddSession = async (e) => {
-
-        e.preventDefault();
-
-        setError("");
-
-
-        if (!addForm.name.trim()) {
-
-            setError(
-                "Session name is required."
-            );
-
-            return;
-        }
-
-
-        if (!addForm.term) {
-
-            setError(
-                "Please select a term."
-            );
-
-            return;
-        }
-
-
-        if (!addForm.year) {
-
-            setError(
-                "Year is required."
-            );
-
-            return;
-        }
-
-
-        try {
-
-            setGenerating(true);
-
-            const payload = {
-
-                name:
-                    addForm.name.trim(),
-
-                term:
-                    addForm.term,
-
-                year:
-                    Number(addForm.year),
-
-                isActive:
-                    Boolean(
-                        addForm.isActive
-                    ),
-            };
-
-
-            await createSession(
-                payload
-            );
-
-            setShowAddModal(false);
-
-            await fetchData();
-
-        } catch (err) {
-
-            console.error(
-                "Create session error:",
-                err
-            );
-
-            setError(
-                err?.response?.data?.message ||
-                err?.message ||
-                "Failed to create session."
-            );
-
-        } finally {
-
-            setGenerating(false);
-        }
     };
 
 
@@ -836,9 +661,12 @@ const Sessions = () => {
         e.preventDefault();
 
         setError("");
+        setGenerateResult(null);
 
 
-        if (!generateForm.degreeClassId) {
+        if (
+            !generateForm.degreeClassId
+        ) {
 
             setError(
                 "Please select a degree class."
@@ -848,10 +676,24 @@ const Sessions = () => {
         }
 
 
-        if (!generateForm.startYear) {
+        if (
+            !generateForm.startYear
+        ) {
 
             setError(
                 "Please enter a start year."
+            );
+
+            return;
+        }
+
+
+        if (
+            !generateForm.startTerm
+        ) {
+
+            setError(
+                "Please select the starting term."
             );
 
             return;
@@ -872,6 +714,9 @@ const Sessions = () => {
                     Number(
                         generateForm.startYear
                     ),
+
+                startTerm:
+                    generateForm.startTerm,
             };
 
 
@@ -887,31 +732,44 @@ const Sessions = () => {
                 {};
 
 
+            const created =
+                Array.isArray(
+                    result?.created
+                )
+                    ? result.created
+                    : Array.isArray(
+                          response?.created
+                      )
+                    ? response.created
+                    : [];
+
+
+            const skipped =
+                Array.isArray(
+                    result?.skipped
+                )
+                    ? result.skipped
+                    : Array.isArray(
+                          response?.skipped
+                      )
+                    ? response.skipped
+                    : [];
+
+
             setGenerateResult({
 
                 message:
                     response?.message ||
-                    `${
-                        result?.created?.length ||
-                        0
-                    } session(s) created, ${
-                        result?.skipped?.length ||
-                        0
-                    } skipped`,
+                    result?.message ||
+                    `${created.length} session(s) created${
+                        skipped.length
+                            ? `, ${skipped.length} skipped`
+                            : ""
+                    }.`,
 
-                created:
-                    Array.isArray(
-                        result?.created
-                    )
-                        ? result.created
-                        : [],
+                created,
 
-                skipped:
-                    Array.isArray(
-                        result?.skipped
-                    )
-                        ? result.skipped
-                        : [],
+                skipped,
             });
 
 
@@ -920,7 +778,7 @@ const Sessions = () => {
         } catch (err) {
 
             console.error(
-                "Generate session error:",
+                "Generate sessions error:",
                 err
             );
 
@@ -945,38 +803,43 @@ const Sessions = () => {
 
         setEditingSession(session);
 
+
         setEditForm({
 
             name:
-                session.name ||
+                session?.name ||
                 "",
 
             term:
-                session.term ||
+                session?.term ||
                 "",
 
             year:
-                session.year ||
+                session?.year ||
                 "",
 
             startDate:
-                session.startDate
-                    ? session.startDate.substring(
+                session?.startDate
+                    ? String(
+                          session.startDate
+                      ).substring(
                           0,
                           10
                       )
                     : "",
 
             endDate:
-                session.endDate
-                    ? session.endDate.substring(
+                session?.endDate
+                    ? String(
+                          session.endDate
+                      ).substring(
                           0,
                           10
                       )
                     : "",
 
             isActive:
-                session.isActive === true,
+                session?.isActive === true,
         });
 
 
@@ -1002,11 +865,11 @@ const Sessions = () => {
 
         setEditForm(
             (prev) => ({
+
                 ...prev,
 
                 [name]:
-                    type ===
-                    "checkbox"
+                    type === "checkbox"
                         ? checked
                         : value,
             })
@@ -1125,7 +988,9 @@ const Sessions = () => {
                     editForm.endDate,
 
                 isActive:
-                    editForm.isActive,
+                    Boolean(
+                        editForm.isActive
+                    ),
             };
 
 
@@ -1162,14 +1027,9 @@ const Sessions = () => {
             );
 
 
-            setShowEditModal(
-                false
-            );
+            setShowEditModal(false);
 
-            setEditingSession(
-                null
-            );
-
+            setEditingSession(null);
 
             await fetchData();
 
@@ -1195,80 +1055,97 @@ const Sessions = () => {
 
 
     // =====================================================
-    // DELETE
+    // DELETE ALL SESSIONS OF DEGREE CLASS
     // =====================================================
 
-    const handleDelete = async (
-        session
-    ) => {
+    const handleDeleteDegreeClassSessions =
+        async (group) => {
 
-        const sessionId =
-            getId(session);
-
-
-        const confirmed =
-            window.confirm(
-                `Are you sure you want to delete "${session.name}"?`
-            );
+            const degreeClassId =
+                group?.degreeClassId;
 
 
-        if (!confirmed) {
-            return;
-        }
+            if (!degreeClassId) {
+
+                alert(
+                    "Degree class ID is missing."
+                );
+
+                return;
+            }
 
 
-        try {
-
-            setDeletingId(
-                sessionId
-            );
-
-
-            await deleteSession(
-                sessionId
-            );
+            const confirmed =
+                window.confirm(
+                    `Are you sure you want to delete all ${group.sessions.length} session(s) of "${group.degreeClassName}"?`
+                );
 
 
-            setSessions(
-                (prev) =>
-                    prev.filter(
-                        (item) =>
-                            String(
-                                getId(item)
-                            ) !==
-                            String(
-                                sessionId
-                            )
+            if (!confirmed) {
+                return;
+            }
+
+
+            try {
+
+                setDeletingId(
+                    String(
+                        degreeClassId
                     )
-            );
+                );
 
 
-            await fetchData();
-
-        } catch (err) {
-
-            console.error(
-                "Delete session error:",
-                err
-            );
+                await deleteSessionsByDegreeClass(
+                    degreeClassId
+                );
 
 
-            alert(
-                err?.response?.data?.message ||
-                "Failed to delete session."
-            );
+                setSessions(
+                    (prev) =>
+                        prev.filter(
+                            (session) => {
 
-        } finally {
+                                const id =
+                                    session?.degreeClassId?._id ||
+                                    session?.degreeClassId?.id ||
+                                    session?.degreeClassId;
 
-            setDeletingId(
-                null
-            );
-        }
-    };
+                                return (
+                                    String(id) !==
+                                    String(
+                                        degreeClassId
+                                    )
+                                );
+                            }
+                        )
+                );
+
+
+                await fetchData();
+
+            } catch (err) {
+
+                console.error(
+                    "Bulk delete sessions error:",
+                    err
+                );
+
+
+                alert(
+                    err?.response?.data?.message ||
+                    err?.message ||
+                    "Failed to delete sessions."
+                );
+
+            } finally {
+
+                setDeletingId(null);
+            }
+        };
 
 
     // =====================================================
-    // CLOSE GENERATE
+    // CLOSE GENERATE MODAL
     // =====================================================
 
     const closeGenerateModal = () => {
@@ -1278,47 +1155,26 @@ const Sessions = () => {
         }
 
 
-        setShowGenerateModal(
-            false
-        );
+        setShowGenerateModal(false);
 
-        setGenerateResult(
-            null
-        );
-
-        setClassSessionInfo(
-            null
-        );
-
-        setGenerateForm({
-            degreeClassId: "",
-            startYear: new Date().getFullYear(),
-        });
-    };
-
-
-    const closeAddModal = () => {
-
-        if (generating) {
-            return;
-        }
-
-
-        setShowAddModal(false);
+        setGenerateResult(null);
 
         setError("");
 
-        setAddForm({
-            name: "",
-            term: "",
-            year: new Date().getFullYear(),
-            isActive: true,
+        setGenerateForm({
+
+            degreeClassId: "",
+
+            startYear:
+                new Date().getFullYear(),
+
+            startTerm: "Fall",
         });
     };
 
 
     // =====================================================
-    // CLOSE EDIT
+    // CLOSE EDIT MODAL
     // =====================================================
 
     const closeEditModal = () => {
@@ -1328,13 +1184,31 @@ const Sessions = () => {
         }
 
 
-        setShowEditModal(
-            false
-        );
+        setShowEditModal(false);
 
-        setEditingSession(
-            null
-        );
+        setEditingSession(null);
+
+        setError("");
+    };
+
+
+    // =====================================================
+    // VIEW SESSION
+    // =====================================================
+
+    const handleView = (session) => {
+
+        setViewingSession(session);
+
+        setShowViewModal(true);
+    };
+
+
+    const closeViewModal = () => {
+
+        setShowViewModal(false);
+
+        setViewingSession(null);
     };
 
 
@@ -1358,7 +1232,6 @@ const Sessions = () => {
                 parsed.getTime()
             )
         ) {
-
             return "-";
         }
 
@@ -1383,18 +1256,18 @@ const Sessions = () => {
     ) => {
 
         if (
-            status ===
-            "ongoing"
+            status === "ongoing"
         ) {
             return "Ongoing";
         }
 
+
         if (
-            status ===
-            "completed"
+            status === "completed"
         ) {
             return "Completed";
         }
+
 
         return "Upcoming";
     };
@@ -1441,6 +1314,18 @@ const Sessions = () => {
 
 
     // =====================================================
+    // SELECTED VIEW DEGREE CLASS
+    // =====================================================
+
+    const viewingDegreeClass =
+        viewingSession
+            ? getDegreeClass(
+                  viewingSession
+              )
+            : null;
+
+
+    // =====================================================
     // RENDER
     // =====================================================
 
@@ -1458,10 +1343,13 @@ const Sessions = () => {
                 <div className="session-title-section">
 
                     <div className="session-main-icon">
+
                         <CalendarDays
                             size={27}
                         />
+
                     </div>
+
 
                     <div>
 
@@ -1470,9 +1358,9 @@ const Sessions = () => {
                         </h1>
 
                         <p>
-                            Manage Spring, Fall,
-                            academic years and
-                            session history
+                            Manage degree class
+                            academic sessions and
+                            semester history
                         </p>
 
                     </div>
@@ -1480,47 +1368,20 @@ const Sessions = () => {
                 </div>
 
 
-                <div
-                    style={{
-                        display: "flex",
-                        gap: 12,
-                        alignItems: "center",
-                    }}
+                <button
+                    className="add-session-btn"
+                    onClick={
+                        handleOpenGenerate
+                    }
                 >
 
-                    <button
-                        className="add-session-btn"
-                        onClick={
-                            handleOpenAddSession
-                        }
-                        style={{
-                            background: "#3b82f6",
-                        }}
-                    >
+                    <Sparkles
+                        size={18}
+                    />
 
-                        <Plus size={18} />
+                    Generate Sessions
 
-                        Add Session
-
-                    </button>
-
-
-                    <button
-                        className="add-session-btn"
-                        onClick={
-                            handleOpenGenerate
-                        }
-                    >
-
-                        <Sparkles
-                            size={18}
-                        />
-
-                        Generate Sessions
-
-                    </button>
-
-                </div>
+                </button>
 
             </div>
 
@@ -1541,6 +1402,7 @@ const Sessions = () => {
 
                     </div>
 
+
                     <div className="next-session-alert-content">
 
                         <strong>
@@ -1548,21 +1410,21 @@ const Sessions = () => {
                         </strong>
 
                         <span>
-                            The last available session
-                            has been completed. Create
-                            the next Spring + Fall cycle
-                            when the new academic year
-                            is ready.
+                            The current session cycle
+                            has been completed.
+                            Generate the next sessions
+                            for the required degree class.
                         </span>
 
                     </div>
+
 
                     <button
                         onClick={
                             handleOpenGenerate
                         }
                     >
-                        Generate Next Session
+                        Generate Sessions
                     </button>
 
                 </div>
@@ -1593,6 +1455,7 @@ const Sessions = () => {
                         </button>
 
                     </div>
+
                 )}
 
 
@@ -1616,6 +1479,7 @@ const Sessions = () => {
                         </strong>
 
                     </div>
+
 
                     <div className="session-stat-icon blue">
 
@@ -1642,6 +1506,7 @@ const Sessions = () => {
 
                     </div>
 
+
                     <div className="session-stat-icon gray">
 
                         <CheckCircle2
@@ -1667,6 +1532,7 @@ const Sessions = () => {
 
                     </div>
 
+
                     <div className="session-stat-icon green">
 
                         <Clock3
@@ -1691,6 +1557,7 @@ const Sessions = () => {
                         </strong>
 
                     </div>
+
 
                     <div className="session-stat-icon purple">
 
@@ -1719,7 +1586,7 @@ const Sessions = () => {
 
                     <input
                         type="text"
-                        placeholder="Search sessions..."
+                        placeholder="Search sessions or degree class..."
                         value={
                             search
                         }
@@ -1775,6 +1642,7 @@ const Sessions = () => {
                     <option value="all">
                         All Years
                     </option>
+
 
                     {availableYears.map(
                         (year) => (
@@ -1835,7 +1703,7 @@ const Sessions = () => {
 
 
             {/* =================================================
-                UPDATED DEGREE CLASS TABLE
+                DEGREE CLASS TABLE
             ================================================= */}
 
             <div className="sessions-table-card">
@@ -1853,7 +1721,11 @@ const Sessions = () => {
                                 </th>
 
                                 <th>
-                                    TOTAL SEMESTERS
+                                    PROGRAM
+                                </th>
+
+                                <th>
+                                    SEMESTERS
                                 </th>
 
                                 <th>
@@ -1876,7 +1748,7 @@ const Sessions = () => {
                                 <tr>
 
                                     <td
-                                        colSpan="4"
+                                        colSpan="5"
                                     >
 
                                         <div className="session-loading">
@@ -1903,214 +1775,273 @@ const Sessions = () => {
                             ) : groupedSessions.length > 0 ? (
 
                                 groupedSessions.map(
-                                    (group) => (
+                                    (group) => {
 
-                                        <tr
-                                            key={
-                                                group.degreeClassId ||
-                                                group.degreeClassName
-                                            }
-                                        >
+                                        const isDeleting =
+                                            deletingId ===
+                                            String(
+                                                group.degreeClassId
+                                            );
 
-                                            {/* DEGREE CLASS */}
 
-                                            <td>
+                                        return (
 
-                                                <div className="session-name-cell">
+                                            <tr
+                                                key={
+                                                    group.degreeClassId ||
+                                                    group.degreeClassName
+                                                }
+                                            >
 
-                                                    <div className="session-avatar">
+                                                {/* DEGREE CLASS */}
 
-                                                        {group.degreeClassCode
-                                                            ? group.degreeClassCode
-                                                                .substring(0, 3)
-                                                                .toUpperCase()
-                                                            : "DC"}
+                                                <td>
+
+                                                    <div className="session-name-cell">
+
+                                                        <div className="session-avatar">
+
+                                                            {group.degreeClassCode
+                                                                ? group.degreeClassCode
+                                                                    .substring(
+                                                                        0,
+                                                                        3
+                                                                    )
+                                                                    .toUpperCase()
+                                                                : "DC"}
+
+                                                        </div>
+
+
+                                                        <div>
+
+                                                            <strong>
+                                                                {
+                                                                    group.degreeClassName
+                                                                }
+                                                            </strong>
+
+
+                                                            {group.degreeClassCode && (
+
+                                                                <small>
+                                                                    Code:{" "}
+                                                                    {
+                                                                        group.degreeClassCode
+                                                                    }
+                                                                </small>
+
+                                                            )}
+
+                                                        </div>
 
                                                     </div>
 
-                                                    <div>
+                                                </td>
 
-                                                        <strong>
+
+                                                {/* PROGRAM TYPE */}
+
+                                                <td>
+
+                                                    <span className="session-year">
+
+                                                        {group.programType ||
+                                                            "-"}
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                {/* SEMESTERS */}
+
+                                                <td>
+
+                                                    <span className="session-year">
+
+                                                        Sem{" "}
+                                                        {
+                                                            group.startSemester
+                                                        }
+
+                                                        {" - "}
+
+                                                        {
+                                                            group.endSemester
+                                                        }
+
+                                                        <small
+                                                            style={{
+                                                                display:
+                                                                    "block",
+                                                                marginTop:
+                                                                    4,
+                                                                opacity:
+                                                                    0.7,
+                                                            }}
+                                                        >
+
                                                             {
-                                                                group.degreeClassName
-                                                            }
-                                                        </strong>
+                                                                group.totalSemesters
+                                                            }{" "}
+                                                            {group.totalSemesters ===
+                                                            1
+                                                                ? "Semester"
+                                                                : "Semesters"}
 
-                                                        {group.degreeClassCode && (
-                                                            <small>
-                                                                Code:{" "}
-                                                                {
-                                                                    group.degreeClassCode
-                                                                }
-                                                            </small>
+                                                        </small>
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                {/* CREATED SESSIONS */}
+
+                                                <td>
+
+                                                    <div className="created-sessions-list">
+
+                                                        {group.sessions.length >
+                                                        0 ? (
+
+                                                            group.sessions.map(
+                                                                (
+                                                                    session
+                                                                ) => (
+
+                                                                    <span
+                                                                        key={getId(
+                                                                            session
+                                                                        )}
+                                                                        className={`created-session-badge ${
+                                                                            session?.term?.toLowerCase() ===
+                                                                            "spring"
+                                                                                ? "spring"
+                                                                                : "fall"
+                                                                        }`}
+                                                                    >
+
+                                                                        {session?.name ||
+                                                                            `${session?.term || ""} ${session?.year || ""}`}
+
+                                                                    </span>
+
+                                                                )
+                                                            )
+
+                                                        ) : (
+
+                                                            <span>
+                                                                No sessions
+                                                            </span>
+
                                                         )}
 
                                                     </div>
 
-                                                </div>
-
-                                            </td>
+                                                </td>
 
 
-                                            {/* TOTAL SEMESTERS */}
+                                                {/* ACTIONS */}
 
-                                            <td>
+                                                <td>
 
-                                                <span className="session-year">
+                                                    <div className="session-actions">
 
-                                                    {
-                                                        group.totalSemesters
-                                                    }
+                                                        {group.sessions.length >
+                                                            0 && (
 
-                                                    {" "}
-
-                                                    {group.totalSemesters === 1
-                                                        ? "Semester"
-                                                        : "Semesters"}
-
-                                                </span>
-
-                                            </td>
-
-
-                                            {/* CREATED SESSIONS */}
-
-                                            <td>
-
-                                                <div className="created-sessions-list">
-
-                                                    {group.sessions.map(
-                                                        (session) => (
-
-                                                            <span
-                                                                key={
-                                                                    getId(session)
+                                                            <button
+                                                                className="view-session-btn"
+                                                                title="View session"
+                                                                onClick={() =>
+                                                                    handleView(
+                                                                        group.sessions[
+                                                                            0
+                                                                        ]
+                                                                    )
                                                                 }
-                                                                className={`created-session-badge ${
-                                                                    session.term?.toLowerCase() ===
-                                                                    "spring"
-                                                                        ? "spring"
-                                                                        : "fall"
-                                                                }`}
                                                             >
 
-                                                                {session.name}
-
-                                                            </span>
-
-                                                        )
-                                                    )}
-
-                                                </div>
-
-                                            </td>
-
-
-                                            {/* ACTIONS */}
-
-                                            <td>
-
-                                                <div className="session-actions">
-
-                                                    {group.sessions.length > 0 && (
-
-                                                        <button
-                                                            className="view-session-btn"
-                                                            title="View"
-                                                            onClick={() =>
-                                                                setViewingSession(
-                                                                    group.sessions[0]
-                                                                )
-                                                            }
-                                                        >
-
-                                                            <Eye
-                                                                size={16}
-                                                            />
-
-                                                        </button>
-
-                                                    )}
-
-                                                    {group.sessions.length > 0 && (
-
-                                                        <button
-                                                            className="edit-session-btn"
-                                                            title="Edit latest session"
-                                                            onClick={() =>
-                                                                handleEdit(
-                                                                    group.sessions[
-                                                                        group.sessions.length -
-                                                                            1
-                                                                    ]
-                                                                )
-                                                            }
-                                                        >
-
-                                                            <Pencil
-                                                                size={16}
-                                                            />
-
-                                                        </button>
-
-                                                    )}
-
-                                                    {group.sessions.length > 0 && (
-
-                                                        <button
-                                                            className="delete-session-btn"
-                                                            title="Delete latest session"
-                                                            disabled={
-                                                                deletingId ===
-                                                                getId(
-                                                                    group.sessions[
-                                                                        group.sessions.length -
-                                                                            1
-                                                                    ]
-                                                                )
-                                                            }
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    group.sessions[
-                                                                        group.sessions.length -
-                                                                            1
-                                                                    ]
-                                                                )
-                                                            }
-                                                        >
-
-                                                            {deletingId ===
-                                                            getId(
-                                                                group.sessions[
-                                                                    group.sessions.length -
-                                                                        1
-                                                                ]
-                                                            ) ? (
-
-                                                                <FaSpinner
-                                                                    className="session-button-spinner"
-                                                                    size={15}
-                                                                />
-
-                                                            ) : (
-
-                                                                <Trash2
+                                                                <Eye
                                                                     size={16}
                                                                 />
 
-                                                            )}
+                                                            </button>
 
-                                                        </button>
+                                                        )}
 
-                                                    )}
 
-                                                </div>
+                                                        {group.sessions.length >
+                                                            0 && (
 
-                                            </td>
+                                                            <button
+                                                                className="edit-session-btn"
+                                                                title="Edit session"
+                                                                onClick={() =>
+                                                                    handleEdit(
+                                                                        group.sessions[
+                                                                            group.sessions.length -
+                                                                                1
+                                                                        ]
+                                                                    )
+                                                                }
+                                                            >
 
-                                        </tr>
+                                                                <Pencil
+                                                                    size={16}
+                                                                />
 
-                                    )
+                                                            </button>
+
+                                                        )}
+
+
+                                                        {group.degreeClassId && (
+
+                                                            <button
+                                                                className="delete-session-btn"
+                                                                title="Delete all sessions"
+                                                                disabled={
+                                                                    isDeleting
+                                                                }
+                                                                onClick={() =>
+                                                                    handleDeleteDegreeClassSessions(
+                                                                        group
+                                                                    )
+                                                                }
+                                                            >
+
+                                                                {isDeleting ? (
+
+                                                                    <FaSpinner
+                                                                        className="session-button-spinner"
+                                                                        size={15}
+                                                                    />
+
+                                                                ) : (
+
+                                                                    <Trash2
+                                                                        size={16}
+                                                                    />
+
+                                                                )}
+
+                                                            </button>
+
+                                                        )}
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+
+                                        );
+
+                                    }
                                 )
 
                             ) : (
@@ -2118,7 +2049,7 @@ const Sessions = () => {
                                 <tr>
 
                                     <td
-                                        colSpan="4"
+                                        colSpan="5"
                                     >
 
                                         <div className="session-empty">
@@ -2132,9 +2063,9 @@ const Sessions = () => {
                                             </h3>
 
                                             <p>
-                                                Generate a Spring
-                                                + Fall academic
-                                                session cycle.
+                                                Select a degree class
+                                                and generate its
+                                                academic sessions.
                                             </p>
 
                                             <button
@@ -2163,259 +2094,6 @@ const Sessions = () => {
 
 
             {/* =================================================
-                ADD SESSION MODAL
-            ================================================= */}
-
-            {showAddModal && (
-
-                <div className="session-modal-overlay">
-
-                    <div className="session-modal generate-session-modal">
-
-                        <div className="session-modal-header">
-
-                            <div>
-
-                                <div className="generate-modal-title">
-
-                                    <div className="generate-icon">
-
-                                        <Plus
-                                            size={20}
-                                        />
-
-                                    </div>
-
-                                    <div>
-
-                                        <h2>
-                                            Add Session
-                                        </h2>
-
-                                        <p>
-                                            Create a single session manually
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-
-                            <button
-                                className="session-close-btn"
-                                onClick={
-                                    closeAddModal
-                                }
-                            >
-
-                                <X
-                                    size={19}
-                                />
-
-                            </button>
-
-                        </div>
-
-
-                        <form
-                            onSubmit={
-                                handleAddSession
-                            }
-                        >
-
-                            {error && (
-
-                                <div className="session-form-error">
-
-                                    <AlertCircle
-                                        size={17}
-                                    />
-
-                                    {error}
-
-                                </div>
-
-                            )}
-
-
-                            <div className="session-form-group">
-
-                                <label>
-                                    Session Name{" "}
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="name"
-                                    value={
-                                        addForm.name
-                                    }
-                                    onChange={(e) =>
-                                        setAddForm(
-                                            (prev) => ({
-                                                ...prev,
-                                                name: e.target.value,
-                                            })
-                                        )
-                                    }
-                                    placeholder="Spring 2026"
-                                    required
-                                />
-
-                            </div>
-
-
-                            <div className="session-form-group">
-
-                                <label>
-                                    Term{" "}
-                                    <span>*</span>
-                                </label>
-
-                                <select
-                                    name="term"
-                                    value={
-                                        addForm.term
-                                    }
-                                    onChange={(e) =>
-                                        setAddForm(
-                                            (prev) => ({
-                                                ...prev,
-                                                term: e.target.value,
-                                            })
-                                        )
-                                    }
-                                    required
-                                >
-
-                                    <option value="">
-                                        Select Term
-                                    </option>
-
-                                    <option value="Spring">
-                                        Spring
-                                    </option>
-
-                                    <option value="Fall">
-                                        Fall
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-
-                            <div className="session-form-group">
-
-                                <label>
-                                    Year{" "}
-                                    <span>*</span>
-                                </label>
-
-                                <input
-                                    type="number"
-                                    name="year"
-                                    min="2020"
-                                    max="2100"
-                                    value={
-                                        addForm.year
-                                    }
-                                    onChange={(e) =>
-                                        setAddForm(
-                                            (prev) => ({
-                                                ...prev,
-                                                year: e.target.value,
-                                            })
-                                        )
-                                    }
-                                    required
-                                />
-
-                            </div>
-
-
-                            <div className="session-form-group">
-
-                                <label className="session-toggle-label">
-
-                                    <input
-                                        type="checkbox"
-                                        checked={
-                                            addForm.isActive
-                                        }
-                                        onChange={(e) =>
-                                            setAddForm(
-                                                (prev) => ({
-                                                    ...prev,
-                                                    isActive:
-                                                        e.target.checked,
-                                                })
-                                            )
-                                        }
-                                    />
-
-                                    Active session
-
-                                </label>
-
-                            </div>
-
-
-                            <div className="session-modal-footer">
-
-                                <button
-                                    type="button"
-                                    className="session-cancel-btn"
-                                    onClick={
-                                        closeAddModal
-                                    }
-                                >
-                                    Cancel
-                                </button>
-
-
-                                <button
-                                    type="submit"
-                                    className="session-save-btn"
-                                    disabled={
-                                        generating
-                                    }
-                                >
-
-                                    {generating ? (
-
-                                        <>
-                                            <FaSpinner
-                                                className="session-button-spinner"
-                                                size={15}
-                                            />
-
-                                            Saving...
-                                        </>
-
-                                    ) : (
-
-                                        "Create Session"
-
-                                    )}
-
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
-            )}
-
-
-            {/* =================================================
                 GENERATE MODAL
             ================================================= */}
 
@@ -2425,8 +2103,6 @@ const Sessions = () => {
 
                     <div className="session-modal generate-session-modal">
 
-
-                        {/* HEADER */}
 
                         <div className="session-modal-header">
 
@@ -2442,6 +2118,7 @@ const Sessions = () => {
 
                                     </div>
 
+
                                     <div>
 
                                         <h2>
@@ -2449,8 +2126,8 @@ const Sessions = () => {
                                         </h2>
 
                                         <p>
-                                            Create Spring + Fall
-                                            automatically
+                                            Generate all semester
+                                            sessions for a degree class
                                         </p>
 
                                     </div>
@@ -2464,6 +2141,9 @@ const Sessions = () => {
                                 className="session-close-btn"
                                 onClick={
                                     closeGenerateModal
+                                }
+                                disabled={
+                                    generating
                                 }
                             >
 
@@ -2482,36 +2162,41 @@ const Sessions = () => {
                             }
                         >
 
-                            {!generateResult && (
+                            {error && (
+
+                                <div className="session-form-error">
+
+                                    <AlertCircle
+                                        size={17}
+                                    />
+
+                                    {error}
+
+                                </div>
+
+                            )}
+
+
+                            {!generateResult ? (
+
                                 <>
 
-                                    {error && (
-
-                                        <div className="session-form-error">
-
-                                            <AlertCircle
-                                                size={17}
-                                            />
-
-                                            {error}
-
-                                        </div>
-
-                                    )}
-
-
-                                    {/* INFO */}
+                                    {/* INFO BOX */}
 
                                     <div className="generate-info-box">
 
                                         <strong>
-                                            Bulk generation
+                                            Degree Class Based Generation
                                         </strong>
 
                                         <p>
-                                            Select a degree class and enter the
-                                            start year. The backend will generate
-                                            the related session records for that class.
+
+                                            The system will use the
+                                            selected degree class's
+                                            start and end semesters
+                                            to generate the complete
+                                            academic session sequence.
+
                                         </p>
 
                                     </div>
@@ -2522,9 +2207,12 @@ const Sessions = () => {
                                     <div className="session-form-group">
 
                                         <label>
+
                                             Degree Class{" "}
                                             <span>*</span>
+
                                         </label>
+
 
                                         <select
                                             name="degreeClassId"
@@ -2541,6 +2229,7 @@ const Sessions = () => {
                                                 Select Degree Class
                                             </option>
 
+
                                             {degreeClasses.map(
                                                 (item) => {
 
@@ -2549,10 +2238,13 @@ const Sessions = () => {
                                                             item
                                                         );
 
+
                                                     const department =
-                                                        item.departmentId?.name ||
-                                                        item.departmentName ||
+                                                        item?.departmentId
+                                                            ?.name ||
+                                                        item?.departmentName ||
                                                         "";
+
 
                                                     return (
 
@@ -2561,7 +2253,11 @@ const Sessions = () => {
                                                             value={id}
                                                         >
 
-                                                            {item.name}
+                                                            {item?.name}
+
+                                                            {item?.code
+                                                                ? ` — ${item.code}`
+                                                                : ""}
 
                                                             {department
                                                                 ? ` — ${department}`
@@ -2579,12 +2275,133 @@ const Sessions = () => {
                                     </div>
 
 
+                                    {/* PROGRAM PREVIEW */}
+
+                                    {generateForm.degreeClassId && (
+
+                                        (() => {
+
+                                            const selected =
+                                                degreeClasses.find(
+                                                    (item) =>
+                                                        String(
+                                                            getId(
+                                                                item
+                                                            )
+                                                        ) ===
+                                                        String(
+                                                            generateForm.degreeClassId
+                                                        )
+                                                );
+
+
+                                            if (!selected) {
+                                                return null;
+                                            }
+
+
+                                            const start =
+                                                Number(
+                                                    selected.startSemester ||
+                                                    1
+                                                );
+
+
+                                            const end =
+                                                Number(
+                                                    selected.endSemester ||
+                                                    start
+                                                );
+
+
+                                            const total =
+                                                end >= start
+                                                    ? end -
+                                                      start +
+                                                      1
+                                                    : 0;
+
+
+                                            return (
+
+                                                <div
+                                                    className="generate-info-box"
+                                                    style={{
+                                                        marginTop:
+                                                            -4,
+                                                    }}
+                                                >
+
+                                                    <div>
+
+                                                        <strong>
+                                                            {
+                                                                selected.name
+                                                            }
+                                                        </strong>
+
+                                                    </div>
+
+
+                                                    <p
+                                                        style={{
+                                                            marginBottom:
+                                                                0,
+                                                        }}
+                                                    >
+
+                                                        Program Type:{" "}
+                                                        <strong>
+                                                            {
+                                                                selected.programType ||
+                                                                "-"
+                                                            }
+                                                        </strong>
+
+                                                        {" • "}
+
+                                                        Semesters:{" "}
+                                                        <strong>
+                                                            {
+                                                                start
+                                                            }
+                                                            {" - "}
+                                                            {
+                                                                end
+                                                            }
+                                                        </strong>
+
+                                                        {" • "}
+
+                                                        Total:{" "}
+                                                        <strong>
+                                                            {
+                                                                total
+                                                            }
+                                                        </strong>
+
+                                                    </p>
+
+                                                </div>
+
+                                            );
+
+                                        })()
+
+                                    )}
+
+
+                                    {/* START YEAR */}
+
                                     <div className="session-form-group">
 
                                         <label>
+
                                             Start Year{" "}
                                             <span>*</span>
+
                                         </label>
+
 
                                         <input
                                             type="number"
@@ -2603,219 +2420,40 @@ const Sessions = () => {
                                     </div>
 
 
-                                    {/* CLASS SESSION INFO */}
+                                    {/* START TERM */}
 
-                                    {generateForm.degreeClassId && (
+                                    <div className="session-form-group">
 
-                                        <div
-                                            className="class-session-info"
-                                            style={{
-                                                border: "1px solid #e5e7eb",
-                                                borderRadius: 8,
-                                                padding: "10px 12px",
-                                                marginBottom: 16,
-                                                background: "#f9fafb",
-                                            }}
+                                        <label>
+
+                                            Starting Term{" "}
+                                            <span>*</span>
+
+                                        </label>
+
+
+                                        <select
+                                            name="startTerm"
+                                            value={
+                                                generateForm.startTerm
+                                            }
+                                            onChange={
+                                                handleGenerateChange
+                                            }
+                                            required
                                         >
 
-                                            {loadingClassInfo && (
+                                            <option value="Spring">
+                                                Spring
+                                            </option>
 
-                                                <div
-                                                    style={{
-                                                        fontSize: 13,
-                                                        opacity: 0.7,
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        gap: 8,
-                                                    }}
-                                                >
+                                            <option value="Fall">
+                                                Fall
+                                            </option>
 
-                                                    <FaSpinner
-                                                        className="session-button-spinner"
-                                                        size={14}
-                                                    />
+                                        </select>
 
-                                                    Loading session info for this class...
-
-                                                </div>
-
-                                            )}
-
-
-                                            {!loadingClassInfo &&
-                                                classSessionInfo?.error && (
-
-                                                    <div
-                                                        style={{
-                                                            fontSize: 13,
-                                                            color: "#b91c1c",
-                                                        }}
-                                                    >
-                                                        {classSessionInfo.error}
-                                                    </div>
-
-                                                )}
-
-
-                                            {!loadingClassInfo &&
-                                                classSessionInfo &&
-                                                !classSessionInfo.error &&
-                                                classSessionInfo.batches.length === 0 && (
-
-                                                    <div
-                                                        style={{
-                                                            fontSize: 13,
-                                                            opacity: 0.7,
-                                                        }}
-                                                    >
-                                                        No batches exist yet for this class — nothing to check.
-                                                    </div>
-
-                                                )}
-
-
-                                            {!loadingClassInfo &&
-                                                classSessionInfo?.batches?.map(
-                                                    (summary) => (
-
-                                                        <div
-                                                            key={
-                                                                summary.batchId
-                                                            }
-                                                            style={{
-                                                                marginBottom: 10,
-                                                                paddingBottom: 10,
-                                                                borderBottom:
-                                                                    "1px dashed #e5e7eb",
-                                                            }}
-                                                        >
-
-                                                            <strong
-                                                                style={{
-                                                                    fontSize: 13,
-                                                                }}
-                                                            >
-                                                                {
-                                                                    summary.batchName
-                                                                }
-                                                            </strong>
-
-
-                                                            {summary.error ? (
-
-                                                                <div
-                                                                    style={{
-                                                                        fontSize: 12,
-                                                                        color: "#b91c1c",
-                                                                        marginTop: 4,
-                                                                    }}
-                                                                >
-                                                                    {
-                                                                        summary.error
-                                                                    }
-                                                                </div>
-
-                                                            ) : (
-
-                                                                <>
-
-                                                                    <div
-                                                                        style={{
-                                                                            fontSize: 12,
-                                                                            marginTop: 4,
-                                                                        }}
-                                                                    >
-
-                                                                        <span
-                                                                            style={{
-                                                                                opacity: 0.7,
-                                                                            }}
-                                                                        >
-                                                                            Sessions used so far:
-                                                                        </span>{" "}
-
-                                                                        {summary.usedSessions
-                                                                            .length >
-                                                                        0
-                                                                            ? summary.usedSessions
-                                                                                  .map(
-                                                                                      (
-                                                                                          u
-                                                                                      ) =>
-                                                                                          `Sem ${u.semester} → ${u.sessionName}`
-                                                                                  )
-                                                                                  .join(
-                                                                                      "  •  "
-                                                                                  )
-                                                                            : "None yet"}
-
-                                                                    </div>
-
-
-                                                                    <div
-                                                                        style={{
-                                                                            fontSize: 12,
-                                                                            marginTop: 4,
-                                                                        }}
-                                                                    >
-
-                                                                        <span
-                                                                            style={{
-                                                                                opacity: 0.7,
-                                                                            }}
-                                                                        >
-                                                                            Current:
-                                                                        </span>{" "}
-
-                                                                        {summary.status ===
-                                                                        "completed"
-                                                                            ? "Completed"
-                                                                            : summary.currentSessionName
-                                                                            ? `Semester ${summary.currentSemester} — ${summary.currentSessionName}`
-                                                                            : "-"}
-
-                                                                    </div>
-
-
-                                                                    {summary.status !==
-                                                                        "completed" && (
-
-                                                                        <div
-                                                                            style={{
-                                                                                fontSize: 12,
-                                                                                marginTop: 4,
-                                                                            }}
-                                                                        >
-
-                                                                            <span
-                                                                                style={{
-                                                                                    opacity: 0.7,
-                                                                                }}
-                                                                            >
-                                                                                Next needed:
-                                                                            </span>{" "}
-
-                                                                            {
-                                                                                summary.nextExpectedSessionName ||
-                                                                                "Not created yet — generate it below"
-                                                                            }
-
-                                                                        </div>
-
-                                                                    )}
-
-                                                                </>
-
-                                                            )}
-
-                                                        </div>
-
-                                                    )
-                                                )}
-
-                                        </div>
-
-                                    )}
+                                    </div>
 
 
                                     {/* ACTIONS */}
@@ -2877,34 +2515,34 @@ const Sessions = () => {
 
                                 </>
 
-                            )}
+                            ) : (
 
+                                /* =================================================
+                                   GENERATE RESULT
+                                ================================================= */
 
-                            {/* =================================================
-                                RESULT SUMMARY
-                            ================================================= */}
-
-                            {generateResult && (
-
-                                <div
-                                    className="generate-result-panel"
-                                    style={{
-                                        padding: "4px 2px 2px",
-                                    }}
-                                >
+                                <div className="generate-result-panel">
 
                                     <div
                                         className="session-form-success"
                                         style={{
-                                            display: "flex",
-                                            alignItems: "center",
+                                            display:
+                                                "flex",
+                                            alignItems:
+                                                "center",
                                             gap: 8,
-                                            padding: "10px 12px",
-                                            borderRadius: 8,
-                                            background: "#ecfdf5",
-                                            color: "#065f46",
-                                            fontWeight: 600,
-                                            marginBottom: 14,
+                                            padding:
+                                                "10px 12px",
+                                            borderRadius:
+                                                8,
+                                            background:
+                                                "#ecfdf5",
+                                            color:
+                                                "#065f46",
+                                            fontWeight:
+                                                600,
+                                            marginBottom:
+                                                14,
                                         }}
                                     >
 
@@ -2919,41 +2557,52 @@ const Sessions = () => {
                                     </div>
 
 
-                                    {generateResult.created.length > 0 && (
+                                    {generateResult.created?.length >
+                                        0 && (
 
                                         <div
                                             className="generate-result-group"
                                             style={{
-                                                marginBottom: 14,
+                                                marginBottom:
+                                                    14,
                                             }}
                                         >
 
                                             <h4
                                                 style={{
-                                                    margin: "0 0 6px",
+                                                    margin:
+                                                        "0 0 6px",
                                                 }}
                                             >
-                                                Newly Created (
+
+                                                Created (
                                                 {
                                                     generateResult.created.length
                                                 }
                                                 )
+
                                             </h4>
 
 
                                             <ul
                                                 style={{
-                                                    margin: 0,
-                                                    paddingLeft: 18,
+                                                    margin:
+                                                        0,
+                                                    paddingLeft:
+                                                        18,
                                                 }}
                                             >
 
                                                 {generateResult.created.map(
-                                                    (createdItem) => {
+                                                    (
+                                                        item,
+                                                        index
+                                                    ) => {
 
                                                         const session =
-                                                            createdItem?.session ||
-                                                            createdItem;
+                                                            item?.session ||
+                                                            item;
+
 
                                                         return (
 
@@ -2962,28 +2611,19 @@ const Sessions = () => {
                                                                     getId(
                                                                         session
                                                                     ) ||
-                                                                    session.name
+                                                                    `${session?.name}-${index}`
                                                                 }
-                                                                className="generate-result-created"
                                                                 style={{
-                                                                    color: "#065f46",
+                                                                    color:
+                                                                        "#065f46",
+                                                                    marginBottom:
+                                                                        4,
                                                                 }}
                                                             >
 
                                                                 {
-                                                                    session.name
-                                                                }
-
-                                                                {" — "}
-
-                                                                {
-                                                                    session.term
-                                                                }
-
-                                                                {" "}
-
-                                                                {
-                                                                    session.year
+                                                                    session?.name ||
+                                                                    `${session?.term || ""} ${session?.year || ""}`
                                                                 }
 
                                                             </li>
@@ -3000,46 +2640,64 @@ const Sessions = () => {
                                     )}
 
 
-                                    {generateResult.skipped.length > 0 && (
+                                    {generateResult.skipped?.length >
+                                        0 && (
 
                                         <div
                                             className="generate-result-group"
                                             style={{
-                                                marginBottom: 14,
+                                                marginBottom:
+                                                    14,
                                             }}
                                         >
 
                                             <h4
                                                 style={{
-                                                    margin: "0 0 6px",
+                                                    margin:
+                                                        "0 0 6px",
                                                 }}
                                             >
-                                                Already Existed — Skipped (
+
+                                                Already Exists (
                                                 {
                                                     generateResult.skipped.length
                                                 }
                                                 )
+
                                             </h4>
 
 
                                             <ul
                                                 style={{
-                                                    margin: 0,
-                                                    paddingLeft: 18,
+                                                    margin:
+                                                        0,
+                                                    paddingLeft:
+                                                        18,
                                                 }}
                                             >
 
                                                 {generateResult.skipped.map(
-                                                    (name) => (
+                                                    (
+                                                        item,
+                                                        index
+                                                    ) => (
 
                                                         <li
-                                                            key={name}
-                                                            className="generate-result-skipped"
+                                                            key={`${item}-${index}`}
                                                             style={{
-                                                                color: "#92400e",
+                                                                color:
+                                                                    "#92400e",
+                                                                marginBottom:
+                                                                    4,
                                                             }}
                                                         >
-                                                            {name}
+
+                                                            {typeof item ===
+                                                            "string"
+                                                                ? item
+                                                                : item?.name ||
+                                                                  `${item?.term || ""} ${item?.year || ""}`}
+
                                                         </li>
 
                                                     )
@@ -3099,15 +2757,20 @@ const Sessions = () => {
                                     </h2>
 
                                     <p>
-                                        Update session information
+                                        Update existing session
+                                        information
                                     </p>
 
                                 </div>
+
 
                                 <button
                                     className="session-close-btn"
                                     onClick={
                                         closeEditModal
+                                    }
+                                    disabled={
+                                        generating
                                     }
                                 >
 
@@ -3129,6 +2792,10 @@ const Sessions = () => {
                                 {error && (
 
                                     <div className="session-form-error">
+
+                                        <AlertCircle
+                                            size={17}
+                                        />
 
                                         {error}
 
@@ -3199,7 +2866,7 @@ const Sessions = () => {
                                         <input
                                             type="number"
                                             name="year"
-                                            min="2000"
+                                            min="2020"
                                             max="2100"
                                             value={
                                                 editForm.year
@@ -3223,25 +2890,17 @@ const Sessions = () => {
                                             Start Date
                                         </label>
 
-                                        <div className="session-date-input">
-
-                                            <CalendarDays
-                                                size={16}
-                                            />
-
-                                            <input
-                                                type="date"
-                                                name="startDate"
-                                                value={
-                                                    editForm.startDate
-                                                }
-                                                onChange={
-                                                    handleEditChange
-                                                }
-                                                required
-                                            />
-
-                                        </div>
+                                        <input
+                                            type="date"
+                                            name="startDate"
+                                            value={
+                                                editForm.startDate
+                                            }
+                                            onChange={
+                                                handleEditChange
+                                            }
+                                            required
+                                        />
 
                                     </div>
 
@@ -3252,34 +2911,26 @@ const Sessions = () => {
                                             End Date
                                         </label>
 
-                                        <div className="session-date-input">
-
-                                            <CalendarDays
-                                                size={16}
-                                            />
-
-                                            <input
-                                                type="date"
-                                                name="endDate"
-                                                value={
-                                                    editForm.endDate
-                                                }
-                                                onChange={
-                                                    handleEditChange
-                                                }
-                                                required
-                                            />
-
-                                        </div>
+                                        <input
+                                            type="date"
+                                            name="endDate"
+                                            value={
+                                                editForm.endDate
+                                            }
+                                            onChange={
+                                                handleEditChange
+                                            }
+                                            required
+                                        />
 
                                     </div>
 
                                 </div>
 
 
-                                <div className="session-active-box">
+                                <div className="session-form-group">
 
-                                    <label className="session-checkbox">
+                                    <label className="session-toggle-label">
 
                                         <input
                                             type="checkbox"
@@ -3292,25 +2943,14 @@ const Sessions = () => {
                                             }
                                         />
 
-                                        <div>
-
-                                            <strong>
-                                                Active Session
-                                            </strong>
-
-                                            <small>
-                                                Mark this session
-                                                as currently active
-                                            </small>
-
-                                        </div>
+                                        Active session
 
                                     </label>
 
                                 </div>
 
 
-                                <div className="session-modal-actions">
+                                <div className="session-modal-footer">
 
                                     <button
                                         type="button"
@@ -3343,21 +2983,13 @@ const Sessions = () => {
                                                     size={15}
                                                 />
 
-                                                Updating...
+                                                Saving...
 
                                             </>
 
                                         ) : (
 
-                                            <>
-
-                                                <Pencil
-                                                    size={17}
-                                                />
-
-                                                Update Session
-
-                                            </>
+                                            "Update Session"
 
                                         )}
 
@@ -3378,254 +3010,241 @@ const Sessions = () => {
                 VIEW MODAL
             ================================================= */}
 
-            {viewingSession && (
+            {showViewModal &&
+                viewingSession && (
 
-                <div className="session-modal-overlay">
+                    <div className="session-modal-overlay">
 
-                    <div className="session-view-modal">
+                        <div className="session-modal">
 
-                        <div className="session-modal-header">
+                            <div className="session-modal-header">
 
-                            <div>
+                                <div>
 
-                                <h2>
-                                    Session Details
-                                </h2>
+                                    <h2>
+                                        Session Details
+                                    </h2>
 
-                                <p>
-                                    Complete academic
-                                    session information
-                                </p>
+                                    <p>
+                                        Academic session
+                                        information
+                                    </p>
+
+                                </div>
+
+
+                                <button
+                                    className="session-close-btn"
+                                    onClick={
+                                        closeViewModal
+                                    }
+                                >
+
+                                    <X
+                                        size={19}
+                                    />
+
+                                </button>
 
                             </div>
 
-                            <button
-                                className="session-close-btn"
-                                onClick={() =>
-                                    setViewingSession(
-                                        null
-                                    )
-                                }
+
+                            <div
+                                style={{
+                                    display:
+                                        "grid",
+                                    gap: 14,
+                                }}
                             >
 
-                                <X
-                                    size={19}
-                                />
+                                <div
+                                    className="generate-info-box"
+                                >
 
-                            </button>
+                                    <strong>
+                                        {
+                                            viewingSession.name ||
+                                            "-"
+                                        }
+                                    </strong>
 
-                        </div>
+                                    <p
+                                        style={{
+                                            marginBottom:
+                                                0,
+                                        }}
+                                    >
+
+                                        Term:{" "}
+                                        <strong>
+                                            {
+                                                viewingSession.term ||
+                                                "-"
+                                            }
+                                        </strong>
+
+                                        {" • "}
+
+                                        Year:{" "}
+                                        <strong>
+                                            {
+                                                viewingSession.year ||
+                                                "-"
+                                            }
+                                        </strong>
+
+                                    </p>
+
+                                </div>
 
 
-                        <div className="session-view-content">
+                                <div
+                                    style={{
+                                        display:
+                                            "grid",
+                                        gridTemplateColumns:
+                                            "repeat(2, minmax(0, 1fr))",
+                                        gap: 12,
+                                    }}
+                                >
+
+                                    <div>
+
+                                        <small>
+                                            Degree Class
+                                        </small>
+
+                                        <strong
+                                            style={{
+                                                display:
+                                                    "block",
+                                                marginTop:
+                                                    4,
+                                            }}
+                                        >
+                                            {
+                                                viewingDegreeClass?.name ||
+                                                viewingSession?.degreeClassId?.name ||
+                                                "-"
+                                            }
+                                        </strong>
+
+                                    </div>
 
 
-                            {/* HERO */}
+                                    <div>
 
-                            <div className="session-view-hero">
+                                        <small>
+                                            Program Type
+                                        </small>
 
-                                <div className="session-view-avatar">
+                                        <strong
+                                            style={{
+                                                display:
+                                                    "block",
+                                                marginTop:
+                                                    4,
+                                            }}
+                                        >
+                                            {
+                                                viewingDegreeClass?.programType ||
+                                                viewingSession?.degreeClassId?.programType ||
+                                                "-"
+                                            }
+                                        </strong>
 
-                                    {viewingSession.term ===
-                                    "Spring"
-                                        ? "SP"
-                                        : "FA"}
+                                    </div>
+
+
+                                    <div>
+
+                                        <small>
+                                            Start Date
+                                        </small>
+
+                                        <strong
+                                            style={{
+                                                display:
+                                                    "block",
+                                                marginTop:
+                                                    4,
+                                            }}
+                                        >
+                                            {
+                                                formatDate(
+                                                    viewingSession.startDate
+                                                )
+                                            }
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <small>
+                                            End Date
+                                        </small>
+
+                                        <strong
+                                            style={{
+                                                display:
+                                                    "block",
+                                                marginTop:
+                                                    4,
+                                            }}
+                                        >
+                                            {
+                                                formatDate(
+                                                    viewingSession.endDate
+                                                )
+                                            }
+                                        </strong>
+
+                                    </div>
 
                                 </div>
 
 
                                 <div>
 
-                                    <h3>
-                                        {
-                                            viewingSession.name
-                                        }
-                                    </h3>
-
-                                    <span>
-
-                                        {
-                                            viewingSession.term
-                                        }
-
-                                        {" • "}
-
-                                        {
-                                            viewingSession.year
-                                        }
-
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {/* DETAILS */}
-
-                            <div className="session-detail-grid">
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
-                                        Session
-                                    </span>
-
-                                    <strong>
-                                        {
-                                            viewingSession.name
-                                        }
-                                    </strong>
-
-                                </div>
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
-                                        Term
-                                    </span>
-
-                                    <strong>
-                                        {
-                                            viewingSession.term
-                                        }
-                                    </strong>
-
-                                </div>
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
-                                        Year
-                                    </span>
-
-                                    <strong>
-                                        {
-                                            viewingSession.year
-                                        }
-                                    </strong>
-
-                                </div>
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
-                                        Start Date
-                                    </span>
-
-                                    <strong>
-                                        {formatDate(
-                                            viewingSession.startDate
-                                        )}
-                                    </strong>
-
-                                </div>
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
-                                        End Date
-                                    </span>
-
-                                    <strong>
-                                        {formatDate(
-                                            viewingSession.endDate
-                                        )}
-                                    </strong>
-
-                                </div>
-
-
-                                <div className="session-detail-item">
-
-                                    <span>
+                                    <small>
                                         Status
-                                    </span>
+                                    </small>
 
                                     <strong
-                                        className={`detail-${getStatus(
-                                            viewingSession
-                                        )}`}
+                                        style={{
+                                            display:
+                                                "block",
+                                            marginTop:
+                                                4,
+                                        }}
                                     >
-
-                                        {getStatusLabel(
-                                            getStatus(
-                                                viewingSession
+                                        {
+                                            getStatusLabel(
+                                                getStatus(
+                                                    viewingSession
+                                                )
                                             )
-                                        )}
-
+                                        }
                                     </strong>
 
                                 </div>
 
-                            </div>
 
+                                <div className="session-modal-footer">
 
-                            {/* ID */}
+                                    <button
+                                        type="button"
+                                        className="session-cancel-btn"
+                                        onClick={
+                                            closeViewModal
+                                        }
+                                    >
+                                        Close
+                                    </button>
 
-                            <div className="session-id-box">
-
-                                <span>
-                                    Session ID
-                                </span>
-
-                                <strong>
-                                    {
-                                        getId(
-                                            viewingSession
-                                        )
-                                    }
-                                </strong>
-
-                            </div>
-
-
-                            {/* FOOTER */}
-
-                            <div className="session-view-footer">
-
-                                <button
-                                    className="session-cancel-btn"
-                                    onClick={() =>
-                                        setViewingSession(
-                                            null
-                                        )
-                                    }
-                                >
-                                    Close
-                                </button>
-
-
-                                <button
-                                    className="session-save-btn"
-                                    onClick={() => {
-
-                                        const session =
-                                            viewingSession;
-
-                                        setViewingSession(
-                                            null
-                                        );
-
-                                        handleEdit(
-                                            session
-                                        );
-
-                                    }}
-                                >
-
-                                    <Pencil
-                                        size={16}
-                                    />
-
-                                    Edit Session
-
-                                </button>
+                                </div>
 
                             </div>
 
@@ -3633,9 +3252,7 @@ const Sessions = () => {
 
                     </div>
 
-                </div>
-
-            )}
+                )}
 
         </div>
     );

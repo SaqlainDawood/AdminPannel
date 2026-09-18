@@ -11,12 +11,12 @@ import {
     Trash2,
     GraduationCap,
     Building2,
-    Clock3,
     Layers3,
     X,
     Eye,
     Sun,
     Moon,
+    BookOpen,
 } from "lucide-react";
 
 import { FaSpinner } from "react-icons/fa";
@@ -66,7 +66,7 @@ const DegreeClasses = () => {
         name: "",
         code: "",
         departmentId: "",
-        duration: "",
+        programType: "",
     });
 
     const [selectedShifts, setSelectedShifts] =
@@ -190,6 +190,72 @@ const DegreeClasses = () => {
     };
 
     // ===============================
+    // GET DEPARTMENT NAME
+    // ===============================
+
+    const getDepartmentName = (item) => {
+
+        if (item?.departmentId?.name) {
+            return item.departmentId.name;
+        }
+
+        if (item?.departmentName) {
+            return item.departmentName;
+        }
+
+        const department =
+            departments.find(
+                (d) =>
+                    String(
+                        d._id || d.id
+                    ) ===
+                    String(
+                        item?.departmentId?._id ||
+                        item?.departmentId
+                    )
+            );
+
+        return department?.name || "Unknown";
+    };
+
+    // ===============================
+    // PROGRAM TYPE LABEL
+    // ===============================
+
+    const getProgramTypeLabel = (value) => {
+
+        const labels = {
+            BS: "BS",
+            POST_ADP:"Post ADP",
+            ADP: "ADP",
+            
+        };
+
+        return labels[value] || value || "—";
+    };
+
+    // ===============================
+    // SEMESTER RANGE
+    // ===============================
+
+    const getSemesterRange = (item) => {
+
+        const start = item?.startSemester;
+        const end = item?.endSemester;
+
+        if (
+            start !== undefined &&
+            start !== null &&
+            end !== undefined &&
+            end !== null
+        ) {
+            return `${start} - ${end}`;
+        }
+
+        return "—";
+    };
+
+    // ===============================
     // SEARCH
     // ===============================
 
@@ -224,6 +290,9 @@ const DegreeClasses = () => {
                     ?.toLowerCase()
                     .includes(searchValue) ||
                 item.code
+                    ?.toLowerCase()
+                    .includes(searchValue) ||
+                item.programType
                     ?.toLowerCase()
                     .includes(searchValue) ||
                 departmentName
@@ -307,7 +376,7 @@ const DegreeClasses = () => {
             name: "",
             code: "",
             departmentId: "",
-            duration: "",
+            programType: "",
         });
 
         setSelectedShifts([]);
@@ -333,8 +402,8 @@ const DegreeClasses = () => {
                 item.departmentId?._id ||
                 item.departmentId ||
                 "",
-            duration:
-                item.duration || "",
+            programType:
+                item.programType || "",
         });
 
         setSelectedShifts(
@@ -354,13 +423,15 @@ const DegreeClasses = () => {
 
         e.preventDefault();
 
-        if (saving) return;
+        if (saving) {
+            return;
+        }
 
         if (
             !formData.departmentId ||
-            !formData.name ||
-            !formData.code ||
-            !formData.duration
+            !formData.name.trim() ||
+            !formData.code.trim() ||
+            !formData.programType
         ) {
             alert(
                 "Please fill all required fields."
@@ -381,6 +452,10 @@ const DegreeClasses = () => {
                     )
             );
 
+        // ==================================
+        // NEW DEGREE CLASS PAYLOAD
+        // ==================================
+
         const payload = {
             name:
                 formData.name.trim(),
@@ -393,11 +468,14 @@ const DegreeClasses = () => {
             departmentId:
                 formData.departmentId,
 
-            duration:
-                Number(
-                    formData.duration
-                ),
+            programType:
+                formData.programType,
         };
+
+        console.log(
+            "DEGREE CLASS PAYLOAD:",
+            payload
+        );
 
         try {
 
@@ -462,6 +540,11 @@ const DegreeClasses = () => {
                 response ||
                 {};
 
+            console.log(
+                "CREATED DEGREE CLASS:",
+                created
+            );
+
             const createdClassId =
                 created?._id ||
                 created?.id;
@@ -481,14 +564,19 @@ const DegreeClasses = () => {
                 {
                     ...created,
                     ...payload,
+
                     _id:
                         created?._id ||
                         createdClassId,
+
                     id:
                         created?.id ||
                         createdClassId,
+
                     departmentId:
+                        created?.departmentId ||
                         payload.departmentId,
+
                     departmentName:
                         department?.name ||
                         "Unknown",
@@ -542,6 +630,11 @@ const DegreeClasses = () => {
             console.error(
                 "Degree Class Save Error:",
                 error
+            );
+
+            console.error(
+                "Degree Class API Response:",
+                error?.response?.data
             );
 
             alert(
@@ -632,47 +725,8 @@ const DegreeClasses = () => {
             name: "",
             code: "",
             departmentId: "",
-            duration: "",
+            programType: "",
         });
-    };
-
-    // ===============================
-    // DEPARTMENT NAME
-    // ===============================
-
-    const getDepartmentName = (
-        item
-    ) => {
-
-        if (
-            item.departmentId?.name
-        ) {
-            return item.departmentId.name;
-        }
-
-        if (
-            item.departmentName
-        ) {
-            return item.departmentName;
-        }
-
-        const department =
-            departments.find(
-                (d) =>
-                    String(
-                        d._id ||
-                        d.id
-                    ) ===
-                    String(
-                        item.departmentId?._id ||
-                        item.departmentId
-                    )
-            );
-
-        return (
-            department?.name ||
-            "Unknown"
-        );
     };
 
     // ===============================
@@ -684,28 +738,24 @@ const DegreeClasses = () => {
 
     const totalDepartments =
         new Set(
-            classes.map(
-                (item) =>
-                    item.departmentId?._id ||
-                    item.departmentId
-            )
+            classes
+                .map(
+                    (item) =>
+                        item.departmentId?._id ||
+                        item.departmentId
+                )
+                .filter(Boolean)
         ).size;
 
-    const averageDuration =
-        classes.length
-            ? (
-                  classes.reduce(
-                      (sum, item) =>
-                          sum +
-                          Number(
-                              item.duration ||
-                              0
-                          ),
-                      0
-                  ) /
-                  classes.length
-              ).toFixed(1)
-            : "0";
+    const totalPrograms =
+        new Set(
+            classes
+                .map(
+                    (item) =>
+                        item.programType
+                )
+                .filter(Boolean)
+        ).size;
 
     // ===============================
     // RENDER
@@ -713,6 +763,10 @@ const DegreeClasses = () => {
 
     return (
         <div className="degree-classes-page">
+
+            {/* ===============================
+                HEADER
+            =============================== */}
 
             <div className="degree-classes-header">
 
@@ -725,6 +779,7 @@ const DegreeClasses = () => {
                     </div>
 
                     <div>
+
                         <h1>
                             Degree Classes
                         </h1>
@@ -734,6 +789,7 @@ const DegreeClasses = () => {
                             programs, classes
                             and shifts
                         </p>
+
                     </div>
 
                 </div>
@@ -748,13 +804,16 @@ const DegreeClasses = () => {
 
             </div>
 
-            {/* STATS */}
+            {/* ===============================
+                STATS
+            =============================== */}
 
             <div className="degree-stats">
 
                 <div className="degree-stat-card">
 
                     <div>
+
                         <span>
                             Total Classes
                         </span>
@@ -762,6 +821,7 @@ const DegreeClasses = () => {
                         <strong>
                             {totalClasses}
                         </strong>
+
                     </div>
 
                     <div className="degree-stat-icon blue">
@@ -773,6 +833,7 @@ const DegreeClasses = () => {
                 <div className="degree-stat-card">
 
                     <div>
+
                         <span>
                             Departments
                         </span>
@@ -780,6 +841,7 @@ const DegreeClasses = () => {
                         <strong>
                             {totalDepartments}
                         </strong>
+
                     </div>
 
                     <div className="degree-stat-icon purple">
@@ -791,24 +853,28 @@ const DegreeClasses = () => {
                 <div className="degree-stat-card">
 
                     <div>
+
                         <span>
-                            Average Duration
+                            Program Types
                         </span>
 
                         <strong>
-                            {averageDuration} Years
+                            {totalPrograms}
                         </strong>
+
                     </div>
 
                     <div className="degree-stat-icon orange">
-                        <Clock3 size={21} />
+                        <BookOpen size={21} />
                     </div>
 
                 </div>
 
             </div>
 
-            {/* TOOLBAR */}
+            {/* ===============================
+                TOOLBAR
+            =============================== */}
 
             <div className="degree-toolbar">
 
@@ -837,6 +903,7 @@ const DegreeClasses = () => {
                     }
                     className="department-filter"
                 >
+
                     <option value="all">
                         All Departments
                     </option>
@@ -869,7 +936,9 @@ const DegreeClasses = () => {
 
             </div>
 
-            {/* TABLE */}
+            {/* ===============================
+                TABLE
+            =============================== */}
 
             <div className="degree-table-card">
 
@@ -878,29 +947,43 @@ const DegreeClasses = () => {
                     <table className="degree-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>
                                     Degree / Class
                                 </th>
+
                                 <th>
                                     Code
                                 </th>
+
                                 <th>
                                     Department
                                 </th>
+
                                 <th>
-                                    Duration
+                                    Program Type
                                 </th>
+
+                                <th>
+                                    Semesters
+                                </th>
+
                                 <th>
                                     Shifts
                                 </th>
+
                                 <th>
                                     Status
                                 </th>
+
                                 <th>
                                     Actions
                                 </th>
+
                             </tr>
+
                         </thead>
 
                         <tbody>
@@ -908,16 +991,20 @@ const DegreeClasses = () => {
                             {loading ? (
 
                                 <tr>
+
                                     <td
-                                        colSpan="7"
+                                        colSpan="8"
                                     >
+
                                         <div className="degree-loading">
 
                                             <div className="degree-spinner-wrapper">
+
                                                 <FaSpinner
                                                     className="degree-spinner"
                                                     size={30}
                                                 />
+
                                             </div>
 
                                             <p>
@@ -925,7 +1012,9 @@ const DegreeClasses = () => {
                                             </p>
 
                                         </div>
+
                                     </td>
+
                                 </tr>
 
                             ) : filteredClasses.length ? (
@@ -942,23 +1031,30 @@ const DegreeClasses = () => {
                                             );
 
                                         return (
+
                                             <tr
                                                 key={id}
                                             >
 
+                                                {/* DEGREE */}
+
                                                 <td>
+
                                                     <div className="degree-name-cell">
 
                                                         <div className="degree-avatar">
+
                                                             {
                                                                 item.code?.substring(
                                                                     0,
                                                                     3
                                                                 )
                                                             }
+
                                                         </div>
 
                                                         <div>
+
                                                             <strong>
                                                                 {
                                                                     item.name
@@ -968,21 +1064,33 @@ const DegreeClasses = () => {
                                                             <small>
                                                                 {id}
                                                             </small>
+
                                                         </div>
 
                                                     </div>
+
                                                 </td>
 
+                                                {/* CODE */}
+
                                                 <td>
+
                                                     <span className="degree-code">
+
                                                         {
                                                             item.code
                                                         }
+
                                                     </span>
+
                                                 </td>
 
+                                                {/* DEPARTMENT */}
+
                                                 <td>
+
                                                     <div className="degree-department">
+
                                                         <Building2
                                                             size={15}
                                                         />
@@ -992,25 +1100,48 @@ const DegreeClasses = () => {
                                                                 item
                                                             )
                                                         }
+
                                                     </div>
+
                                                 </td>
 
+                                                {/* PROGRAM TYPE */}
+
                                                 <td>
-                                                    <span className="duration-badge">
-                                                        <Clock3
+
+                                                    <span className="program-type-badge">
+
+                                                        {
+                                                            getProgramTypeLabel(
+                                                                item.programType
+                                                            )
+                                                        }
+
+                                                    </span>
+
+                                                </td>
+
+                                                {/* SEMESTERS */}
+
+                                                <td>
+
+                                                    <span className="semester-badge">
+
+                                                        <Layers3
                                                             size={14}
                                                         />
 
                                                         {
-                                                            item.duration
-                                                        }{" "}
-                                                        {Number(
-                                                            item.duration
-                                                        ) === 1
-                                                            ? "Year"
-                                                            : "Years"}
+                                                            getSemesterRange(
+                                                                item
+                                                            )
+                                                        }
+
                                                     </span>
+
                                                 </td>
+
+                                                {/* SHIFTS */}
 
                                                 <td>
 
@@ -1033,6 +1164,7 @@ const DegreeClasses = () => {
                                                                         "morning";
 
                                                                     return (
+
                                                                         <span
                                                                             key={
                                                                                 shiftId
@@ -1043,24 +1175,31 @@ const DegreeClasses = () => {
                                                                                     : "evening"
                                                                             }`}
                                                                         >
+
                                                                             {morning ? (
+
                                                                                 <Sun
                                                                                     size={
                                                                                         13
                                                                                     }
                                                                                 />
+
                                                                             ) : (
+
                                                                                 <Moon
                                                                                     size={
                                                                                         13
                                                                                     }
                                                                                 />
+
                                                                             )}
 
                                                                             {
                                                                                 shift.name
                                                                             }
+
                                                                         </span>
+
                                                                     );
                                                                 }
                                                             )}
@@ -1068,20 +1207,39 @@ const DegreeClasses = () => {
                                                         </div>
 
                                                     ) : (
+
                                                         <span className="no-shift">
                                                             No Shift
                                                         </span>
+
                                                     )}
 
                                                 </td>
 
-                                                <td>
-                                                    <span className="degree-status">
-                                                        Active
-                                                    </span>
-                                                </td>
+                                                {/* STATUS */}
 
                                                 <td>
+
+                                                    <span
+                                                        className={
+                                                            item.isActive === false
+                                                                ? "degree-status inactive"
+                                                                : "degree-status"
+                                                        }
+                                                    >
+                                                        {
+                                                            item.isActive === false
+                                                                ? "Inactive"
+                                                                : "Active"
+                                                        }
+                                                    </span>
+
+                                                </td>
+
+                                                {/* ACTIONS */}
+
+                                                <td>
+
                                                     <div className="degree-actions">
 
                                                         <button
@@ -1091,6 +1249,7 @@ const DegreeClasses = () => {
                                                                     item
                                                                 )
                                                             }
+                                                            title="View"
                                                         >
                                                             <Eye
                                                                 size={16}
@@ -1104,6 +1263,7 @@ const DegreeClasses = () => {
                                                                     item
                                                                 )
                                                             }
+                                                            title="Edit"
                                                         >
                                                             <Pencil
                                                                 size={16}
@@ -1117,6 +1277,7 @@ const DegreeClasses = () => {
                                                                     item
                                                                 )
                                                             }
+                                                            title="Delete"
                                                         >
                                                             <Trash2
                                                                 size={16}
@@ -1124,9 +1285,11 @@ const DegreeClasses = () => {
                                                         </button>
 
                                                     </div>
+
                                                 </td>
 
                                             </tr>
+
                                         );
                                     }
                                 )
@@ -1134,9 +1297,11 @@ const DegreeClasses = () => {
                             ) : (
 
                                 <tr>
+
                                     <td
-                                        colSpan="7"
+                                        colSpan="8"
                                     >
+
                                         <div className="degree-empty">
 
                                             <GraduationCap
@@ -1152,7 +1317,9 @@ const DegreeClasses = () => {
                                             </p>
 
                                         </div>
+
                                     </td>
+
                                 </tr>
 
                             )}
@@ -1165,7 +1332,9 @@ const DegreeClasses = () => {
 
             </div>
 
-            {/* ADD / EDIT MODAL */}
+            {/* ===============================
+                ADD / EDIT MODAL
+            =============================== */}
 
             {showModal && (
 
@@ -1176,6 +1345,7 @@ const DegreeClasses = () => {
                         <div className="degree-modal-header">
 
                             <div>
+
                                 <h2>
                                     {editingClass
                                         ? "Edit Degree Class"
@@ -1185,13 +1355,15 @@ const DegreeClasses = () => {
                                 <p>
                                     {editingClass
                                         ? "Update degree class information"
-                                        : "Create a class and assign its shifts"}
+                                        : "Create a degree class and assign its shifts"}
                                 </p>
+
                             </div>
 
                             <button
                                 className="degree-close-btn"
                                 onClick={closeModal}
+                                type="button"
                             >
                                 <X size={19} />
                             </button>
@@ -1203,6 +1375,8 @@ const DegreeClasses = () => {
                                 handleSubmit
                             }
                         >
+
+                            {/* NAME */}
 
                             <div className="degree-form-group">
 
@@ -1223,6 +1397,8 @@ const DegreeClasses = () => {
                                 />
 
                             </div>
+
+                            {/* CODE + PROGRAM TYPE */}
 
                             <div className="degree-form-row">
 
@@ -1249,34 +1425,50 @@ const DegreeClasses = () => {
                                 <div className="degree-form-group">
 
                                     <label>
-                                        Duration
+                                        Program Type
                                     </label>
 
-                                    <div className="duration-input-wrapper">
+                                    <select
+                                        name="programType"
+                                        value={
+                                            formData.programType
+                                        }
+                                        onChange={
+                                            handleChange
+                                        }
+                                        required
+                                    >
 
-                                        <input
-                                            type="number"
-                                            name="duration"
-                                            min="1"
-                                            max="10"
-                                            value={
-                                                formData.duration
-                                            }
-                                            onChange={
-                                                handleChange
-                                            }
-                                            required
-                                        />
+                                        <option value="">
+                                            Select Program Type
+                                        </option>
 
-                                        <span>
-                                            Years
-                                        </span>
+                                        <option value="BS">
+                                            BS
+                                        </option>
 
-                                    </div>
+                                        <option value="ADP">
+                                            ADP
+                                        </option>
+
+                                        <option value="POST_ADP">
+                                            Post ADP
+                                        </option>
+
+
+                                     
+
+                                        
+
+                                      
+
+                                    </select>
 
                                 </div>
 
                             </div>
+
+                            {/* DEPARTMENT */}
 
                             <div className="degree-form-group">
 
@@ -1309,6 +1501,7 @@ const DegreeClasses = () => {
                                                 department.id;
 
                                             return (
+
                                                 <option
                                                     key={
                                                         id
@@ -1321,6 +1514,7 @@ const DegreeClasses = () => {
                                                         department.name
                                                     }
                                                 </option>
+
                                             );
                                         }
                                     )}
@@ -1329,7 +1523,39 @@ const DegreeClasses = () => {
 
                             </div>
 
-                            {/* ONLY CREATE */}
+                            {/* SEMESTER INFORMATION */}
+
+                            {editingClass && (
+
+                                <div className="degree-semester-info">
+
+                                    <div className="degree-semester-info-icon">
+                                        <Layers3
+                                            size={18}
+                                        />
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            Semester Range
+                                        </strong>
+
+                                        <span>
+                                            {
+                                                getSemesterRange(
+                                                    editingClass
+                                                )
+                                            }
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            )}
+
+                            {/* ONLY CREATE - SHIFTS */}
 
                             {!editingClass && (
 
@@ -1346,6 +1572,8 @@ const DegreeClasses = () => {
 
                                     <div className="shift-options">
 
+                                        {/* MORNING */}
+
                                         <label className="shift-option">
 
                                             <input
@@ -1363,14 +1591,19 @@ const DegreeClasses = () => {
                                             />
 
                                             <span className="shift-option-content">
+
                                                 <Sun
                                                     size={17}
                                                 />
+
                                                 Morning
+
                                             </span>
 
                                         </label>
 
+                                        {/* EVENING */}
+
                                         <label className="shift-option">
 
                                             <input
@@ -1388,10 +1621,13 @@ const DegreeClasses = () => {
                                             />
 
                                             <span className="shift-option-content">
+
                                                 <Moon
                                                     size={17}
                                                 />
+
                                                 Evening
+
                                             </span>
 
                                         </label>
@@ -1402,13 +1638,19 @@ const DegreeClasses = () => {
 
                             )}
 
+                            {/* ACTIONS */}
+
                             <div className="degree-modal-actions">
 
                                 <button
                                     type="button"
                                     className="degree-cancel-btn"
-                                    onClick={closeModal}
-                                    disabled={saving}
+                                    onClick={
+                                        closeModal
+                                    }
+                                    disabled={
+                                        saving
+                                    }
                                 >
                                     Cancel
                                 </button>
@@ -1416,18 +1658,24 @@ const DegreeClasses = () => {
                                 <button
                                     type="submit"
                                     className="degree-save-btn"
-                                    disabled={saving}
+                                    disabled={
+                                        saving
+                                    }
                                 >
 
                                     {saving ? (
+
                                         <>
                                             <FaSpinner
                                                 className="degree-button-spinner"
                                                 size={15}
                                             />
+
                                             Saving...
                                         </>
+
                                     ) : (
+
                                         <>
                                             <Plus
                                                 size={17}
@@ -1437,6 +1685,7 @@ const DegreeClasses = () => {
                                                 ? "Update Class"
                                                 : "Add Class"}
                                         </>
+
                                     )}
 
                                 </button>
@@ -1451,7 +1700,9 @@ const DegreeClasses = () => {
 
             )}
 
-            {/* VIEW MODAL */}
+            {/* ===============================
+                VIEW MODAL
+            =============================== */}
 
             {viewingClass && (
 
@@ -1462,6 +1713,7 @@ const DegreeClasses = () => {
                         <div className="degree-modal-header">
 
                             <div>
+
                                 <h2>
                                     Degree Class Details
                                 </h2>
@@ -1469,6 +1721,7 @@ const DegreeClasses = () => {
                                 <p>
                                     Complete class information
                                 </p>
+
                             </div>
 
                             <button
@@ -1478,6 +1731,7 @@ const DegreeClasses = () => {
                                         null
                                     )
                                 }
+                                type="button"
                             >
                                 <X size={19} />
                             </button>
@@ -1485,6 +1739,8 @@ const DegreeClasses = () => {
                         </div>
 
                         <div className="degree-view-content">
+
+                            {/* HERO */}
 
                             <div className="degree-view-hero">
 
@@ -1515,9 +1771,12 @@ const DegreeClasses = () => {
 
                             </div>
 
+                            {/* DETAILS */}
+
                             <div className="degree-detail-grid">
 
                                 <div className="degree-detail-item">
+
                                     <span>
                                         Degree / Class
                                     </span>
@@ -1527,9 +1786,11 @@ const DegreeClasses = () => {
                                             viewingClass.name
                                         }
                                     </strong>
+
                                 </div>
 
                                 <div className="degree-detail-item">
+
                                     <span>
                                         Code
                                     </span>
@@ -1539,9 +1800,11 @@ const DegreeClasses = () => {
                                             viewingClass.code
                                         }
                                     </strong>
+
                                 </div>
 
                                 <div className="degree-detail-item">
+
                                     <span>
                                         Department
                                     </span>
@@ -1553,38 +1816,73 @@ const DegreeClasses = () => {
                                             )
                                         }
                                     </strong>
+
                                 </div>
 
                                 <div className="degree-detail-item">
+
                                     <span>
-                                        Duration
+                                        Program Type
                                     </span>
 
                                     <strong>
                                         {
-                                            viewingClass.duration
-                                        }{" "}
-                                        Years
+                                            getProgramTypeLabel(
+                                                viewingClass.programType
+                                            )
+                                        }
                                     </strong>
+
                                 </div>
 
                                 <div className="degree-detail-item">
+
+                                    <span>
+                                        Semester Range
+                                    </span>
+
+                                    <strong>
+                                        {
+                                            getSemesterRange(
+                                                viewingClass
+                                            )
+                                        }
+                                    </strong>
+
+                                </div>
+
+                                <div className="degree-detail-item">
+
                                     <span>
                                         Status
                                     </span>
 
-                                    <strong className="detail-active">
-                                        Active
+                                    <strong
+                                        className={
+                                            viewingClass.isActive === false
+                                                ? "detail-inactive"
+                                                : "detail-active"
+                                        }
+                                    >
+                                        {
+                                            viewingClass.isActive === false
+                                                ? "Inactive"
+                                                : "Active"
+                                        }
                                     </strong>
+
                                 </div>
 
                             </div>
+
+                            {/* SHIFTS */}
 
                             <div className="degree-view-shifts">
 
                                 <div className="degree-view-shifts-header">
 
                                     <div>
+
                                         <h4>
                                             Assigned Shifts
                                         </h4>
@@ -1592,6 +1890,7 @@ const DegreeClasses = () => {
                                         <p>
                                             Shifts belonging to this class
                                         </p>
+
                                     </div>
 
                                     <span>
@@ -1625,6 +1924,7 @@ const DegreeClasses = () => {
                                                     "morning";
 
                                                 return (
+
                                                     <div
                                                         key={
                                                             id
@@ -1635,22 +1935,27 @@ const DegreeClasses = () => {
                                                         <div className="degree-view-shift-icon">
 
                                                             {morning ? (
+
                                                                 <Sun
                                                                     size={
                                                                         18
                                                                     }
                                                                 />
+
                                                             ) : (
+
                                                                 <Moon
                                                                     size={
                                                                         18
                                                                     }
                                                                 />
+
                                                             )}
 
                                                         </div>
 
                                                         <div>
+
                                                             <strong>
                                                                 {
                                                                     shift.name
@@ -1660,9 +1965,11 @@ const DegreeClasses = () => {
                                                             <small>
                                                                 Shift
                                                             </small>
+
                                                         </div>
 
                                                     </div>
+
                                                 );
                                             }
                                         )}
@@ -1672,15 +1979,20 @@ const DegreeClasses = () => {
                                 ) : (
 
                                     <div className="degree-no-shifts">
-                                        <Clock3
+
+                                        <Layers3
                                             size={20}
                                         />
+
                                         No shifts assigned
+
                                     </div>
 
                                 )}
 
                             </div>
+
+                            {/* FOOTER */}
 
                             <div className="degree-view-footer">
 
@@ -1691,6 +2003,7 @@ const DegreeClasses = () => {
                                             null
                                         )
                                     }
+                                    type="button"
                                 >
                                     Close
                                 </button>
@@ -1710,11 +2023,15 @@ const DegreeClasses = () => {
                                             item
                                         );
                                     }}
+                                    type="button"
                                 >
+
                                     <Pencil
                                         size={16}
                                     />
+
                                     Edit Class
+
                                 </button>
 
                             </div>
