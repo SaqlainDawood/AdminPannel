@@ -1212,3 +1212,261 @@
   }
 
 }
+/* =========================================================
+   SUBJECT PREREQUISITES  (purane append block ki jagah paste karein)
+========================================================= */
+
+/* description textarea — inputs jaisa look */
+.subject-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 11px;
+  border: 1px solid #dfe4eb;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #293345;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  transition: 0.18s ease;
+}
+
+.subject-form-group textarea:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.07);
+}
+
+.subject-form-group textarea::placeholder {
+  color: #a1a9b6;
+}
+
+/* heading row + Add button */
+.subject-prereq-heading {
+  justify-content: space-between;
+}
+
+.subject-prereq-heading-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.subject-prereq-add-btn {
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
+  background: #7c3aed;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.subject-prereq-add-btn:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.subject-prereq-add-btn:disabled {
+  background: #d5dae2;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.subject-prereq-hint {
+  margin: 8px 0 0;
+  color: #8993a3;
+  font-size: 12px;
+}
+
+/* picker */
+.subject-prereq-picker {
+  margin-top: 10px;
+  padding: 13px;
+  border: 1px dashed #d8c8fb;
+  border-radius: 10px;
+  background: #faf7ff;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.subject-prereq-picker select {
+  width: 100%;
+  height: 42px;
+  box-sizing: border-box;
+  padding: 0 11px;
+  border: 1px solid #dfe4eb;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #293345;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.subject-prereq-picker select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.07);
+}
+
+.subject-prereq-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #465164;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.subject-prereq-check input {
+  accent-color: #7c3aed;
+}
+
+.subject-prereq-picker-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.subject-prereq-picker-actions .subject-save-btn {
+  min-width: 0;
+}
+
+.subject-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* selected list */
+.subject-prereq-list {
+  list-style: none;
+  margin: 11px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subject-prereq-list li {
+  padding: 10px 12px;
+  border: 1px solid #e7ebf0;
+  border-radius: 9px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subject-prereq-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.subject-prereq-info strong {
+  color: #202a3a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.subject-prereq-type {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.subject-prereq-type.static {
+  cursor: default;
+}
+
+.subject-prereq-type.mandatory,
+.subject-prereq-chip.mandatory {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.subject-prereq-type.optional,
+.subject-prereq-chip.optional {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.subject-prereq-remove {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.subject-prereq-remove:hover {
+  background: #fff1f2;
+  color: #e11d48;
+}
+
+/* table chips */
+.subject-prereq-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 220px;
+}
+
+.subject-prereq-chip {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* view modal blocks */
+.subject-view-block {
+  margin-top: 17px;
+}
+
+.subject-view-block > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #697487;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.subject-view-block p {
+  margin: 0;
+  color: #4c5668;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* disabled delete (already inactive) */
+.subject-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .subject-prereq-list li {
+    flex-wrap: wrap;
+  }
+}

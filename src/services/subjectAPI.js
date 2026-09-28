@@ -4,35 +4,35 @@ const SubjectAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-export const getSubjects = async () => {
-  const response = await SubjectAPI.get("/api/subjects");
+SubjectAPI.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// params: { departmentId, isActive }
+export const getSubjects = async (params = {}) => {
+  const response = await SubjectAPI.get("/api/subject", { params });
   return response.data;
 };
 
 export const getSubjectById = async (id) => {
-  const response = await SubjectAPI.get(`/api/subjects/${id}`);
+  const response = await SubjectAPI.get(`/api/subject/${id}`);
   return response.data;
 };
 
 export const createSubject = async (subjectData) => {
-  const response = await SubjectAPI.post(
-    "/api/subjects",
-    subjectData
-  );
+  const response = await SubjectAPI.post("/api/subject", subjectData);
   return response.data;
 };
 
 export const updateSubject = async (id, subjectData) => {
-  const response = await SubjectAPI.put(
-    `/api/subjects/${id}`,
-    subjectData
-  );
+  const response = await SubjectAPI.put(`/api/subject/${id}`, subjectData);
   return response.data;
 };
 
-export const deleteSubject = async (id) => {
-  const response = await SubjectAPI.delete(
-    `/api/subjects/${id}`
-  );
+// Soft delete (isActive: false)
+export const deactivateSubject = async (id) => {
+  const response = await SubjectAPI.patch(`/api/subject/${id}/deactivate`);
   return response.data;
 };
