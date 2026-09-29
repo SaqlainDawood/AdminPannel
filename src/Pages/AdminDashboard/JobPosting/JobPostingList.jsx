@@ -57,14 +57,17 @@ const JobPostingList = () => {
       setLoading(true);
       setError("");
       const res = await getJobs();
-      const list = Array.isArray(res?.jobs)
-        ? res.jobs
-        : Array.isArray(res?.data)
-        ? res.data
-        : Array.isArray(res)
-        ? res
-        : [];
-      setJobs(list);
+      const list = Array.isArray(res?.jobPosts)
+  ? res.jobPosts
+  : Array.isArray(res?.jobs)
+  ? res.jobs
+  : Array.isArray(res?.data)
+  ? res.data
+  : Array.isArray(res)
+  ? res
+  : [];
+
+setJobs(list);
     } catch (err) {
       console.error("Load jobs error:", err);
       setError(

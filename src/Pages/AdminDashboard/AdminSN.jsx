@@ -83,6 +83,20 @@ const AdminSidebar = () => {
         { id: 'coord-add', title: 'Add Coordinator', icon: 'fa-plus', path: '/admin/dashboard/coordinators/add' },
       ]
     },
+
+   {
+      id: 'Jobs',
+      title: 'CMS',
+      icon: 'fa-briefcase',
+      // path: '/admin/dashboard/jobs',
+      submenu: [
+        { id: 'job-list', title: 'JObs', icon: 'fa-list', path: '/admin/dashboard/jobs' },
+         { id: 'role-list', title: 'Roles', icon: 'fa-list', path: '/admin/dashboard/jobs/roles' },
+
+       
+      ]
+    },
+
     {
       id: 'fee',
       title: 'Fee Management',

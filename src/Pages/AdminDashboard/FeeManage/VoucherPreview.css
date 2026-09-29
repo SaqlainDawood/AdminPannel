@@ -1,290 +1,46 @@
-/* =========================================================
-   MODAL OVERLAY
-========================================================= */
-.vp-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 20px;
-  overflow-y: auto;
-}
+.vp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px}
+.vp-modal{background:#f4f4f4;border-radius:10px;width:100%;max-width:1240px}
+.vp-page{background:#f4f4f4;min-height:100vh;padding:16px}
+.vp-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #ddd;border-radius:10px 10px 0 0}
+.vp-toolbar h3{margin:0;font-size:16px}
+.vp-actions{display:flex;gap:8px}
+.vp-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:14px}
+.vp-btn:disabled{opacity:.5;cursor:not-allowed}
+.vp-btn-pdf{background:#1a56db;border-color:#1a56db;color:#fff}
+.vp-btn-print{background:#111;border-color:#111;color:#fff}
+.vp-spin{animation:vp-rot 1s linear infinite}
+@keyframes vp-rot{to{transform:rotate(360deg)}}
+.vp-state{padding:48px;text-align:center;color:#444}
+.vp-state-error{color:#b42318}
+.vp-scroll{overflow-x:auto;padding:16px}
 
-.vp-modal {
-  background: #fff;
-  border-radius: 8px;
-  max-width: 1600px;
-  width: 100%;
-  padding: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
+/* sheet = A4 landscape width */
+.vp-sheet{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:1120px;margin:0 auto;background:#fff;padding:8px;box-sizing:border-box;color:#000;font-family:Arial,Helvetica,sans-serif}
+.vp-copy{border:1px solid #444;padding:10px;font-size:11px;line-height:1.35;display:flex;flex-direction:column;box-sizing:border-box;break-inside:avoid}
+.vp-copy-name{text-align:center;font-weight:700;font-size:13px;border-bottom:1.5px solid #000;padding-bottom:4px;margin-bottom:6px}
+.vp-title{text-align:center;font-weight:700;font-size:13px;margin-bottom:8px}
+.vp-meta{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.vp-line-info{display:flex;gap:4px}
+.vp-line-info span{color:#333;white-space:nowrap}
+.vp-line-info strong{font-weight:700;word-break:break-word}
+.vp-row-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vp-table{width:100%;border-collapse:collapse;margin:6px 0}
+.vp-table th,.vp-table td{border:1px solid #000;padding:3px 4px;text-align:left}
+.vp-table th:last-child,.vp-table td:last-child{text-align:right}
+.vp-table th{background:#eee}
+.vp-total td{font-weight:700}
+.vp-words{font-style:italic;border-top:1px dashed #666;border-bottom:1px dashed #666;padding:3px 0;margin:6px 0;font-size:10.5px}
+.vp-line{display:flex;justify-content:space-between;padding:2px 0}
+.vp-line-bold{font-weight:700}
+.vp-notes{margin-top:auto;padding-top:8px;font-size:8.5px;line-height:1.3;color:#222}
+.vp-notes div{margin-bottom:3px}
 
-/* =========================================================
-   PAGE MODE
-========================================================= */
-.vp-page {
-  padding: 16px;
-  background: #f5f5f5;
-  min-height: 100vh;
-}
-
-.vp-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.vp-toolbar h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.vp-toolbar > div {
-  display: flex;
-  gap: 8px;
-}
-
-.vp-btn-print,
-.vp-btn-close,
-.vp-btn-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.vp-btn-print {
-  background: #2563eb;
-  color: #fff;
-}
-.vp-btn-print:hover { background: #1d4ed8; }
-
-.vp-btn-close {
-  background: #ef4444;
-  color: #fff;
-  padding: 6px 10px;
-}
-.vp-btn-close:hover { background: #dc2626; }
-
-.vp-btn-back {
-  background: #e5e7eb;
-  color: #111;
-}
-.vp-btn-back:hover { background: #d1d5db; }
-
-/* =========================================================
-   SHEET — 4 COPIES SIDE BY SIDE
-========================================================= */
-.vp-sheet {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.vp-copy {
-  background: #fff;
-  border: 1px solid #999;
-  padding: 8px 10px;
-  font-size: 10px;
-  line-height: 1.35;
-  color: #000;
-}
-
-.vp-copy-name {
-  text-align: center;
-  font-weight: 700;
-  font-size: 11px;
-  border-bottom: 1px solid #000;
-  padding-bottom: 3px;
-  margin-bottom: 5px;
-}
-
-.vp-bank,
-.vp-university {
-  text-align: center;
-  font-weight: 700;
-  font-size: 11px;
-}
-.vp-university { font-size: 12px; margin-bottom: 6px; }
-
-/* META */
-.vp-meta > div {
-  display: flex;
-  gap: 4px;
-  font-size: 9.5px;
-  margin-bottom: 2px;
-}
-.vp-meta > div > span {
-  flex: 0 0 auto;
-  color: #333;
-}
-.vp-meta > div > strong {
-  flex: 1 1 auto;
-  font-weight: 600;
-  color: #000;
-  word-break: break-word;
-}
-
-.vp-row-2 {
-  display: flex;
-  gap: 6px;
-}
-.vp-row-2 > div {
-  flex: 1;
-  display: flex;
-  gap: 3px;
-}
-
-/* TABLE */
-.vp-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 9px;
-  margin: 6px 0;
-}
-.vp-table th,
-.vp-table td {
-  border: 1px solid #000;
-  padding: 2px 4px;
-}
-.vp-table thead th {
-  background: #f2f2f2;
-  font-weight: 700;
-  text-align: center;
-}
-.vp-table .vp-total td {
-  font-weight: 700;
-  background: #fafafa;
-}
-
-/* WORDS */
-.vp-words {
-  font-size: 9px;
-  font-style: italic;
-  padding: 3px 0;
-  border-top: 1px dashed #999;
-  border-bottom: 1px dashed #999;
-  margin: 4px 0;
-}
-
-/* LINES */
-.vp-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  padding: 2px 0;
-}
-.vp-line-bold {
-  font-weight: 700;
-}
-
-/* NOTES */
-.vp-notes {
-  font-size: 7.5px;
-  margin-top: 6px;
-  line-height: 1.3;
-  border-top: 1px solid #ccc;
-  padding-top: 4px;
-}
-.vp-notes > div { margin-bottom: 2px; }
-
-/* LOADER / ERROR */
-.vp-page-state {
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.vp-loader { font-size: 15px; color: #555; }
-.vp-error {
-  text-align: center;
-  background: #fff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.vp-error h3 { margin: 0 0 8px; }
-.vp-error p { color: #666; margin: 0 0 16px; }
-.vp-error button {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* =========================================================
-   PRINT — 4 COPIES LANDSCAPE A4
-========================================================= */
-@media print {
-  @page {
-    size: A4 landscape;
-    margin: 5mm;
-  }
-
-  body * { visibility: hidden; }
-
-  .vp-sheet,
-  .vp-sheet * { visibility: visible; }
-
-  .no-print,
-  .vp-toolbar { display: none !important; }
-
-  .vp-overlay,
-  .vp-modal,
-  .vp-page {
-    position: static !important;
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    max-width: none !important;
-  }
-
-  .vp-sheet {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 3px !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-
-  .vp-copy {
-    font-size: 7px !important;
-    line-height: 1.2 !important;
-    padding: 4px !important;
-    border: 1px solid #000 !important;
-  }
-
-  .vp-copy-name { font-size: 8px !important; }
-  .vp-bank,
-  .vp-university { font-size: 8.5px !important; }
-  .vp-meta > div { font-size: 6.5px !important; margin-bottom: 1px !important; }
-  .vp-table { font-size: 6.5px !important; }
-  .vp-table th,
-  .vp-table td { padding: 1px 2px !important; }
-  .vp-words { font-size: 6px !important; }
-  .vp-line { font-size: 6.5px !important; padding: 1px 0 !important; }
-  .vp-notes { font-size: 5.5px !important; }
+/* PRINT: sirf voucher sheet, jaisa screen par dikhta hai */
+@page{size:A4 landscape;margin:6mm}
+@media print{
+  html,body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body *{visibility:hidden}
+  .vp-print-root,.vp-print-root *{visibility:visible}
+  .vp-print-root{position:absolute;left:0;top:0;width:100%!important;margin:0;padding:0}
+  .no-print{display:none!important}
 }

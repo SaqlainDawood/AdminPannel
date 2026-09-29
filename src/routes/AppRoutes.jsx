@@ -74,7 +74,7 @@ import JobPostingView from "../Pages/AdminDashboard/JobPosting/JobPostingView";
 import CoordinatorDashboard from "../CoordinatorDashboard/CoordSideNav/CoordSideNav";
 
 import ProtectedRoute from "./ProtectedRoute";
-
+import RolesManager from "../Pages/AdminDashboard/JobPosting/RolesManager";
 
 const AppRoutes = () => {
   return (
@@ -418,15 +418,20 @@ const AppRoutes = () => {
 
           </Route>
 
-
+<Route>
           {/* Jobs */}
-          <Route path="jobs">
+        <Route
+  path="jobs"
+  element={<JobPostingList />}
+/>
 
-            <Route
-              index
-              element={<JobPostingList />}
-            />
+<Route
+  path="jobs/roles"
+  element={<RolesManager />}
+/>
 
+          
+            
             <Route
               path="create"
               element={<JobPostingForm />}
@@ -441,6 +446,8 @@ const AppRoutes = () => {
               path="view/:id"
               element={<JobPostingView />}
             />
+                
+            
 
           </Route>
 

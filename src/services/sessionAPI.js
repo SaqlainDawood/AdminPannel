@@ -5,10 +5,31 @@ const SessionAPI = axios.create({
 });
 
 // =====================================================
+// TOKEN INTERCEPTOR
+// Get JWT from sessionStorage
+// =====================================================
+
+SessionAPI.interceptors.request.use(
+    (config) => {
+        const token = sessionStorage.getItem("token");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// =====================================================
 // GET ALL SESSIONS
 // GET /api/sessions
 // Optional params: term, year
 // =====================================================
+
 export const getSessions = async (params = {}) => {
     const response = await SessionAPI.get(
         "/api/sessions",
@@ -18,11 +39,11 @@ export const getSessions = async (params = {}) => {
     return response.data;
 };
 
-
 // =====================================================
 // GET SESSION STATUS
 // GET /api/sessions/status
 // =====================================================
+
 export const getSessionStatus = async () => {
     const response = await SessionAPI.get(
         "/api/sessions/status"
@@ -31,11 +52,11 @@ export const getSessionStatus = async () => {
     return response.data;
 };
 
-
 // =====================================================
 // GET CURRENT ACTIVE SESSION
 // GET /api/sessions/current
 // =====================================================
+
 export const getCurrentSession = async () => {
     const response = await SessionAPI.get(
         "/api/sessions/current"
@@ -44,11 +65,11 @@ export const getCurrentSession = async () => {
     return response.data;
 };
 
-
 // =====================================================
 // GET SESSION BY ID
 // GET /api/sessions/:id
 // =====================================================
+
 export const getSessionById = async (id) => {
     const response = await SessionAPI.get(
         `/api/sessions/${id}`
@@ -56,7 +77,6 @@ export const getSessionById = async (id) => {
 
     return response.data;
 };
-
 
 // =====================================================
 // BULK GENERATE DEGREE CLASS SESSIONS
@@ -69,6 +89,7 @@ export const getSessionById = async (id) => {
 //     startTerm: "Fall"
 // }
 // =====================================================
+
 export const generateSessions = async (payload) => {
     const response = await SessionAPI.post(
         "/api/sessions/generate",
@@ -78,11 +99,11 @@ export const generateSessions = async (payload) => {
     return response.data;
 };
 
-
 // =====================================================
 // DELETE ALL SESSIONS OF DEGREE CLASS
 // DELETE /api/sessions/bulk/:degreeClassId
 // =====================================================
+
 export const deleteSessionsByDegreeClass = async (
     degreeClassId
 ) => {
@@ -92,6 +113,5 @@ export const deleteSessionsByDegreeClass = async (
 
     return response.data;
 };
-
 
 export default SessionAPI;

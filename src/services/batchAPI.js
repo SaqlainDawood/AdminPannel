@@ -5,6 +5,26 @@ const BatchAPI = axios.create({
 });
 
 // ============================================
+// TOKEN INTERCEPTOR
+// Get JWT from sessionStorage
+// ============================================
+
+BatchAPI.interceptors.request.use(
+    (config) => {
+        const token = sessionStorage.getItem("token");
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// ============================================
 // GET ALL BATCHES
 // GET /api/batches
 // ============================================

@@ -7,23 +7,42 @@ const JobAPI = axios.create({
 // Token interceptor
 JobAPI.interceptors.request.use((config) => {
   const token =
-    localStorage.getItem("adminToken") || localStorage.getItem("token");
+    sessionStorage.getItem("adminToken") || sessionStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-JobAPI.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err?.response?.status === 401) {
-      localStorage.removeItem("adminToken");
-      localStorage.removeItem("token");
+// Token interceptor
+JobAPI.interceptors.request.use(
+  (config) => {
+    const token =
+      sessionStorage.getItem("adminToken") ||
+      sessionStorage.getItem("token");
+
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
-    return Promise.reject(err);
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor
+JobAPI.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401) {
+      sessionStorage.removeItem("adminToken");
+      sessionStorage.removeItem("token");
+    }
+
+    return Promise.reject(error);
   }
 );
 
-const BASE = "/api/jobs";
+const BASE = "/api/cms/job-posts";
 
 // ---------- API CALLS ----------
 

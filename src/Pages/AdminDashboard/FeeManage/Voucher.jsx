@@ -808,7 +808,7 @@ console.log("selectedStudent:", selectedStudent);
      setPreviewVoucher({
   ...createdVoucher,
   items: createdItems,
-  student: raw?.student || selectedStudent,
+  student: selectedStudent,
   selectedStudent,
   enrollment,
   batch: enrollment?.batchId || batch,  // 👈 enrollment se lo (already flattened)
