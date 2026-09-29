@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Search,
   Eye,
@@ -8,201 +8,232 @@ import {
   Clock,
   DollarSign,
   AlertCircle,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
+
+import { getVouchers, updateVoucherStatus } from "../../../services/feeService";
 import "./FeeVerify.css";
+
+// ============================================
+// STATUS MAPPING (backend <-> UI)
+// ============================================
+const TO_UI = { unpaid: "pending", paid: "verified", cancelled: "rejected" };
+const TO_API = { pending: "unpaid", verified: "paid", rejected: "cancelled" };
+
+// ============================================
+// HELPERS
+// ============================================
+const getList = (response) => {
+  const data = response?.data ?? response;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.vouchers)) return data.vouchers;
+  return [];
+};
+
+const getId = (item) => item?._id || item?.id;
+
+const getStudent = (v) =>
+  v?.enrollmentId?.studentId || v?.studentId || v?.student || {};
+
+const getStudentName = (v) => {
+  const s = getStudent(v);
+  return (
+    s?.name ||
+    s?.fullName ||
+    `${s?.firstName || ""} ${s?.lastName || ""}`.trim() ||
+    "Unknown"
+  );
+};
+
+const getRollNo = (v) => {
+  const s = getStudent(v);
+  return s?.rollNo || s?.registrationNo || s?.studentId || "—";
+};
+
+const fmtDate = (val) => {
+  if (!val) return "—";
+  try {
+    return new Date(val).toISOString().split("T")[0];
+  } catch {
+    return val;
+  }
+};
 
 const FeeVerify = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("pending");
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [error, setError] = useState("");
 
-  // =========================
-  // STATIC PAYMENT DATA
-  // =========================
+  // ============================================
+  // LOAD VOUCHERS
+  // ============================================
+  const loadPayments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-  const [payments, setPayments] = useState([
-    {
-      id: "PV-001",
-      student: "Sara Noor",
-      rollNo: "BS-CS-2022-034",
-      amount: 25000,
-      submittedDate: "2025-10-05",
-      challanNo: "CH-789456",
-      bank: "HBL",
-      status: "pending",
-    },
-    {
-      id: "PV-002",
-      student: "Ahmed Hassan",
-      rollNo: "BS-IT-2021-056",
-      amount: 25000,
-      submittedDate: "2025-10-06",
-      challanNo: "CH-789457",
-      bank: "UBL",
-      status: "pending",
-    },
-    {
-      id: "PV-003",
-      student: "Zainab Fatima",
-      rollNo: "BS-SE-2023-012",
-      amount: 25000,
-      submittedDate: "2025-10-06",
-      challanNo: "CH-789458",
-      bank: "MCB",
-      status: "pending",
-    },
-    {
-      id: "PV-004",
-      student: "Bilal Khan",
-      rollNo: "BS-CS-2022-078",
-      amount: 30000,
-      submittedDate: "2025-10-07",
-      challanNo: "CH-789459",
-      bank: "Meezan Bank",
-      status: "verified",
-    },
-  ]);
+      const response = await getVouchers();
+      const list = getList(response);
 
-  // =========================
-  // FILTER PAYMENTS
-  // =========================
+      const mapped = list.map((v) => ({
+        id: v?.voucherNo || getId(v),
+        _raw: v,
+        student: getStudentName(v),
+        rollNo: getRollNo(v),
+        amount: Number(v?.totalAmount || v?.baseAmount || 0),
+        submittedDate: fmtDate(v?.createdAt || v?.issueDate),
+        payDueDate: fmtDate(v?.payDueDate),
+        fineDueDate: fmtDate(v?.fineDueDate),
+        challanNo: v?.voucherNo || "—",
+        bank: v?.bank || "—",
+        status: TO_UI[v?.payStatus] || "pending",
+      }));
 
-  const filteredPayments = payments.filter((payment) => {
-    const search = searchTerm.toLowerCase();
+      setPayments(mapped);
+    } catch (err) {
+      console.error("Fee verify load:", err);
+      setError(
+        err?.response?.data?.message || err?.message || "Failed to load payments."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const matchesSearch =
-      payment.student.toLowerCase().includes(search) ||
-      payment.rollNo.toLowerCase().includes(search) ||
-      payment.challanNo.toLowerCase().includes(search);
+  useEffect(() => {
+    loadPayments();
+  }, [loadPayments]);
 
-    const matchesStatus =
-      filterStatus === "all" || payment.status === filterStatus;
-
-    return matchesSearch && matchesStatus;
+  // ============================================
+  // FILTER
+  // ============================================
+  const filtered = payments.filter((p) => {
+    const q = searchTerm.toLowerCase();
+    const matchSearch =
+      p.student.toLowerCase().includes(q) ||
+      p.rollNo.toLowerCase().includes(q) ||
+      p.challanNo.toLowerCase().includes(q);
+    const matchStatus = filterStatus === "all" || p.status === filterStatus;
+    return matchSearch && matchStatus;
   });
 
-  // =========================
-  // APPROVE PAYMENT
-  // =========================
+  // ============================================
+  // UPDATE STATUS
+  // ============================================
+  const handleUpdate = async (payment, newUiStatus) => {
+    const student = getStudent(payment._raw);
+    const studentId = getId(student);
+    const voucherId = getId(payment._raw);
 
-  const handleApprove = (id) => {
-    setPayments((prev) =>
-      prev.map((payment) =>
-        payment.id === id
-          ? { ...payment, status: "verified" }
-          : payment
-      )
-    );
+    if (!studentId || !voucherId) {
+      setError("Student or voucher ID missing.");
+      return;
+    }
+
+    try {
+      setActionLoading(payment.id);
+      setError("");
+
+      await updateVoucherStatus(studentId, voucherId, TO_API[newUiStatus]);
+
+      setPayments((prev) =>
+        prev.map((p) =>
+          p.id === payment.id ? { ...p, status: newUiStatus } : p
+        )
+      );
+    } catch (err) {
+      console.error("Update status:", err);
+      setError(
+        err?.response?.data?.message || err?.message || "Failed to update."
+      );
+    } finally {
+      setActionLoading(null);
+    }
   };
 
-  // =========================
-  // REJECT PAYMENT
-  // =========================
-
-  const handleReject = (id) => {
-    setPayments((prev) =>
-      prev.map((payment) =>
-        payment.id === id
-          ? { ...payment, status: "rejected" }
-          : payment
-      )
-    );
-  };
-
-  // =========================
-  // STATUS BADGE
-  // =========================
-
-  const getStatusBadge = (status) => {
-    const config = {
-      pending: {
-        className: "fee-verify-status pending",
-        label: "Pending",
-      },
-      verified: {
-        className: "fee-verify-status verified",
-        label: "Verified",
-      },
-      rejected: {
-        className: "fee-verify-status rejected",
-        label: "Rejected",
-      },
+  // ============================================
+  // BADGE
+  // ============================================
+  const badge = (status) => {
+    const cfg = {
+      pending: { className: "fee-verify-status pending", label: "Pending" },
+      verified: { className: "fee-verify-status verified", label: "Verified" },
+      rejected: { className: "fee-verify-status rejected", label: "Rejected" },
     };
-
-    const current = config[status] || config.pending;
-
-    return (
-      <span className={current.className}>
-        {current.label}
-      </span>
-    );
+    const c = cfg[status] || cfg.pending;
+    return <span className={c.className}>{c.label}</span>;
   };
 
-  // =========================
+  // ============================================
   // SUMMARY
-  // =========================
-
-  const pendingCount = payments.filter(
-    (payment) => payment.status === "pending"
-  ).length;
-
-  const verifiedCount = payments.filter(
-    (payment) => payment.status === "verified"
-  ).length;
-
-  const rejectedCount = payments.filter(
-    (payment) => payment.status === "rejected"
-  ).length;
-
+  // ============================================
+  const pendingCount = payments.filter((p) => p.status === "pending").length;
+  const verifiedCount = payments.filter((p) => p.status === "verified").length;
+  const rejectedCount = payments.filter((p) => p.status === "rejected").length;
   const pendingAmount = payments
-    .filter((payment) => payment.status === "pending")
-    .reduce((total, payment) => total + payment.amount, 0);
+    .filter((p) => p.status === "pending")
+    .reduce((s, p) => s + p.amount, 0);
 
   return (
     <div className="fee-verify-page">
-
-      {/* ================= HEADER ================= */}
-
+      {/* HEADER */}
       <div className="fee-verify-header">
         <div>
           <div className="fee-verify-title-row">
             <div className="fee-verify-title-icon">
               <CheckCircle size={25} />
             </div>
-
             <div>
               <h2>Payment Verification</h2>
-              <p>
-                Review and verify student fee payment submissions.
-              </p>
+              <p>Review and verify student fee payment submissions.</p>
             </div>
           </div>
         </div>
+
+        <button
+          className="fee-verify-refresh"
+          onClick={loadPayments}
+          disabled={loading}
+        >
+          <RefreshCw size={16} className={loading ? "spin" : ""} />
+          Refresh
+        </button>
       </div>
 
-      {/* ================= INFO ALERT ================= */}
+      {/* ERROR */}
+      {error && (
+        <div className="fee-verify-alert error">
+          <AlertCircle size={20} />
+          <div>
+            <strong>Something went wrong</strong>
+            <p>{error}</p>
+          </div>
+          <button onClick={() => setError("")}>×</button>
+        </div>
+      )}
 
+      {/* INFO */}
       <div className="fee-verify-alert">
         <AlertCircle size={21} />
-
         <div>
           <strong>Verification Required</strong>
-
           <p>
-            Please carefully review the submitted challan details
-            before approving or rejecting a payment.
+            Please carefully review the submitted challan details before
+            approving or rejecting a payment.
           </p>
         </div>
       </div>
 
-      {/* ================= SUMMARY CARDS ================= */}
-
+      {/* SUMMARY */}
       <div className="fee-verify-summary">
-
         <div className="fee-verify-summary-card">
           <div className="summary-icon orange">
             <Clock size={21} />
           </div>
-
           <div>
             <span>Pending Verification</span>
             <h3>{pendingCount}</h3>
@@ -213,12 +244,9 @@ const FeeVerify = () => {
           <div className="summary-icon blue">
             <DollarSign size={21} />
           </div>
-
           <div>
             <span>Pending Amount</span>
-            <h3>
-              PKR {pendingAmount.toLocaleString()}
-            </h3>
+            <h3>PKR {pendingAmount.toLocaleString()}</h3>
           </div>
         </div>
 
@@ -226,7 +254,6 @@ const FeeVerify = () => {
           <div className="summary-icon green">
             <CheckCircle size={21} />
           </div>
-
           <div>
             <span>Verified Payments</span>
             <h3>{verifiedCount}</h3>
@@ -237,41 +264,27 @@ const FeeVerify = () => {
           <div className="summary-icon red">
             <XCircle size={21} />
           </div>
-
           <div>
             <span>Rejected Payments</span>
             <h3>{rejectedCount}</h3>
           </div>
         </div>
-
       </div>
 
-      {/* ================= MAIN CARD ================= */}
-
+      {/* MAIN */}
       <div className="fee-verify-card">
-
-        {/* CARD HEADER */}
-
         <div className="fee-verify-card-header">
           <div>
             <h3>Submitted Payments</h3>
-            <p>
-              Review student payment challans and update their status.
-            </p>
+            <p>Review student payment challans and update their status.</p>
           </div>
-
-          <div className="fee-verify-count">
-            {filteredPayments.length} Payments
-          </div>
+          <div className="fee-verify-count">{filtered.length} Payments</div>
         </div>
 
-        {/* ================= FILTER BAR ================= */}
-
+        {/* FILTER */}
         <div className="fee-verify-filter">
-
           <div className="fee-verify-search">
             <Search size={18} />
-
             <input
               type="text"
               placeholder="Search student, roll number or challan..."
@@ -289,91 +302,56 @@ const FeeVerify = () => {
             <option value="verified">Verified</option>
             <option value="rejected">Rejected</option>
           </select>
-
         </div>
 
-        {/* ================= PAYMENTS ================= */}
-
+        {/* LIST */}
         <div className="fee-verify-list">
-
-          {filteredPayments.length > 0 ? (
-            filteredPayments.map((payment) => (
-              <div
-                className="fee-verify-payment"
-                key={payment.id}
-              >
-
-                {/* STUDENT */}
-
+          {loading ? (
+            <div className="fee-verify-empty">
+              <Loader2 size={45} className="spin" />
+              <h4>Loading payments...</h4>
+            </div>
+          ) : filtered.length > 0 ? (
+            filtered.map((payment) => (
+              <div className="fee-verify-payment" key={payment.id}>
                 <div className="fee-verify-student">
-
                   <div className="fee-verify-avatar">
-                    {payment.student.charAt(0)}
+                    {payment.student.charAt(0).toUpperCase()}
                   </div>
-
                   <div>
                     <h4>{payment.student}</h4>
                     <p>{payment.rollNo}</p>
-
                     <div className="fee-verify-payment-id">
-                      Payment ID: {payment.id}
+                      Voucher: {payment.challanNo}
                     </div>
                   </div>
-
                 </div>
-
-                {/* DETAILS */}
 
                 <div className="fee-verify-details">
-
                   <div>
                     <span>Amount</span>
-
-                    <strong>
-                      PKR {payment.amount.toLocaleString()}
-                    </strong>
+                    <strong>PKR {payment.amount.toLocaleString()}</strong>
                   </div>
-
                   <div>
-                    <span>Challan Number</span>
-
-                    <strong>
-                      {payment.challanNo}
-                    </strong>
+                    <span>Pay Due</span>
+                    <strong>{payment.payDueDate}</strong>
                   </div>
-
                   <div>
-                    <span>Bank</span>
-
-                    <strong>
-                      {payment.bank}
-                    </strong>
+                    <span>Fine Due</span>
+                    <strong>{payment.fineDueDate}</strong>
                   </div>
-
                   <div>
-                    <span>Submitted</span>
-
-                    <strong>
-                      {payment.submittedDate}
-                    </strong>
+                    <span>Issued</span>
+                    <strong>{payment.submittedDate}</strong>
                   </div>
-
                 </div>
-
-                {/* STATUS */}
 
                 <div className="fee-verify-status-wrapper">
-                  {getStatusBadge(payment.status)}
+                  {badge(payment.status)}
                 </div>
 
-                {/* ACTIONS */}
-
                 <div className="fee-verify-actions">
-
-                  <button
-                    className="fee-verify-view"
-                    title="View Challan"
-                  >
+                  <button className="fee-verify-view" title="View Voucher">
                     <Eye size={16} />
                     View
                   </button>
@@ -382,42 +360,38 @@ const FeeVerify = () => {
                     <>
                       <button
                         className="fee-verify-approve"
-                        onClick={() => handleApprove(payment.id)}
+                        disabled={actionLoading === payment.id}
+                        onClick={() => handleUpdate(payment, "verified")}
                       >
-                        <CheckCircle size={16} />
+                        {actionLoading === payment.id ? (
+                          <Loader2 size={16} className="spin" />
+                        ) : (
+                          <CheckCircle size={16} />
+                        )}
                         Approve
                       </button>
 
                       <button
                         className="fee-verify-reject"
-                        onClick={() => handleReject(payment.id)}
+                        disabled={actionLoading === payment.id}
+                        onClick={() => handleUpdate(payment, "rejected")}
                       >
                         <XCircle size={16} />
                         Reject
                       </button>
                     </>
                   )}
-
                 </div>
-
               </div>
             ))
           ) : (
             <div className="fee-verify-empty">
-
               <FileText size={45} />
-
               <h4>No payments found</h4>
-
-              <p>
-                Try changing your search or filter.
-              </p>
-
+              <p>Try changing your search or filter.</p>
             </div>
           )}
-
         </div>
-
       </div>
     </div>
   );

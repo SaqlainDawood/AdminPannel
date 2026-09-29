@@ -1,132 +1,192 @@
-import React, { useEffect, useState } from 'react';
-import './Student.css';
-import { toast } from 'react-toastify';
-import AdminAPI from '../../../api';
-import {FaSpinner} from 'react-icons/fa';
+import React, { useEffect, useState, useCallback } from "react";
+import "./Student.css";
+import { toast } from "react-toastify";
+import { FaSpinner } from "react-icons/fa";
+import {
+  getPendingApplications,
+  approveApplication,
+  rejectApplication,
+} from "../../../services/studentAdminAPI";
+
+// =========================================================
+// HELPERS
+// =========================================================
+const getFullName = (student) => {
+  const p = student?.personalInfo || {};
+  return (
+    `${p.firstName || ""} ${p.lastName || ""}`.trim() ||
+    student?.email ||
+    "Unknown"
+  );
+};
+
+const getEmail = (student) => student?.email || "No Email";
+
+const getPhone = (student) =>
+  student?.personalInfo?.phoneNo || student?.phoneNo || "N/A";
+
+const getCnic = (student) =>
+  student?.personalInfo?.cnic || student?.cnic || "N/A";
+
+const getFatherName = (student) =>
+  student?.personalInfo?.fatherName ||
+  student?.family?.fatherName ||
+  "N/A";
+
+// =========================================================
+// MAIN COMPONENT
+// =========================================================
 const StudentApprovals = () => {
   const [pendingStudents, setPendingStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [actionType, setActionType] = useState('');
-  const [rejectReason, setRejectReason] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [actionType, setActionType] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
+  const [filter, setFilter] = useState("all");
+
+  const [rollNo, setRollNo] = useState("");
+  const [registrationNo, setRegistrationNo] = useState("");
+  const [section, setSection] = useState("");
+
   const [initialLoading, setInitialLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-  useEffect(() => {
-    const fetchPendingStudents = async () => {
-      try {
-        const res = await AdminAPI.get("/stats/students/pending");
-        let studentsArray = [];
-        if (Array.isArray(res.data)) {
-          studentsArray = res.data;
-        } else if (res.data && Array.isArray(res.data.students)) {
-          studentsArray = res.data.students;
-        } else if (res.data && Array.isArray(res.data.data)) {
-          studentsArray = res.data.data;
-        } else if (res.data && Array.isArray(res.data.pendingStudents)) {
-          studentsArray = res.data.pendingStudents;
-        } else {
-          console.error("Unexpected API structure:", res.data);
-          toast.error("Unexpected data format received");
-        }
-        setPendingStudents(studentsArray);
-      } catch (error) {
-        console.error("Fetch Pending students Error!!!", error);
-        toast.error("Failed to load pending students");
-        setPendingStudents([]);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-    
-    fetchPendingStudents();
+
+  // =========================================================
+  // FETCH
+  // =========================================================
+  const fetchPendingStudents = useCallback(async () => {
+    try {
+      setInitialLoading(true);
+      const res = await getPendingApplications();
+
+      const list = Array.isArray(res?.applications)
+        ? res.applications
+        : Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res)
+        ? res
+        : [];
+
+      setPendingStudents(list);
+    } catch (error) {
+      console.error("Fetch pending applications error:", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to load pending students"
+      );
+      setPendingStudents([]);
+    } finally {
+      setInitialLoading(false);
+    }
   }, []);
 
-  const handleApprove = (student) => {
-    setSelectedStudent(student);
-    setActionType('approve');
+  useEffect(() => {
+    fetchPendingStudents();
+  }, [fetchPendingStudents]);
+
+  // =========================================================
+  // OPEN MODAL
+  // =========================================================
+  const handleApprove = (application) => {
+    setSelectedStudent(application);
+    setActionType("approve");
+    setRollNo(application?.rollNo || "");
+    setRegistrationNo(application?.registrationNo || "");
+    setSection(application?.section || "");
     setShowModal(true);
   };
 
-  const handleReject = (student) => {
-    setSelectedStudent(student);
-    setActionType('rejected');
+  const handleReject = (application) => {
+    setSelectedStudent(application);
+    setActionType("rejected");
+    setRejectReason("");
     setShowModal(true);
   };
 
+  // =========================================================
+  // CONFIRM
+  // =========================================================
   const confirmAction = async () => {
-    if (!selectedStudent) return;
-    // Prevent multiple clicks
-    if (processing) return;
+    if (!selectedStudent || processing) return;
+
     setProcessing(true);
+
     try {
-      if (actionType === 'approve') {
-        const res = await AdminAPI.put(`/stats/students/approve/${selectedStudent._id}`);
-        
-        if (res.data.success) {
-          toast.success(`${selectedStudent.firstName} ${selectedStudent.lastName} has been approved successfully!`);
-          
-          // Remove from list
-          setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));
-          
-          // Close modal after success
-          setTimeout(() => {
-            setShowModal(false);
-            setProcessing(false);
-            setSelectedStudent(null);
-          }, 500);
-          
-          return;
+      if (actionType === "approve") {
+        const payload = {};
+        if (rollNo.trim()) payload.rollNo = rollNo.trim();
+        if (registrationNo.trim())
+          payload.registrationNo = registrationNo.trim();
+        if (section.trim()) payload.section = section.trim();
+
+        const res = await approveApplication(selectedStudent._id, payload);
+
+        if (res?.success) {
+          toast.success(
+            `${getFullName(selectedStudent.student)} has been approved!`
+          );
+          setPendingStudents((prev) =>
+            prev.filter((s) => s._id !== selectedStudent._id)
+          );
+          setShowModal(false);
+          setSelectedStudent(null);
         } else {
-          toast.error(res.data.message || "Approval failed");
+          toast.error(res?.message || "Approval failed");
         }
-      } 
-      else if (actionType === 'rejected') {
-        const res = await AdminAPI.put(`/stats/students/rejected/${selectedStudent._id}`, {
-          rejectionReason: rejectReason
-        });
-        
-        if (res.data.success) {
-          toast.info(`${selectedStudent.firstName} ${selectedStudent.lastName} has been rejected`);
-          setPendingStudents(prev => prev.filter(s => s._id !== selectedStudent._id));
-          
-          setTimeout(() => {
-            setShowModal(false);
-            setProcessing(false);
-            setRejectReason('');
-            setSelectedStudent(null);
-          }, 500);
-          
+      } else if (actionType === "rejected") {
+        if (!rejectReason.trim()) {
+          toast.warn("Please enter a rejection reason");
+          setProcessing(false);
           return;
+        }
+
+        const res = await rejectApplication(
+          selectedStudent._id,
+          rejectReason.trim()
+        );
+
+        if (res?.success) {
+          toast.info(
+            `${getFullName(selectedStudent.student)} has been rejected`
+          );
+          setPendingStudents((prev) =>
+            prev.filter((s) => s._id !== selectedStudent._id)
+          );
+          setShowModal(false);
+          setRejectReason("");
+          setSelectedStudent(null);
         } else {
-          toast.error(res.data.message || "Rejection failed");
+          toast.error(res?.message || "Rejection failed");
         }
       }
     } catch (error) {
-      console.error("Approval/Reject Error:", error);
-      toast.error("Something went wrong while updating the status!");
+      console.error("Action error:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Something went wrong. Please try again."
+      );
     } finally {
       setProcessing(false);
     }
   };
-  const getDocumentStatus = (documents) => {
-    if (!documents || typeof documents !== 'object') {
-      return { completed: 0, total: 0, percentage: 0 };
-    }
-    const total = Object.keys(documents).length;
-    const completed = Object.values(documents).filter(Boolean).length;
-    return { completed, total, percentage: (completed / total) * 100 };
-  };
 
-  const filteredStudents = filter === 'all'
-    ? pendingStudents
-    : pendingStudents.filter((s) =>
-        s.enrollment?.department?.toLowerCase().includes(filter.toLowerCase())
-      );
+  // =========================================================
+  // FILTER
+  // =========================================================
+  const filteredStudents =
+    filter === "all"
+      ? pendingStudents
+      : pendingStudents.filter((s) =>
+          (s?.departmentId?.name || "")
+            .toLowerCase()
+            .includes(filter.toLowerCase())
+        );
 
+  // =========================================================
+  // LOADING
+  // =========================================================
   if (initialLoading) {
     return (
-       <div className="loading-container">
+      <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
           <p className="loading-text">Loading Student Approvals...</p>
@@ -135,10 +195,13 @@ const StudentApprovals = () => {
     );
   }
 
+  // =========================================================
+  // RENDER
+  // =========================================================
   return (
     <div className="approvals-container">
       <div className="container-fluid">
-        {/* Header */}
+        {/* HEADER */}
         <div className="page-header">
           <div>
             <h1 className="page-title">
@@ -156,61 +219,60 @@ const StudentApprovals = () => {
           </div>
         </div>
 
-        {/* Filter Section */}
+        {/* FILTER */}
         <div className="filter-section">
           <div className="filter-label">Search by Department:</div>
           <div className="filter-controls">
             <button
-              className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-              onClick={() => setFilter('all')}
+              className={`filter-btn ${filter === "all" ? "active" : ""}`}
+              onClick={() => setFilter("all")}
             >
               All Departments
             </button>
             <input
               type="text"
               className="search-bar"
-              placeholder="Type department name (e.g. Software Engineering)"
-              value={filter === 'all' ? '' : filter}
+              placeholder="Type department name..."
+              value={filter === "all" ? "" : filter}
               onChange={(e) => {
                 const value = e.target.value;
-                setFilter(value === '' ? 'all' : value);
+                setFilter(value === "" ? "all" : value);
               }}
             />
           </div>
         </div>
 
-        {/* Approvals Grid */}
+        {/* GRID */}
         <div className="approvals-grid">
-          {filteredStudents.map(student => {
-            const docStatus = getDocumentStatus(student.documents);
+          {filteredStudents.map((app) => {
+            const student = app?.student || {};
+            const fullName = getFullName(student);
+
             return (
-              <div key={student._id} className="approval-card">
+              <div key={app._id} className="approval-card">
                 <div className="card-header">
                   <div className="student-basic-info">
-                    <img 
-                      src={
-                        student.documents?.photo?.url ||
-                        student.profileImage?.url ||
-                        "/default-avatar.png"
-                      } 
-                      alt={`${student.firstName} ${student.lastName}`} 
-                      className="student-photo" 
+                    <img
+                      src={student?.profileImage?.url || "/default-avatar.png"}
+                      alt={fullName}
+                      className="student-photo"
                     />
                     <div className="student-details">
-                      <h3 className="student-name">{student.firstName} {student.lastName}</h3>
+                      <h3 className="student-name">{fullName}</h3>
                       <p className="student-email">
                         <i className="fas fa-envelope me-2"></i>
-                        {student?.user?.email || "No Email"}
+                        {getEmail(student)}
                       </p>
                       <p className="student-phone">
                         <i className="fas fa-phone me-2"></i>
-                        {student.phoneNo}
+                        {getPhone(student)}
                       </p>
                     </div>
                   </div>
                   <div className="time-badge">
                     <i className="far fa-clock me-2"></i>
-                    Applied: {new Date(student.createdAt || student.appliedDate).toLocaleDateString()}
+                    Applied:{" "}
+                    {new Date(app.createdAt).toLocaleDateString()}
                   </div>
                 </div>
 
@@ -218,53 +280,24 @@ const StudentApprovals = () => {
                   <div className="info-grid">
                     <div className="info-item">
                       <label>CNIC</label>
-                      <span>{student.cnic}</span>
+                      <span>{getCnic(student)}</span>
                     </div>
                     <div className="info-item">
                       <label>Father's Name</label>
-                      <span>{student.family?.fatherName || 'N/A'}</span>
+                      <span>{getFatherName(student)}</span>
                     </div>
                     <div className="info-item">
                       <label>Department</label>
-                      <span className="dept-badge">{student.enrollment?.department || 'N/A'}</span>
+                      <span className="dept-badge">
+                        {app?.departmentId?.name || "N/A"}
+                      </span>
                     </div>
                     <div className="info-item">
                       <label>Program</label>
-                      <span>{student.enrollment?.program || 'N/A'} - {student.enrollment?.semester}</span>
-                    </div>
-                  </div>
-
-                  {/* Documents Status */}
-                  <div className="documents-section">
-                    <div className="documents-header">
-                      <h4>Documents Verification</h4>
-                      <span className="completion-badge">
-                        {docStatus.completed}/{docStatus.total} Complete
+                      <span>
+                        {app?.degreeClassId?.name || "N/A"} —{" "}
+                        {app?.shiftId?.name || "N/A"}
                       </span>
-                    </div>
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${docStatus.percentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="documents-list">
-                      <div className={`doc-item ${student.documents?.cnic ? 'verified' : 'missing'}`}>
-                        <i className={`fas ${student.documents?.cnic ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                        <span>CNIC Copy</span>
-                      </div>
-                      <div className={`doc-item ${student.documents?.marksheet ? 'verified' : 'missing'}`}>
-                        <i className={`fas ${student.documents?.marksheet ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                        <span>Marksheet</span>
-                      </div>
-                      <div className={`doc-item ${student.documents?.photo ? 'verified' : 'missing'}`}>
-                        <i className={`fas ${student.documents?.photo ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                        <span>Photograph</span>
-                      </div>
-                      <div className={`doc-item ${student.documents?.domicile ? 'verified' : 'missing'}`}>
-                        <i className={`fas ${student.documents?.domicile ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
-                        <span>Domicile</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -272,14 +305,14 @@ const StudentApprovals = () => {
                 <div className="card-footer">
                   <button
                     className="btn-reject"
-                    onClick={() => handleReject(student)}
+                    onClick={() => handleReject(app)}
                   >
                     <i className="fas fa-times me-2"></i>
                     Reject
                   </button>
                   <button
                     className="btn-approve"
-                    onClick={() => handleApprove(student)}
+                    onClick={() => handleApprove(app)}
                   >
                     <i className="fas fa-check me-2"></i>
                     Approve
@@ -290,7 +323,7 @@ const StudentApprovals = () => {
           })}
         </div>
 
-        {/* Empty State */}
+        {/* EMPTY */}
         {filteredStudents.length === 0 && (
           <div className="empty-state">
             <i className="fas fa-check-circle"></i>
@@ -300,16 +333,19 @@ const StudentApprovals = () => {
         )}
       </div>
 
-      {/* Confirmation Modal */}
+      {/* MODAL */}
       {showModal && (
-        <div 
-          className={`modal-overlay ${processing ? 'processing' : ''}`} 
+        <div
+          className={`modal-overlay ${processing ? "processing" : ""}`}
           onClick={() => !processing && setShowModal(false)}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="modal-header">
               <h3>
-                {actionType === 'approve' ? (
+                {actionType === "approve" ? (
                   <>
                     <i className="fas fa-check-circle text-success me-2"></i>
                     Approve Application
@@ -322,69 +358,109 @@ const StudentApprovals = () => {
                 )}
               </h3>
               {!processing && (
-                <button className="btn-close" onClick={() => setShowModal(false)}>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                >
                   <i className="fas fa-times"></i>
                 </button>
               )}
             </div>
-            
-            {/* Show loading spinner when processing */}
+
             {processing ? (
               <div className="modal-body text-center py-5">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Processing...</span>
-                </div>
+                <div className="spinner-border text-primary" role="status" />
                 <p className="mt-3">
-                  {actionType === 'approve' ? 'Approving student...' : 'Rejecting student...'}
+                  {actionType === "approve"
+                    ? "Approving student..."
+                    : "Rejecting student..."}
                 </p>
               </div>
             ) : (
               <div className="modal-body">
-                {actionType === 'approve' ? (
+                {actionType === "approve" ? (
                   <div>
                     <p className="mb-3">
-                      Are you sure you want to approve <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong>'s application?
+                      Approve{" "}
+                      <strong>
+                        {getFullName(selectedStudent?.student)}
+                      </strong>
+                      ?
                     </p>
-                    <div className="approval-details">
-                      <div className="detail-item">
-                        <i className="fas fa-user-graduate"></i>
-                        <span>{selectedStudent?.firstName} {selectedStudent?.lastName}</span>
-                      </div>
-                      <div className="detail-item">
-                        <i className="fas fa-envelope"></i>
-                        <span>{selectedStudent?.user?.email || 'No email available'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <i className="fas fa-building"></i>
-                        <span>{selectedStudent?.enrollment?.department || 'N/A'}</span>
-                      </div>
+
+                    <div className="form-group mb-3">
+                      <label>Roll Number (optional)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="e.g. CS-2026-001"
+                        value={rollNo}
+                        onChange={(e) =>
+                          setRollNo(e.target.value.toUpperCase())
+                        }
+                      />
+                      <small className="text-muted">
+                        Khaali chhodo — backend auto-generate karega
+                      </small>
                     </div>
+
+                    <div className="form-group mb-3">
+                      <label>Registration No. (optional)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="e.g. 2026-CS-001"
+                        value={registrationNo}
+                        onChange={(e) =>
+                          setRegistrationNo(e.target.value.toUpperCase())
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group mb-3">
+                      <label>Section (optional)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="e.g. A"
+                        value={section}
+                        onChange={(e) =>
+                          setSection(e.target.value.toUpperCase())
+                        }
+                      />
+                    </div>
+
                     <div className="alert alert-info">
                       <i className="fas fa-info-circle me-2"></i>
-                      Student will receive confirmation email with login credentials.
+                      Student ko approval email milegi login credentials ke
+                      saath.
                     </div>
                   </div>
                 ) : (
                   <div>
                     <p className="mb-3">
-                      Please provide a reason for rejecting <strong>{selectedStudent?.firstName} {selectedStudent?.lastName}</strong>'s application:
+                      Reject{" "}
+                      <strong>
+                        {getFullName(selectedStudent?.student)}
+                      </strong>
+                      ?
                     </p>
                     <textarea
                       className="form-control"
                       rows="4"
-                      placeholder="Enter rejection reason..."
+                      placeholder="Rejection reason..."
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}
-                    ></textarea>
+                    />
                     <div className="alert alert-warning mt-3">
                       <i className="fas fa-exclamation-triangle me-2"></i>
-                      Student will be notified via email with the rejection reason.
+                      Student ko rejection email jaayegi.
                     </div>
                   </div>
                 )}
               </div>
             )}
-            
+
             <div className="modal-footer">
               <button
                 className="btn btn-secondary"
@@ -394,17 +470,29 @@ const StudentApprovals = () => {
                 Cancel
               </button>
               <button
-                className={`btn ${actionType === 'approve' ? 'btn-success' : 'btn-danger'}`}
+                className={`btn ${
+                  actionType === "approve" ? "btn-success" : "btn-danger"
+                }`}
                 onClick={confirmAction}
-                disabled={processing || (actionType === 'rejected' && !rejectReason.trim())}
+                disabled={
+                  processing ||
+                  (actionType === "rejected" && !rejectReason.trim())
+                }
               >
                 {processing ? (
                   <>
-                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    {actionType === 'approve' ? 'Approving...' : 'Rejecting...'}
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    />
+                    {actionType === "approve"
+                      ? "Approving..."
+                      : "Rejecting..."}
                   </>
+                ) : actionType === "approve" ? (
+                  "Confirm Approval"
                 ) : (
-                  actionType === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'
+                  "Confirm Rejection"
                 )}
               </button>
             </div>

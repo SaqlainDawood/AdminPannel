@@ -1730,11 +1730,7 @@ const Batch = () => {
                                 }
                               </strong>
 
-                              <small>
-                                {
-                                  batchId
-                                }
-                              </small>
+                             
 
                             </div>
 

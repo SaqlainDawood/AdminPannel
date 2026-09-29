@@ -1061,9 +1061,6 @@ const DegreeClasses = () => {
                                                                 }
                                                             </strong>
 
-                                                            <small>
-                                                                {id}
-                                                            </small>
 
                                                         </div>
 

@@ -1,140 +1,371 @@
-import React from "react";
-import {
-  X,
-  Printer,
-  Download,
-  FileText,
-} from "lucide-react";
-
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { X, Printer, ArrowLeft } from "lucide-react";
+import FeeAPI from "../../../services/feeService";
 import "./VoucherPreview.css";
 
-const VoucherPreview = ({
-  isOpen,
-  onClose,
-  voucherData,
-}) => {
+/* =========================================================
+   HELPERS
+========================================================= */
 
-  if (!isOpen || !voucherData) {
-    return null;
+const fmtMoney = (val) => `PKR ${Number(val || 0).toLocaleString()}`;
+
+const fmtDate = (val) => {
+  if (!val) return "-";
+
+  if (typeof val === "string" && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+    const [y, m, d] = val.split("-");
+    return `${d}-${m}-${y}`;
   }
 
-  // ==========================================
-  // DATA
-  // ==========================================
+  try {
+    const date = new Date(val);
+    if (Number.isNaN(date.getTime())) return String(val);
+    return date
+      .toLocaleDateString("en-GB")
+      .replace(/\//g, "-");
+  } catch {
+    return String(val);
+  }
+};
 
-  const {
-    generationType,
-    batchId,
-    departmentId,
-    semester,
-    payDueDate,
-    fineDueDate,
-    fineTypeId,
-    includeTransport,
-    apiResponse,
-  } = voucherData;
+const buildName = (student) => {
+  if (!student) return "-";
+  const p = student.personalInfo || student;
+  const f = p.firstName || "";
+  const l = p.lastName || "";
+  return (
+    student.name ||
+    student.fullName ||
+    `${f} ${l}`.trim() ||
+    student.email ||
+    "-"
+  );
+};
 
-  // ==========================================
-  // NORMALIZE API RESPONSE
-  // ==========================================
+const amountInWords = (value) => {
+  const n = Math.floor(Number(value || 0));
+  if (!n) return "Zero Only";
 
-  const responseData =
-    apiResponse?.data ||
-    apiResponse?.voucher ||
-    apiResponse?.result ||
-    apiResponse;
+  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+  const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
 
-  // ==========================================
-  // VOUCHER NUMBER
-  // ==========================================
+  const two = (x) =>
+    x < 10 ? ones[x] : x < 20 ? teens[x - 10] : `${tens[Math.floor(x / 10)]}${x % 10 ? `-${ones[x % 10]}` : ""}`;
 
-  const voucherNumber =
-    responseData?.voucherNumber ||
-    responseData?.voucherNo ||
-    responseData?.challanNo ||
-    responseData?.challanNumber ||
-    "-";
+  const three = (x) =>
+    x < 100 ? two(x) : `${ones[Math.floor(x / 100)]} Hundred${x % 100 ? ` ${two(x % 100)}` : ""}`;
 
-  // ==========================================
-  // BILL NUMBER
-  // ==========================================
+  const conv = (x) => {
+    if (x < 1000) return three(x);
+    if (x < 100000) return `${two(Math.floor(x / 1000))} Thousand${x % 1000 ? ` ${three(x % 1000)}` : ""}`;
+    if (x < 10000000)
+      return `${three(Math.floor(x / 100000))} Lakh${x % 100000 ? ` ${conv(x % 100000)}` : ""}`;
+    return `${two(Math.floor(x / 10000000))} Crore${x % 10000000 ? ` ${conv(x % 10000000)}` : ""}`;
+  };
 
-  const billNumber =
-    responseData?.billNo ||
-    responseData?.billNumber ||
-    "-";
+  return `${conv(n)} Only`;
+};
 
-  // ==========================================
-  // STUDENT
-  // ==========================================
+/* =========================================================
+   MAIN COMPONENT — WORKS AS MODAL + PAGE
+========================================================= */
 
+const VoucherPreview = ({
+  voucher: voucherProp,
+  onClose,
+}) => {
+  const { voucherId } = useParams();
+  const navigate = useNavigate();
+
+  const [voucher, setVoucher] = useState(voucherProp || null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const isModal = Boolean(voucherProp && onClose);
+
+  // =========================================================
+  // PAGE MODE — FETCH FROM API
+  // =========================================================
+  useEffect(() => {
+    if (isModal) return;
+    if (!voucherId) {
+      setError("Voucher ID is missing in URL.");
+      return;
+    }
+
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await FeeAPI.get(`/api/vouchers/${voucherId}`);
+
+        // Backend shape: { success, data: { voucher, items } }
+        const payload = res?.data?.data || res?.data;
+
+        const voucherDoc = payload?.voucher || payload;
+        const itemsArr = Array.isArray(payload?.items) ? payload.items : [];
+
+        if (!voucherDoc) throw new Error("Voucher not found.");
+
+        // Flatten so voucherNo, baseAmount, enrollmentId, items etc.
+        // are all readable straight off the top-level object below.
+        setVoucher({ ...voucherDoc, items: itemsArr });
+      } catch (err) {
+        console.error("Voucher fetch error:", err);
+        setError(
+          err?.response?.data?.message ||
+            err?.message ||
+            "Unable to load voucher."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [voucherId, isModal]);
+
+  // Sync prop → state in modal mode
+  useEffect(() => {
+    if (isModal && voucherProp) setVoucher(voucherProp);
+  }, [voucherProp, isModal]);
+
+  const handlePrint = () => window.print();
+
+  // =========================================================
+  // LOADING / ERROR (page mode)
+  // =========================================================
+  if (!isModal && loading) {
+    return (
+      <div className="vp-page-state">
+        <div className="vp-loader">Loading voucher...</div>
+      </div>
+    );
+  }
+
+  if (!isModal && (error || !voucher)) {
+    return (
+      <div className="vp-page-state">
+        <div className="vp-error">
+          <h3>Voucher Not Found</h3>
+          <p>{error || "Unable to load voucher."}</p>
+          <button onClick={() => navigate(-1)}>
+            <ArrowLeft size={17} /> Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!voucher) return null;
+
+  // =========================================================
+  // DATA NORMALIZATION — BASED ON YOUR API RESPONSE
+  // =========================================================
+
+  // enrollmentId is a populated object in your response
+  const enrollment = voucher?.enrollmentId || voucher?.enrollment || {};
+
+  // student is inside enrollment.studentId
   const student =
-    responseData?.student ||
-    responseData?.studentData ||
+    enrollment?.studentId ||
+    voucher?.student ||
+    voucher?.selectedStudent ||
     {};
 
-  // ==========================================
-  // ITEMS
-  // ==========================================
+  // batch is inside enrollment.batchId
+  const batch =
+    enrollment?.batchId ||
+    voucher?.batch ||
+    {};
 
-  const feeItems =
-    responseData?.items ||
-    responseData?.feeItems ||
-    responseData?.fees ||
-    [];
+  // batch has departmentId, degreeClassId, shiftId (as objects)
+  const department =
+    batch?.departmentId ||
+    batch?.department ||
+    {};
+    console.log("Enrollment:", enrollment);
+console.log("Batch:", enrollment?.batchId);
 
-  const normalizedItems = Array.isArray(feeItems)
-    ? feeItems.map((item) => ({
-        description:
-          item?.description ||
-          item?.name ||
-          item?.title ||
-          item?.feeName ||
-          "Fee",
+  const degreeClass =
+    batch?.degreeClassId ||
+    batch?.degreeClass ||
+    {};
 
-        amount: Number(
-          item?.amount ||
-          item?.total ||
-          item?.value ||
-          0
-        ),
-      }))
+  const shift =
+    batch?.shiftId ||
+    batch?.shift ||
+    {};
+
+  const campus =
+    batch?.campusId ||
+    batch?.campus ||
+    enrollment?.campusId ||
+    {};
+
+  const session =
+    batch?.startSessionId ||
+    batch?.sessionId ||
+    batch?.session ||
+    enrollment?.sessionId ||
+    {};
+
+  // =========================================================
+  // STUDENT FIELDS
+  // =========================================================
+
+ const p = student?.personalInfo || student || {};
+
+const studentName =
+  `${p.firstName || ""} ${p.lastName || ""}`.trim() ||
+  student?.name ||
+  student?.fullName ||
+  voucher?.studentName ||
+  "—";
+
+  const registrationNo =
+    student?.registrationNo ||
+    student?.registrationNumber ||
+    "-";
+
+ const studentId =
+  student?._id ||
+  student?.personalInfo?.studentId ||
+  voucher?.studentId ||
+  "—";
+
+const cnic =
+  student?.personalInfo?.cnic ||
+  student?.cnic ||
+  student?.CNIC ||
+  "—";
+
+  const fatherName =
+    student?.fatherName ||
+    student?.father?.name ||
+    student?.guardianName ||
+    "-";
+
+  const quota =
+    enrollment?.quota?.name ||
+    enrollment?.quotaName ||
+    enrollment?.quota ||
+    student?.quota?.name ||
+    student?.quota ||
+    "Open Merit";
+
+  // =========================================================
+  // PROGRAM / SEMESTER
+  // =========================================================
+
+  const departmentName =
+    department?.name ||
+    department?.title ||
+    department?.departmentName ||
+    "-";
+
+  const degreeName =
+    degreeClass?.name ||
+    degreeClass?.title ||
+    degreeClass?.code ||
+    "-";
+
+  const shiftName =
+    shift?.name ||
+    shift?.title ||
+    shift?.code ||
+    "-";
+
+  const campusName =
+    campus?.name ||
+    campus?.title ||
+    campus?.campusName ||
+    "UE Multan Campus";
+
+  const sessionName =
+    session?.name ||
+    session?.year ||
+    session?.session ||
+    batch?.sessionName ||
+    "-";
+
+  const semester =
+    voucher?.semester ??
+    batch?.currentSemester ??
+    enrollment?.currentSemester ??
+    "-";
+
+  // =========================================================
+  // VOUCHER NUMBERS
+  // =========================================================
+
+  const voucherNo =
+    voucher?.voucherNo ||
+    voucher?.voucherNumber ||
+    voucher?._id ||
+    "-";
+
+  const challanNo =
+    voucher?.challanNo ||
+    voucher?.challanNumber ||
+    voucherNo;
+
+  const billNo =
+    voucher?.billNo ||
+    voucher?.billNumber ||
+    voucherNo;
+
+  // =========================================================
+  // AMOUNTS
+  // =========================================================
+
+  const items = Array.isArray(voucher?.items)
+    ? voucher.items
+    : Array.isArray(voucher?.voucherItems)
+    ? voucher.voucherItems
     : [];
 
-  // ==========================================
-  // TOTAL
-  // ==========================================
+  const itemsTotal = items.reduce(
+    (sum, item) => sum + Number(item?.amount || 0),
+    0
+  );
 
-  const totalAmount =
-    responseData?.totalAmount != null
-      ? Number(responseData.totalAmount)
-      : responseData?.total != null
-      ? Number(responseData.total)
-      : normalizedItems.reduce(
-          (total, item) =>
-            total + item.amount,
-          0
-        );
+  const baseAmount = Number(
+    voucher?.baseAmount ??
+      voucher?.amount ??
+      (items.length ? itemsTotal : 0)
+  );
 
-  // ==========================================
-  // PRINT
-  // ==========================================
+  const fineAmount = Number(
+    voucher?.fineAmount ??
+      voucher?.fine?.amount ??
+      0
+  );
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const afterDueAmount = Number(
+    voucher?.amountAfterDueDate ??
+      voucher?.afterDueAmount ??
+      baseAmount + fineAmount
+  );
 
-  // ==========================================
-  // DOWNLOAD
-  // ==========================================
+  const feeTypeName =
+    voucher?.feeType?.name ||
+    voucher?.feeTypeName ||
+    "Semester wise";
 
-  const handleDownload = () => {
-    window.print();
-  };
+  const issueDate = fmtDate(
+    voucher?.issueDate || voucher?.createdAt
+  );
 
-  // ==========================================
-  // COPY NAMES
-  // ==========================================
+  const dueDate = fmtDate(voucher?.payDueDate);
+  const fineDueDate = fmtDate(voucher?.fineDueDate);
+
+  // =========================================================
+  // COPIES
+  // =========================================================
 
   const copies = [
     "Bank Copy",
@@ -143,452 +374,244 @@ const VoucherPreview = ({
     "Student Copy",
   ];
 
-  // ==========================================
-  // SINGLE VOUCHER COPY
-  // ==========================================
+  // =========================================================
+  // SINGLE COPY RENDER
+  // =========================================================
 
-  const VoucherCopy = ({
-    copyName,
-    index,
-  }) => (
-    <div
-      className="voucher-paper"
-      key={`${copyName}-${index}`}
-    >
+  const VoucherCopy = ({ copyName, index }) => (
+    <article className="vp-copy" key={`${copyName}-${index}`}>
+      <div className="vp-copy-name">{copyName}</div>
 
-      {/* COPY NAME */}
-
-      <div className="voucher-copy-title">
-        {copyName}
+      <div className="vp-bank">The Bank of the Punjab</div>
+      <div className="vp-university">
+        University of Education, Lahore
       </div>
 
-      {/* HEADER */}
-
-      <div className="voucher-university-header">
-
-        <div className="voucher-bank-name">
-          THE BANK OF PUNJAB
-        </div>
-
-        <h1>
-          University of Education, Lahore
-        </h1>
-
-        <p>
-          Fee Challan / Voucher
-        </p>
-
-      </div>
-
-      {/* META */}
-
-      <div className="voucher-meta">
-
-        <div>
-          <span>Challan #</span>
-
-          <strong>
-            {voucherNumber}
-          </strong>
-        </div>
-
-        <div>
-          <span>Bill No.</span>
-
-          <strong>
-            {billNumber}
-          </strong>
-        </div>
-
-        <div>
-          <span>Date</span>
-
-          <strong>
-            {new Date().toLocaleDateString()}
-          </strong>
-        </div>
-
-      </div>
-
-      {/* STUDENT INFORMATION */}
-
-      <div className="voucher-section">
-
-        <div className="voucher-section-heading">
-          Student Information
-        </div>
-
-        <div className="voucher-info-grid">
-
-          <div>
-            <span>Name</span>
-
-            <strong>
-              {student?.name ||
-                responseData?.studentName ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Student ID</span>
-
-            <strong>
-              {student?.studentId ||
-                responseData?.studentId ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Roll Number</span>
-
-            <strong>
-              {student?.rollNo ||
-                responseData?.rollNo ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Campus</span>
-
-            <strong>
-              {student?.campus ||
-                responseData?.campus ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Degree Program</span>
-
-            <strong>
-              {student?.program ||
-                responseData?.program ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Shift</span>
-
-            <strong>
-              {student?.shift ||
-                responseData?.shift ||
-                "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Semester</span>
-
-            <strong>
-              {semester
-                ? `Semester ${semester}`
-                : "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Generation</span>
-
-            <strong>
-              {generationType === "batch"
-                ? "Batch"
-                : "Department"}
-            </strong>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* PAYMENT */}
-
-      <div className="voucher-section">
-
-        <div className="voucher-section-heading">
-          Payment Information
-        </div>
-
-        <div className="voucher-payment-info">
-
-          <div>
-            <span>Payment Due Date</span>
-
-            <strong>
-              {payDueDate || "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Fine Due Date</span>
-
-            <strong>
-              {fineDueDate || "-"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Fine Type</span>
-
-            <strong>
-              {fineTypeId || "No Fine"}
-            </strong>
-          </div>
-
-          <div>
-            <span>Transport</span>
-
-            <strong>
-              {includeTransport
-                ? "Included"
-                : "Not Included"}
-            </strong>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* FEE DETAILS */}
-
-      <div className="voucher-section">
-
-        <div className="voucher-section-heading">
-          Fee Details
-        </div>
-
-        <table className="voucher-fee-table">
-
-          <thead>
-            <tr>
-              <th>Sr#</th>
-              <th>Description</th>
-              <th>Amount (PKR)</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {normalizedItems.length > 0 ? (
-
-              normalizedItems.map(
-                (item, itemIndex) => (
-                  <tr key={itemIndex}>
-
-                    <td>
-                      {itemIndex + 1}
-                    </td>
-
-                    <td>
-                      {item.description}
-                    </td>
-
-                    <td>
-                      {item.amount.toLocaleString()}
-                    </td>
-
-                  </tr>
-                )
-              )
-
-            ) : (
-
-              <tr>
-
-                <td>1</td>
-
-                <td>Fee Voucher</td>
-
+    <div className="vp-meta">
+  <div>
+    <span>Date:</span>
+    <strong>{issueDate}</strong>
+  </div>
+
+  <div>
+    <span>Challan#:</span>
+    <strong>{challanNo}</strong>
+  </div>
+
+  <div>
+    <span>Name:</span>
+    <strong>{studentName}</strong>
+  </div>
+
+  <div>
+    <span>CNIC:</span>
+    <strong>{cnic}</strong>
+  </div>
+
+  <div>
+    <span>Department:</span>
+    <strong>{departmentName}</strong>
+  </div>
+
+  <div>
+    <span>Division/Campus:</span>
+    <strong>{campusName}</strong>
+  </div>
+
+  <div>
+    <span>Degree Program:</span>
+    <strong>{degreeName}</strong>
+  </div>
+
+  <div className="vp-row-2">
+    <div>
+      <span>Shift:</span>
+      <strong>{shiftName}</strong>
+    </div>
+    <div>
+      <span>Quota:</span>
+      <strong>{quota}</strong>
+    </div>
+  </div>
+
+  <div>
+    <span>Semester:</span>
+    <strong>
+      {semester !== "-" ? `Semester ${semester}` : "-"}
+    </strong>
+  </div>
+
+  <div>
+    <span>Due Date:</span>
+    <strong>{dueDate}</strong>
+  </div>
+
+  <div>
+    <span>Fine Due Date:</span>
+    <strong>{fineDueDate}</strong>
+  </div>
+
+  <div>
+    <span>Fee Type:</span>
+    <strong>{feeTypeName}</strong>
+  </div>
+</div>
+
+      <table className="vp-table">
+        <thead>
+          <tr>
+            <th>Sr#</th>
+            <th>Description</th>
+            <th>Rs.</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {items.length > 0 ? (
+            items.map((item, i) => (
+              <tr key={i}>
+                <td>{i + 1}</td>
                 <td>
-                  {totalAmount.toLocaleString()}
+                  {item?.name ||
+                    item?.description ||
+                    item?.feeTypeId?.name ||
+                    "Fee Item"}
                 </td>
-
+                <td>
+                  {Number(item?.amount || 0).toLocaleString()}
+                </td>
               </tr>
-
-            )}
-
-            <tr className="voucher-total-row">
-
-              <td colSpan="2">
-                Total Amount
-              </td>
-
-              <td>
-                PKR{" "}
-                {totalAmount.toLocaleString()}
-              </td>
-
+            ))
+          ) : (
+            <tr>
+              <td>1</td>
+              <td>Tuition Fee</td>
+              <td>{baseAmount.toLocaleString()}</td>
             </tr>
+          )}
 
-          </tbody>
+          <tr className="vp-total">
+            <td colSpan="2">Amount (within due date)</td>
+            <td>{baseAmount.toLocaleString()}</td>
+          </tr>
+        </tbody>
+      </table>
 
-        </table>
-
+      <div className="vp-words">
+        Rs. {amountInWords(baseAmount)}
       </div>
 
-      {/* AMOUNT */}
-
-      <div className="voucher-amount-box">
-
-        <span>
-          Amount Payable Within Due Date
-        </span>
-
-        <strong>
-          PKR{" "}
-          {totalAmount.toLocaleString()}
-        </strong>
-
+      <div className="vp-line">
+        <span>Fine Amount</span>
+        <strong>{fineAmount.toLocaleString()}</strong>
       </div>
 
-      {/* INSTRUCTIONS */}
-
-      <div className="voucher-instructions">
-
-        <h4>
-          Important Instructions
-        </h4>
-
-        <ul>
-
-          <li>
-            Please pay the voucher before
-            the due date.
-          </li>
-
-          <li>
-            Keep the paid challan safely
-            for future reference.
-          </li>
-
-          <li>
-            Late payment may be subject
-            to applicable fines.
-          </li>
-
-          <li>
-            Payment verification will be
-            completed by the university.
-          </li>
-
-        </ul>
-
+      <div className="vp-line vp-line-bold">
+        <span>Amount (after due date)</span>
+        <strong>{afterDueAmount.toLocaleString()}</strong>
       </div>
 
-      {/* SIGNATURES */}
+      <div className="vp-words">
+        Rs. {amountInWords(afterDueAmount)}
+      </div>
 
-      <div className="voucher-signatures">
-
+      <div className="vp-notes">
         <div>
-          <span></span>
-          <p>Bank Officer Signature</p>
+          i) Depositors will receive the system generated
+          deposit slip from the bank as proof of deposit.
+          Sign and stamp on downloaded challan forms or
+          manual deposit is not acceptable to UE authority.
         </div>
-
         <div>
-          <span></span>
-          <p>University Authorized Signature</p>
+          ii) This Voucher may please be deposited into
+          any Branch of BOP.
         </div>
-
+        <div>
+          iii) All Bankers are requested to post this
+          Voucher to the (University of Education New
+          Collection Account).
+        </div>
       </div>
+    </article>
+  );
 
-      {/* FOOTER */}
+  // =========================================================
+  // BODY (shared by modal + page)
+  // =========================================================
 
-      <div className="voucher-footer">
-
-        <p>
-          This is a computer-generated
-          fee voucher.
-        </p>
-
-        <strong>
-          University of Education, Lahore
-        </strong>
-
-      </div>
-
+  const body = (
+    <div className="vp-sheet">
+      {copies.map((name, i) => (
+        <VoucherCopy key={`${name}-${i}`} copyName={name} index={i} />
+      ))}
     </div>
   );
 
-  // ==========================================
-  // RENDER
-  // ==========================================
+  // =========================================================
+  // MODAL MODE
+  // =========================================================
 
-  return (
-    <div className="voucher-preview-overlay">
+  if (isModal) {
+    return (
+      <div
+        className="vp-overlay"
+        onClick={(e) =>
+          e.target === e.currentTarget && onClose()
+        }
+      >
+        <div className="vp-modal">
+          <div className="vp-toolbar no-print">
+            <h3>Voucher Preview</h3>
+            <div>
+              <button
+                className="vp-btn-print"
+                onClick={handlePrint}
+              >
+                <Printer size={16} /> Print
+              </button>
 
-      <div className="voucher-preview-modal">
-
-        {/* HEADER */}
-
-        <div className="voucher-preview-header no-print">
-
-          <div>
-
-            <h3>
-              <FileText size={20} />
-              Voucher Preview
-            </h3>
-
-            <p>
-              Four voucher copies are ready
-              for printing.
-            </p>
-
+              <button
+                className="vp-btn-close"
+                onClick={onClose}
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="voucher-preview-close"
-            onClick={onClose}
-          >
-            <X size={20} />
-          </button>
-
+          {body}
         </div>
+      </div>
+    );
+  }
 
-        {/* ACTIONS */}
+  // =========================================================
+  // PAGE MODE
+  // =========================================================
 
-        <div className="voucher-preview-actions no-print">
+  return (
+    <div className="vp-page">
+      <div className="vp-toolbar vp-toolbar-page no-print">
+        <button
+          className="vp-btn-back"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
 
-          <button
-            type="button"
-            className="voucher-print-btn"
-            onClick={handlePrint}
-          >
-            <Printer size={17} />
-            Print
-          </button>
+        <h3>
+          Voucher Preview — {voucherNo}
+        </h3>
 
-          <button
-            type="button"
-            className="voucher-download-btn"
-            onClick={handleDownload}
-          >
-            <Download size={17} />
-            Download
-          </button>
-
-        </div>
-
-        {/* FOUR COPIES */}
-
-        <div className="voucher-preview-vouchers">
-
-          {copies.map((copyName, index) => (
-            <VoucherCopy
-              key={`${copyName}-${index}`}
-              copyName={copyName}
-              index={index}
-            />
-          ))}
-
-        </div>
-
+        <button
+          className="vp-btn-print"
+          onClick={handlePrint}
+        >
+          <Printer size={16} /> Print
+        </button>
       </div>
 
+      {body}
     </div>
   );
 };

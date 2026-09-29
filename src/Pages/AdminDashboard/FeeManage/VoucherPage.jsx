@@ -1,116 +1,41 @@
 import React, { useState } from "react";
-import GenerateVoucher from "./GenerateVoucher";
-import VoucherPreview from "./VoucherPreview";
+import { useNavigate } from "react-router-dom";
+import { DollarSign, Plus } from "lucide-react";
+import Voucher from "./Voucher";
 import "./VoucherPage.css";
 
 const VoucherPage = () => {
   const [showGenerate, setShowGenerate] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [voucherData, setVoucherData] = useState(null);
-
-  // ==========================================
-  // OPEN GENERATE PAGE
-  // ==========================================
-
-  const handleOpenGenerate = () => {
-    setShowGenerate(true);
-    setShowPreview(false);
-  };
-
-  // ==========================================
-  // BACK FROM GENERATE PAGE
-  // ==========================================
-
-  const handleBack = () => {
-    setShowGenerate(false);
-  };
-
-  // ==========================================
-  // API SUCCESS
-  // GenerateVoucher se data yahan ayega
-  // ==========================================
-
-  const handleVoucherGenerated = (data) => {
-    console.log("Voucher generated successfully:");
-    console.log(data);
-
-    setVoucherData(data);
-
-    // Generate screen close
-    setShowGenerate(false);
-
-    // Preview open
-    setShowPreview(true);
-  };
-
-  // ==========================================
-  // CLOSE PREVIEW
-  // ==========================================
-
-  const handleClosePreview = () => {
-    setShowPreview(false);
-    setVoucherData(null);
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="voucher-page">
-
-      {/* =====================================
-          MAIN PAGE
-      ===================================== */}
-
-      {!showGenerate && !showPreview && (
+      {!showGenerate ? (
         <div className="voucher-home">
-
           <div className="voucher-home-card">
-
             <div className="voucher-home-icon">
-              <span>₹</span>
+              <DollarSign size={40} />
             </div>
 
             <h2>Fee Voucher Management</h2>
-
             <p>
-              Generate fee vouchers for batches
-              or departments.
+              Generate fee vouchers for individual students, batches, or
+              entire departments.
             </p>
 
             <button
               type="button"
               className="open-generate-btn"
-              onClick={handleOpenGenerate}
+              onClick={() => setShowGenerate(true)}
             >
+              <Plus size={18} />
               Generate Voucher
             </button>
-
           </div>
-
         </div>
+      ) : (
+        <Voucher onBack={() => setShowGenerate(false)} />
       )}
-
-      {/* =====================================
-          GENERATE VOUCHER
-      ===================================== */}
-
-      {showGenerate && (
-        <GenerateVoucher
-          onBack={handleBack}
-          onGenerate={handleVoucherGenerated}
-        />
-      )}
-
-      {/* =====================================
-          VOUCHER PREVIEW
-      ===================================== */}
-
-      {showPreview && voucherData && (
-        <VoucherPreview
-          isOpen={showPreview}
-          voucherData={voucherData}
-          onClose={handleClosePreview}
-        />
-      )}
-
     </div>
   );
 };

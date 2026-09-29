@@ -4,18 +4,15 @@ const SessionAPI = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 });
 
-
 // =====================================================
 // GET ALL SESSIONS
 // GET /api/sessions
+// Optional params: term, year
 // =====================================================
-
 export const getSessions = async (params = {}) => {
     const response = await SessionAPI.get(
         "/api/sessions",
-        {
-            params,
-        }
+        { params }
     );
 
     return response.data;
@@ -26,7 +23,6 @@ export const getSessions = async (params = {}) => {
 // GET SESSION STATUS
 // GET /api/sessions/status
 // =====================================================
-
 export const getSessionStatus = async () => {
     const response = await SessionAPI.get(
         "/api/sessions/status"
@@ -40,7 +36,6 @@ export const getSessionStatus = async () => {
 // GET CURRENT ACTIVE SESSION
 // GET /api/sessions/current
 // =====================================================
-
 export const getCurrentSession = async () => {
     const response = await SessionAPI.get(
         "/api/sessions/current"
@@ -54,7 +49,6 @@ export const getCurrentSession = async () => {
 // GET SESSION BY ID
 // GET /api/sessions/:id
 // =====================================================
-
 export const getSessionById = async (id) => {
     const response = await SessionAPI.get(
         `/api/sessions/${id}`
@@ -65,26 +59,16 @@ export const getSessionById = async (id) => {
 
 
 // =====================================================
-// GENERATE DEGREE CLASS SESSIONS
+// BULK GENERATE DEGREE CLASS SESSIONS
 // POST /api/sessions/generate
 //
-// Backend expects:
-//
+// Payload:
 // {
-//     degreeClassId,
-//     startYear,
-//     startTerm
-// }
-//
-// Example:
-//
-// {
-//     degreeClassId: "68c123456789abcdef123456",
+//     degreeClassId: "...",
 //     startYear: 2026,
 //     startTerm: "Fall"
 // }
 // =====================================================
-
 export const generateSessions = async (payload) => {
     const response = await SessionAPI.post(
         "/api/sessions/generate",
@@ -96,28 +80,9 @@ export const generateSessions = async (payload) => {
 
 
 // =====================================================
-// UPDATE EXISTING SESSION
-// PUT /api/sessions/:id
-// =====================================================
-
-export const updateSession = async (
-    id,
-    payload
-) => {
-    const response = await SessionAPI.put(
-        `/api/sessions/${id}`,
-        payload
-    );
-
-    return response.data;
-};
-
-
-// =====================================================
 // DELETE ALL SESSIONS OF DEGREE CLASS
 // DELETE /api/sessions/bulk/:degreeClassId
 // =====================================================
-
 export const deleteSessionsByDegreeClass = async (
     degreeClassId
 ) => {

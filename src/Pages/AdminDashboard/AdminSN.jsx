@@ -32,11 +32,11 @@ const AdminSidebar = () => {
       icon: 'fa-users',
       
       submenu: [
-        { id: 'student-list', title: 'Campus', icon: 'fa-home', path: '/admin/dashboard/Campus' },
+        { id: 'campus', title: 'Campus', icon: 'fa-home', path: '/admin/dashboard/Campus' },
         { id: 'student-list', title: 'Department', icon: 'fa-home', path: '/admin/dashboard/Department' },
         { id: 'student-approval', title: 'Classes', icon: 'fa-clock', path: '/admin/dashboard/DegreeClasses' },
         { id: 'student-assign', title: 'sessions', icon: 'fa-id-card', path: '/admin/dashboard/Sessions' },
-         { id: 'student-assign', title: 'Batches', icon: 'fa-id-card', path: '/admin/dashboard/Batches' },
+         { id: 'batches', title: 'Batches', icon: 'fa-id-card', path: '/admin/dashboard/Batches' },
       ]
     },
 
@@ -89,9 +89,9 @@ const AdminSidebar = () => {
       icon: 'fa-money-bill-wave',
       path: '/admin/dashboard/fee',
       submenu: [
-        { id: 'fee-vouchers', title: 'Fee Vouchers', icon: 'fa-receipt', path: '/admin/dashboard/fee/vouchers' },
-        { id: 'fee-verify', title: 'Fee manage', icon: 'fa-check-circle', path: '/admin/dashboard/fee/generatevoucher' },
-         { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-check-circle', path: '/admin/dashboard/fee/verify' },
+        { id: 'fee-vouchers', title: 'Fee Vouchers', icon: 'fa-file-invoice-dollar', path: '/admin/dashboard/fee/vouchers' },
+        { id: 'config', title: 'Fee Configuration', icon: 'fa-sliders-h', path: '/admin/dashboard/fee/config' },
+         { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-circle-check', path: '/admin/dashboard/fee/verify' },
       ]
     },
     {

@@ -1,54 +1,46 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import {
-  User,
-  Users,
-  Building2,
-  Search,
-  ChevronDown,
-  Plus,
-  Trash2,
-  RefreshCw,
-  CheckCircle,
-  AlertCircle,
-  FileText,
-  Printer,
-  X,
-  Loader2,
+  User, Users, Building2, Search, ChevronDown, Plus, Trash2,
+  RefreshCw, CheckCircle, AlertCircle, FileText, Printer, X, Loader2,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+import FeeAPI, { unwrap } from "../../../services/feeService";
 import "./Voucher.css";
+import "./VoucherPreview.css";
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-});
+const API = FeeAPI;
+// const API = axios.create({
+//   baseURL: import.meta.env.VITE_API_URL,
+// });
+const getTokenConfig = () => ({});
+// const getTokenConfig = () => {
+//   const token = localStorage.getItem("adminToken");
 
-const getTokenConfig = () => {
-  const token = localStorage.getItem("adminToken");
-
-  return token
-    ? {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    : {};
-};
+//   return token
+//     ? {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }
+//     : {};
+// };
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-const unwrap = (response) => {
-  const body = response?.data;
+// const unwrap = (response) => {
+//   const body = response?.data;
 
-  if (!body) return null;
+//   if (!body) return null;
 
-  if (body.success === false) {
-    throw new Error(body.message || "Request failed.");
-  }
+//   if (body.success === false) {
+//     throw new Error(body.message || "Request failed.");
+//   }
 
-  return body.data ?? body;
-};
+//   return body.data ?? body;
+// };
 
 const getArray = (response) => {
   const data = unwrap(response);
@@ -219,101 +211,155 @@ const Voucher = () => {
      STUDENT SEARCH
   ======================================================= */
 
-  useEffect(() => {
-    if (activeFlow !== "single") return;
+useEffect(() => {
+  if (activeFlow !== "single") return;
 
-    const search = studentSearch.trim();
+  const search = studentSearch.trim();
+  if (!search) {
+    setStudents([]);
+    return;
+  }
 
-    if (!search) {
+  const timer = setTimeout(async () => {
+    try {
+      setStudentSearchLoading(true);
+      setPageError("");
+
+      // ✅ Applications endpoint use karo — approved students
+      const response = await FeeAPI.get(
+        "/api/students/admin/applications/",
+        {
+          params: {
+            status: "approved",
+            search: search,
+            limit: 50,
+          },
+        }
+      );
+
+      const data =
+        response?.data?.applications ||
+        response?.data?.data ||
+        response?.data ||
+        [];
+
+      // Map application → student shape (jo Voucher.jsx expect karta hai)
+  const mapped = Array.isArray(data)
+  ? data.map((app) => {
+      const stu = app?.student || {};
+      const p = stu?.personalInfo || {};
+
+      return {
+        _id: stu?._id || stu,
+        name: `${p.firstName || ""} ${p.lastName || ""}`.trim() || stu?.email || "Student",
+        email: stu?.email || "—",
+        cnic: p?.cnic || "—",                    // 👈 add
+        fatherName: p?.fatherName || "—",         // 👈 add
+        phoneNo: p?.phoneNo || "—",               // 👈 add
+        rollNo: app?.rollNo || "—",
+        registrationNo: app?.registrationNo || "—",
+        section: app?.section || "—",
+
+        // 👇 YE POORA APPLICATION SAVE KARO
+        _raw: app,
+      };
+    })
+  : [];
+  // Search karte waqt ye chalao
+const app = students[0]?._raw;
+console.log("_raw.batchId:", app?.batchId);
+console.log("_raw.batchId.departmentId:", app?.batchId?.departmentId);
+console.log("FULL APPLICATION:", JSON.stringify(students[0]?._raw, null, 2));
+console.log(JSON.stringify(students[0]?._raw, null, 2));
+// 1) students array check karo
+console.log("STUDENTS ARRAY:", students);
+console.log("LENGTH:", students?.length);
+
+// 2) pehla element
+console.log("FIRST STUDENT:", students[0]);
+
+// 3) uske saare keys
+console.log("KEYS:", students[0] ? Object.keys(students[0]) : "empty");
+console.log("SELECTED:", selectedStudent);
+console.log("SELECTED._raw:", selectedStudent?._raw);
+console.log("SELECTED._raw.batchId:", selectedStudent?._raw?.batchId);
+console.log("ENROLLMENT:", enrollment);
+
+      setStudents(mapped);
+    } catch (error) {
+      setPageError(getErrorMessage(error));
       setStudents([]);
-      return;
+    } finally {
+      setStudentSearchLoading(false);
     }
+  }, 400);
 
-    const timer = setTimeout(async () => {
-      try {
-        setStudentSearchLoading(true);
-        setPageError("");
-
-        const response = await API.get(
-          `/api/students?search=${encodeURIComponent(search)}`,
-          getTokenConfig()
-        );
-
-        setStudents(getArray(response));
-      } catch (error) {
-        setPageError(getErrorMessage(error));
-        setStudents([]);
-      } finally {
-        setStudentSearchLoading(false);
-      }
-    }, 400);
-
-    return () => clearTimeout(timer);
-  }, [studentSearch, activeFlow]);
+  return () => clearTimeout(timer);
+}, [studentSearch, activeFlow]);
 
   /* =======================================================
      SELECT STUDENT
   ======================================================= */
 
-  const handleSelectStudent = async (student) => {
-    try {
-      clearMessages();
+const handleSelectStudent = async (student) => {
+  try {
+    clearMessages();
 
-      setSelectedStudent(student);
-      setStudents([]);
-      setStudentSearch(
-        student?.name ||
-          student?.fullName ||
-          `${student?.firstName || ""} ${student?.lastName || ""}`.trim()
-      );
+    setSelectedStudent(student);
+    setStudents([]);
+    setStudentSearch(student?.name || "");
+    setTuitionFee(null);
+    setLoading(true);
 
-      setEnrollment(null);
-      setTuitionFee(null);
+    const raw = student?._raw || {};
+    const snapshot = raw?.enrollmentSnapshot || {};
 
-      setLoading(true);
+    // 👇 batchId ke andar dept/class/shift FLATTEN karo
+    const batch = {
+      _id: raw?.batchId?._id || raw?.batchId?.id || null,
+      name: raw?.batchId?.name || null,
 
-      const studentId = getId(student);
+      // Ye 3 application ke TOP-LEVEL pe hain, batchId ke andar nahi
+      departmentId: raw?.departmentId || null,
+      degreeClassId: raw?.degreeClassId || null,
+      shiftId: raw?.shiftId || null,
+      campusId: raw?.campusId || null,
 
-      const response = await API.get(
-        `/api/enrollments?studentId=${studentId}`,
-        getTokenConfig()
-      );
+      currentSemester:
+        raw?.batchId?.currentSemester || 1,
+      totalSemesters:
+        raw?.batchId?.totalSemesters || 4,
+    };
 
-      const data = unwrap(response);
+    const enrollmentData = {
+      _id: raw?._id || null,
+      studentId: raw?.student || null,
+      batchId: batch,
+      currentSemester: batch.currentSemester,
+      totalSemesters: batch.totalSemesters,
+      status: "active",
+      rollNo: raw?.rollNo || student?.rollNo,
+      registrationNo: raw?.registrationNo || student?.registrationNo,
+      section: raw?.section || student?.section,
+      quota: snapshot?.quota || "Open Merit",
+    };
 
-      let activeEnrollment = data;
+    setEnrollment(enrollmentData);
 
-      if (Array.isArray(data)) {
-        activeEnrollment =
-          data.find(
-            (item) =>
-              item?.status === "active" ||
-              item?.isActive === true
-          ) || data[0];
-      }
-
-      if (Array.isArray(data?.enrollments)) {
-        activeEnrollment =
-          data.enrollments.find(
-            (item) =>
-              item?.status === "active" ||
-              item?.isActive === true
-          ) || data.enrollments[0];
-      }
-
-      if (!activeEnrollment) {
-        throw new Error("No active enrollment found for this student.");
-      }
-
-      setEnrollment(activeEnrollment);
-
-      await loadStudentTuitionFee(activeEnrollment);
-    } catch (error) {
-      setPageError(getErrorMessage(error));
-    } finally {
-      setLoading(false);
+    // Tuition fee load karo
+    if (
+      batch?.departmentId?._id &&
+      batch?.degreeClassId?._id &&
+      batch?.shiftId?._id
+    ) {
+      await loadStudentTuitionFee({ batchId: batch });
     }
-  };
+  } catch (error) {
+    setPageError(getErrorMessage(error));
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* =======================================================
      STUDENT TUITION FEE
@@ -543,8 +589,11 @@ const Voucher = () => {
     try {
       setDepartmentLoading(true);
 
+    // Backend's bulkCreateVoucherForDepartment only processes
+    // batches with status "ongoing" — match that here so the list
+    // shown matches what will actually be vouchered.
     const response = await API.get(
-  `/api/batches?departmentId=${value}&status=active`,
+  `/api/batches?departmentId=${value}&status=ongoing`,
   getTokenConfig()
 );
 
@@ -679,7 +728,7 @@ const transportTypes = useMemo(() => {
     return payload;
   };
 
-  /* =======================================================
+   /* =======================================================
      SINGLE VOUCHER
   ======================================================= */
 
@@ -692,22 +741,27 @@ const transportTypes = useMemo(() => {
     }
 
     if (!enrollment) {
-      setPageError(
-        "Student enrollment information is not available."
-      );
+      setPageError("Student enrollment information is not available.");
       return;
     }
 
     if (!validateCommonFields()) return;
 
-    const semester =
-      enrollment?.currentSemester ??
-      enrollment?.batchId?.currentSemester;
+    const raw = selectedStudent?._raw || {};
+    const batch = raw?.batchId || enrollment?.batchId;
 
-    if (semester === undefined || semester === null) {
-      setPageError(
-        "Current semester could not be detected from enrollment."
-      );
+    const semester =
+      batch?.currentSemester ??
+      enrollment?.currentSemester ??
+      1;
+
+    const studentMongoId =
+      raw?.student?._id ||
+      raw?.student ||
+      selectedStudent?._id;
+
+    if (!studentMongoId) {
+      setPageError("Student ID not found.");
       return;
     }
 
@@ -721,9 +775,11 @@ const transportTypes = useMemo(() => {
     try {
       setLoading(true);
 
+      // NOTE: backend always resolves `semester` from the batch's
+      // currentSemester itself — it ignores/ does not accept it in
+      // the body, so it's intentionally left out of this payload.
       const payload = {
-        studentId: getId(selectedStudent),
-        semester,
+        studentId: studentMongoId,
         ...getCommonPayload(),
         customItems: customItemsPayload,
       };
@@ -736,11 +792,33 @@ const transportTypes = useMemo(() => {
 
       const result = unwrap(response);
 
+      // Backend returns { voucher, items } — flatten before using
+      const createdVoucher = result?.voucher || result;
+      const createdItems = Array.isArray(result?.items) ? result.items : [];
+
       setSuccessMessage(
-        `Voucher ${result?.voucherNo || ""} created successfully.`
+        `Voucher ${createdVoucher?.voucherNo || ""} created successfully.`
       );
 
-      setPreviewVoucher(result);
+console.log("=== DEBUG PREVIEW ===");
+console.log("raw.student:", raw?.student);
+console.log("raw.student.personalInfo:", raw?.student?.personalInfo);
+console.log("selectedStudent:", selectedStudent);
+
+     setPreviewVoucher({
+  ...createdVoucher,
+  items: createdItems,
+  student: raw?.student || selectedStudent,
+  selectedStudent,
+  enrollment,
+  batch: enrollment?.batchId || batch,  // 👈 enrollment se lo (already flattened)
+  department: enrollment?.batchId?.departmentId,
+  degreeClass: enrollment?.batchId?.degreeClassId,
+  shift: enrollment?.batchId?.shiftId,
+  campus: enrollment?.batchId?.campusId,
+  semester: createdVoucher?.semester ?? enrollment?.batchId?.currentSemester ?? 1,
+  tuitionFee,
+});
     } catch (error) {
       setPageError(getErrorMessage(error));
     } finally {
@@ -943,6 +1021,9 @@ const generateDepartmentVoucher = async () => {
   /* =======================================================
      RENDER
   ======================================================= */
+  console.log("ENROLLMENT.batchId:", enrollment?.batchId);
+console.log("ENROLLMENT.batchId.departmentId:", enrollment?.batchId?.departmentId);
+console.log("DEPARTMENT NAME:", enrollment?.batchId?.departmentId?.name);
 
   return (
     <div className="voucher-page">
@@ -1148,48 +1229,40 @@ const generateDepartmentVoucher = async () => {
 
                 <div className="auto-info-grid">
                   <InfoItem
-                    label="Department"
-                    value={
-                      enrollment?.batchId?.department?.name ||
-                      enrollment?.batchId?.department?.title ||
-                      "—"
-                    }
-                  />
+  label="Department"
+  value={enrollment?.batchId?.departmentId?.name || "—"}
+/>
 
-                  <InfoItem
-                    label="Degree Class"
-                    value={
-                      enrollment?.batchId?.degreeClass?.name ||
-                      "—"
-                    }
-                  />
+ 
 
-                  <InfoItem
-                    label="Shift"
-                    value={
-                      enrollment?.batchId?.shift?.name ||
-                      "—"
-                    }
-                  />
+<InfoItem
+  label="Degree Class"
+  value={enrollment?.batchId?.degreeClassId?.name || "—"}
+/>
 
-                  <InfoItem
-                    label="Current Semester"
-                    value={
-                      enrollment?.currentSemester ??
-                      enrollment?.batchId?.currentSemester ??
-                      "—"
-                    }
-                    highlight
-                  />
+<InfoItem
+  label="Shift"
+  value={enrollment?.batchId?.shiftId?.name || "—"}
+/>
 
-                  <InfoItem
-                    label="Total Semesters"
-                    value={
-                      enrollment?.totalSemesters ??
-                      enrollment?.batchId?.totalSemesters ??
-                      "—"
-                    }
-                  />
+<InfoItem
+  label="Current Semester"
+  value={
+    enrollment?.currentSemester ??
+    enrollment?.batchId?.currentSemester ??
+    "—"
+  }
+  highlight
+/>
+
+<InfoItem
+  label="Total Semesters"
+  value={
+    enrollment?.totalSemesters ??
+    enrollment?.batchId?.totalSemesters ??
+    "—"
+  }
+/>
                 </div>
               </div>
             )}
@@ -1451,30 +1524,17 @@ const generateDepartmentVoucher = async () => {
                     <div className="report-stats">
                       <ReportStat
                         label="Total Students"
-                        value={
-                          batchReport?.totalStudents ??
-                          batchReport?.total ??
-                          0
-                        }
+                        value={batchReport?.totalStudents ?? 0}
                       />
 
                       <ReportStat
                         label="Already Vouchered"
-                        value={
-                          batchReport?.alreadyHaveVouchers ??
-                          batchReport?.alreadyVouchered ??
-                          batchReport?.created ??
-                          0
-                        }
+                        value={batchReport?.vouchersCreated ?? 0}
                       />
 
                       <ReportStat
                         label="Pending"
-                        value={
-                          batchReport?.pending ??
-                          batchReport?.pendingStudents?.length ??
-                          0
-                        }
+                        value={batchReport?.vouchersPending ?? 0}
                       />
                     </div>
 
@@ -2030,12 +2090,12 @@ const FeeOptions = ({
 ========================================================= */
 
 const PendingStudents = ({ report }) => {
-  const pending =
-    report?.pendingStudents ||
-    report?.pending ||
-    [];
+  // Backend sends a flat `students` array with a `voucherCreated`
+  // boolean per row — pending students are the ones where it's false.
+  const rows = Array.isArray(report?.students) ? report.students : [];
+  const pending = rows.filter((row) => !row?.voucherCreated);
 
-  if (!Array.isArray(pending) || !pending.length) {
+  if (!pending.length) {
     return (
       <div className="no-pending">
         <CheckCircle size={20} />
@@ -2043,6 +2103,23 @@ const PendingStudents = ({ report }) => {
       </div>
     );
   }
+
+  const displayName = (student) => {
+    const p = student?.personalInfo || student || {};
+    return (
+      `${p.firstName || ""} ${p.lastName || ""}`.trim() ||
+      student?.name ||
+      student?.fullName ||
+      "Student"
+    );
+  };
+
+  const displayRollOrReg = (student) =>
+    student?.rollNo ||
+    student?.registrationNo ||
+    student?.personalInfo?.cnic ||
+    student?.cnic ||
+    "—";
 
   return (
     <div className="pending-list">
@@ -2052,42 +2129,24 @@ const PendingStudents = ({ report }) => {
       </div>
 
       <div className="pending-scroll">
-        {pending.map((student, index) => (
-          <div
-            className="pending-student"
-            key={
-              getId(student) ||
-              student?.studentId ||
-              index
-            }
-          >
-            <div className="pending-avatar">
-              {(
-                student?.name ||
-                student?.studentName ||
-                "S"
-              )
-                .charAt(0)
-                .toUpperCase()}
-            </div>
+        {pending.map((row, index) => {
+          const student = row?.student || {};
+          return (
+            <div
+              className="pending-student"
+              key={row?.enrollmentId || getId(student) || index}
+            >
+              <div className="pending-avatar">
+                {displayName(student).charAt(0).toUpperCase()}
+              </div>
 
-            <div>
-              <strong>
-                {student?.name ||
-                  student?.studentName ||
-                  student?.fullName ||
-                  "Student"}
-              </strong>
-
-              <span>
-                {student?.rollNo ||
-                  student?.registrationNo ||
-                  student?.studentId ||
-                  "—"}
-              </span>
+              <div>
+                <strong>{displayName(student)}</strong>
+                <span>{displayRollOrReg(student)}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -2214,6 +2273,7 @@ const BulkResultTable = ({ result }) => {
 
 /* =========================================================
    VOUCHER PREVIEW
+   Inline preview — no route / no modal
 ========================================================= */
 
 const VoucherPreview = ({ voucher, onClose }) => {
@@ -2221,140 +2281,535 @@ const VoucherPreview = ({ voucher, onClose }) => {
     window.print();
   };
 
-  const items = voucher?.items || [];
+  const items = Array.isArray(voucher?.items)
+    ? voucher.items
+    : [];
+
+ const student =
+  voucher?.student ||
+  voucher?.enrollment?.studentId ||
+  voucher?.enrollmentId?.studentId ||    // 👈 YE ADD KARO
+  {};
+
+  const enrollment = voucher?.enrollment || {};
+
+  const batch =
+    voucher?.batch ||
+    enrollment?.batchId ||
+    {};
+
+  const department =
+    batch?.departmentId ||
+    batch?.department ||
+    {};
+
+  const degreeClass =
+    batch?.degreeClassId ||
+    batch?.degreeClass ||
+    {};
+
+  const shift =
+    batch?.shiftId ||
+    batch?.shift ||
+    {};
+
+  const session =
+    batch?.startSessionId ||
+    batch?.sessionId ||
+    batch?.session ||
+    {};
+
+const p = student?.personalInfo || student || {};
+
+const studentName =
+  `${p.firstName || ""} ${p.lastName || ""}`.trim() ||
+  student?.name ||
+  student?.fullName ||
+  voucher?.studentName ||
+  "—";
+
+const cnic =
+  student?.personalInfo?.cnic ||
+  student?.cnic ||
+  student?.CNIC ||
+  "—";
+
+  const rollNo =
+    student?.rollNo ||
+    voucher?.rollNo ||
+    "—";
+
+  const registrationNo =
+    student?.registrationNo ||
+    student?.registrationNumber ||
+    voucher?.registrationNo ||
+    "—";
+
+ const studentId =
+  student?._id ||
+  student?.personalInfo?.studentId ||
+  voucher?.studentId ||
+  "—";
+
+  const campus =
+    batch?.campusId?.name ||
+    batch?.campusId?.title ||
+    batch?.campus?.name ||
+    batch?.campus?.title ||
+    enrollment?.campusId?.name ||
+    "UE Multan Campus";
+
+  const degreeProgram =
+    degreeClass?.name ||
+    degreeClass?.title ||
+    degreeClass?.code ||
+    "—";
+
+  const shiftName =
+    shift?.name ||
+    shift?.title ||
+    shift?.code ||
+    "—";
+
+  const quota =
+    enrollment?.quota ||
+    enrollment?.quotaName ||
+    enrollment?.admissionQuota ||
+    student?.quota ||
+    "Open Merit";
+
+  const semester =
+    voucher?.semester ??
+    enrollment?.currentSemester ??
+    batch?.currentSemester ??
+    "—";
+
+  const sessionName =
+    session?.name ||
+    session?.year ||
+    session?.session ||
+    batch?.session ||
+    batch?.sessionName ||
+    "—";
+
+  const billNo =
+    voucher?.billNo ||
+    voucher?.billNumber ||
+    voucher?.voucherNo ||
+    "—";
+
+  const challanNo =
+    voucher?.challanNo ||
+    voucher?.challanNumber ||
+    voucher?.voucherNo ||
+    "—";
+
+  const baseAmount = Number(
+    voucher?.baseAmount ??
+      voucher?.amount ??
+      items.reduce(
+        (sum, item) =>
+          sum + Number(item?.amount || 0),
+        0
+      )
+  );
+
+  const fineAmount = Number(
+    voucher?.fineAmount ||
+      voucher?.fine?.amount ||
+      0
+  );
+
+  const totalAmount = Number(
+    voucher?.totalAmount ??
+      baseAmount + fineAmount
+  );
+
+  const afterDueAmount =
+    baseAmount + fineAmount;
+
+  const copies = [
+    "Bank Copy",
+    "Bank Copy (UE Treasurer)",
+    "UE Division/Campus Copy",
+    "Student Copy",
+  ];
+
+  const getItemName = (item) =>
+    item?.name ||
+    item?.description ||
+    item?.feeTypeId?.name ||
+    "Fee Item";
+
+  const getItemAmount = (item) =>
+    Number(item?.amount || 0);
+
+  const formatDate = (value) => {
+    if (!value) return "—";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
+
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const amountInWords = (value) => {
+    const number = Math.floor(Number(value || 0));
+
+    if (!number) return "Zero Only";
+
+    const ones = [
+      "",
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+    ];
+
+    const teens = [
+      "Ten",
+      "Eleven",
+      "Twelve",
+      "Thirteen",
+      "Fourteen",
+      "Fifteen",
+      "Sixteen",
+      "Seventeen",
+      "Eighteen",
+      "Nineteen",
+    ];
+
+    const tens = [
+      "",
+      "",
+      "Twenty",
+      "Thirty",
+      "Forty",
+      "Fifty",
+      "Sixty",
+      "Seventy",
+      "Eighty",
+      "Ninety",
+    ];
+
+    const twoDigits = (n) => {
+      if (n < 10) return ones[n];
+      if (n < 20) return teens[n - 10];
+
+      return `${tens[Math.floor(n / 10)]}${
+        n % 10 ? `-${ones[n % 10]}` : ""
+      }`;
+    };
+
+    const threeDigits = (n) => {
+      if (n < 100) return twoDigits(n);
+
+      return `${ones[Math.floor(n / 100)]} Hundred${
+        n % 100 ? ` ${twoDigits(n % 100)}` : ""
+      }`;
+    };
+
+    const convert = (n) => {
+      if (n < 1000) return threeDigits(n);
+
+      if (n < 100000) {
+        return `${twoDigits(Math.floor(n / 1000))} Thousand${
+          n % 1000 ? ` ${threeDigits(n % 1000)}` : ""
+        }`;
+      }
+
+      if (n < 10000000) {
+        return `${threeDigits(Math.floor(n / 100000))} Lakh${
+          n % 100000 ? ` ${convert(n % 100000)}` : ""
+        }`;
+      }
+
+      return `${twoDigits(Math.floor(n / 10000000))} Crore${
+        n % 10000000
+          ? ` ${convert(n % 10000000)}`
+          : ""
+      }`;
+    };
+
+    return `${convert(number)} Only`;
+  };
+
+  const today = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
-    <div className="voucher-preview-overlay">
-      <div className="voucher-preview-modal">
-        <div className="preview-toolbar">
-          <div>
-            <h2>Voucher Created</h2>
-            <span>
-              Voucher No:{" "}
-              <strong>
-                {voucher?.voucherNo || "—"}
-              </strong>
-            </span>
-          </div>
-
-          <div className="preview-actions">
-            <button onClick={handlePrint}>
-              <Printer size={17} />
-              Print
-            </button>
-
-            <button
-              className="close-preview"
-              onClick={onClose}
-            >
-              <X size={18} />
-            </button>
-          </div>
+    <section className="voucher-preview-section">
+      <div className="voucher-preview-heading no-print">
+        <div>
+          <span className="voucher-preview-kicker">
+            VOUCHER GENERATED
+          </span>
+          <h2>Voucher Preview</h2>
+          <p>
+            Four printable copies are shown below.
+          </p>
         </div>
 
-        <div className="print-voucher">
-          <div className="print-header">
-            <h1>UNIVERSITY FEE VOUCHER</h1>
-            <p>Fee Payment Challan</p>
-          </div>
+        <div className="voucher-preview-actions">
+          <button
+            type="button"
+            className="voucher-preview-print-btn"
+            onClick={handlePrint}
+          >
+            <Printer size={17} />
+            Print Voucher
+          </button>
 
-          <div className="print-meta">
-            <div>
-              <span>Voucher No</span>
-              <strong>
-                {voucher?.voucherNo || "—"}
-              </strong>
-            </div>
-
-            <div>
-              <span>Semester</span>
-              <strong>
-                {voucher?.semester || "—"}
-              </strong>
-            </div>
-
-            <div>
-              <span>Pay Due Date</span>
-              <strong>
-                {voucher?.payDueDate || "—"}
-              </strong>
-            </div>
-
-            <div>
-              <span>Fine Due Date</span>
-              <strong>
-                {voucher?.fineDueDate || "—"}
-              </strong>
-            </div>
-          </div>
-
-          <div className="print-student">
-            <div>
-              <span>Student</span>
-              <strong>
-                {voucher?.student?.name ||
-                  voucher?.studentName ||
-                  "—"}
-              </strong>
-            </div>
-
-            <div>
-              <span>Roll Number</span>
-              <strong>
-                {voucher?.student?.rollNo ||
-                  voucher?.rollNo ||
-                  "—"}
-              </strong>
-            </div>
-          </div>
-
-          <table className="print-items">
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {items.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    {item?.name ||
-                      item?.description ||
-                      "Fee Item"}
-                  </td>
-
-                  <td>
-                    {formatMoney(
-                      item?.amount || 0
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-
-            <tfoot>
-              <tr>
-                <td>Total Amount</td>
-                <td>
-                  {formatMoney(
-                    voucher?.totalAmount || 0
-                  )}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-
-          <div className="print-footer">
-            <p>
-              Please pay the above amount before the due date.
-            </p>
-          </div>
+          <button
+            type="button"
+            className="voucher-preview-close-btn"
+            onClick={onClose}
+          >
+            <X size={17} />
+            Close Preview
+          </button>
         </div>
       </div>
-    </div>
+
+      <div className="voucher-preview-sheet">
+        {copies.map((copyName, copyIndex) => (
+          <article
+            className="voucher-copy"
+            key={`${copyName}-${copyIndex}`}
+          >
+            <div className="voucher-copy-name">
+              {copyName}
+            </div>
+
+            <div className="voucher-bank-name">
+              The Bank of the Punjab
+            </div>
+
+            <div className="voucher-university-name">
+              University of Education, Lahore
+            </div>
+
+            <div className="voucher-copy-info">
+              <VoucherInfoLine
+                label="Date"
+                value={today}
+              />
+
+              <VoucherInfoLine
+                label="Challan#"
+                value={challanNo}
+                bold
+              />
+
+              <VoucherInfoLine
+                label="1 Bill No."
+                value={billNo}
+              />
+
+              <VoucherInfoLine
+                label="Name"
+                value={studentName}
+              />
+
+              <VoucherInfoLine
+                label="CNIC"
+                value={cnic}
+              />
+
+              <VoucherInfoLine
+                label="Roll No."
+                value={rollNo}
+              />
+
+              <VoucherInfoLine
+                label="Registration No."
+                value={registrationNo}
+              />
+
+              <VoucherInfoLine
+                label="Division/Campus"
+                value={campus}
+              />
+
+              <VoucherInfoLine
+                label="Degree Program"
+                value={degreeProgram}
+              />
+
+              <div className="voucher-two-col">
+                <VoucherInfoLine
+                  label="Shift"
+                  value={shiftName}
+                />
+
+                <VoucherInfoLine
+                  label="Quota"
+                  value={quota}
+                />
+              </div>
+
+              <div className="voucher-two-col">
+                <VoucherInfoLine
+                  label="Semester"
+                  value={
+                    semester === "—"
+                      ? "—"
+                      : `Semester ${semester}`
+                  }
+                />
+
+                <VoucherInfoLine
+                  label="Session"
+                  value={sessionName}
+                />
+              </div>
+
+              <VoucherInfoLine
+                label="Student Id"
+                value={studentId}
+              />
+
+              <VoucherInfoLine
+                label="Due Date"
+                value={formatDate(
+                  voucher?.payDueDate
+                )}
+              />
+
+              <VoucherInfoLine
+                label="Fine Due Date"
+                value={formatDate(
+                  voucher?.fineDueDate
+                )}
+                bold
+              />
+
+              <VoucherInfoLine
+                label="Fee Type"
+                value="Semester wise"
+              />
+            </div>
+
+            <table className="voucher-copy-table">
+              <thead>
+                <tr>
+                  <th>Sr#</th>
+                  <th>Description</th>
+                  <th>Rs.</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {items.length > 0 ? (
+                  items.map((item, itemIndex) => (
+                    <tr key={`${getItemName(item)}-${itemIndex}`}>
+                      <td>{itemIndex + 1}</td>
+                      <td>{getItemName(item)}</td>
+                      <td>
+                        {getItemAmount(item).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td>1</td>
+                    <td>Tuition Fee</td>
+                    <td>
+                      {baseAmount.toLocaleString()}
+                    </td>
+                  </tr>
+                )}
+
+                <tr className="voucher-copy-total">
+                  <td colSpan="2">
+                    Amount (within due date)
+                  </td>
+                  <td>
+                    {baseAmount.toLocaleString()}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="voucher-amount-words">
+              Rs. {amountInWords(baseAmount)}
+            </div>
+
+            <div className="voucher-fine-line">
+              <span>Fine Amount</span>
+              <strong>
+                {fineAmount.toLocaleString()}
+              </strong>
+            </div>
+
+            <div className="voucher-after-due-line">
+              <span>Amount (after due date)</span>
+              <strong>
+                {afterDueAmount.toLocaleString()}
+              </strong>
+            </div>
+
+            <div className="voucher-amount-words">
+              Rs. {amountInWords(afterDueAmount)}
+            </div>
+
+            <div className="voucher-copy-notes">
+              <div>
+                i) Depositors will receive the system generated
+                deposit slip from the bank as proof of deposit.
+                Sign and stamp on downloaded challan forms or
+                manual deposit is not acceptable to UE authority.
+              </div>
+              <div>
+                ii) This Voucher may please be deposited into
+                any Branch of BOP.
+              </div>
+              <div>
+                iii) All Bankers are requested to post this Voucher
+                to the University of Education New Collection Account.
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="voucher-preview-bottom no-print">
+        <strong>Voucher No: {voucher?.voucherNo || "—"}</strong>
+        <span>Total: {formatMoney(totalAmount)}</span>
+      </div>
+    </section>
   );
 };
+
+
+
+
+const VoucherInfoLine = ({
+  label,
+  value,
+  bold = false,
+}) => (
+  <div className="voucher-info-line">
+    <span>{label}:</span>
+    <strong className={bold ? "is-bold" : ""}>
+      {value || "—"}
+    </strong>
+  </div>
+);
 
 export default Voucher;

@@ -17,7 +17,7 @@ export default function CoordinatorDashboard() {
   }, [location.pathname]);
 
   const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+    setCollapsed(!collapsed);x
   };
 
   // Role-based configurations

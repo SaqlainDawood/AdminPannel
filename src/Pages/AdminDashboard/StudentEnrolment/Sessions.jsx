@@ -6,7 +6,6 @@ import React, {
 
 import {
     Search,
-    Pencil,
     Trash2,
     CalendarDays,
     Clock3,
@@ -24,7 +23,6 @@ import { FaSpinner } from "react-icons/fa";
 import {
     getSessions,
     generateSessions,
-    updateSession,
     deleteSessionsByDegreeClass,
     getSessionStatus,
 } from "../../../services/sessionAPI";
@@ -71,9 +69,6 @@ const Sessions = () => {
     const [showGenerateModal, setShowGenerateModal] =
         useState(false);
 
-    const [showEditModal, setShowEditModal] =
-        useState(false);
-
     const [showViewModal, setShowViewModal] =
         useState(false);
 
@@ -81,9 +76,6 @@ const Sessions = () => {
         useState(null);
 
     const [viewingSession, setViewingSession] =
-        useState(null);
-
-    const [editingSession, setEditingSession] =
         useState(null);
 
 
@@ -96,21 +88,6 @@ const Sessions = () => {
             degreeClassId: "",
             startYear: new Date().getFullYear(),
             startTerm: "Fall",
-        });
-
-
-    // =====================================================
-    // EDIT FORM
-    // =====================================================
-
-    const [editForm, setEditForm] =
-        useState({
-            name: "",
-            term: "",
-            year: "",
-            startDate: "",
-            endDate: "",
-            isActive: false,
         });
 
 
@@ -796,265 +773,6 @@ const Sessions = () => {
 
 
     // =====================================================
-    // EDIT SESSION
-    // =====================================================
-
-    const handleEdit = (session) => {
-
-        setEditingSession(session);
-
-
-        setEditForm({
-
-            name:
-                session?.name ||
-                "",
-
-            term:
-                session?.term ||
-                "",
-
-            year:
-                session?.year ||
-                "",
-
-            startDate:
-                session?.startDate
-                    ? String(
-                          session.startDate
-                      ).substring(
-                          0,
-                          10
-                      )
-                    : "",
-
-            endDate:
-                session?.endDate
-                    ? String(
-                          session.endDate
-                      ).substring(
-                          0,
-                          10
-                      )
-                    : "",
-
-            isActive:
-                session?.isActive === true,
-        });
-
-
-        setError("");
-
-        setShowEditModal(true);
-    };
-
-
-    // =====================================================
-    // EDIT FORM CHANGE
-    // =====================================================
-
-    const handleEditChange = (e) => {
-
-        const {
-            name,
-            value,
-            type,
-            checked,
-        } = e.target;
-
-
-        setEditForm(
-            (prev) => ({
-
-                ...prev,
-
-                [name]:
-                    type === "checkbox"
-                        ? checked
-                        : value,
-            })
-        );
-    };
-
-
-    // =====================================================
-    // UPDATE SESSION
-    // =====================================================
-
-    const handleUpdate = async (e) => {
-
-        e.preventDefault();
-
-        setError("");
-
-
-        if (
-            !editForm.name.trim()
-        ) {
-
-            setError(
-                "Session name is required."
-            );
-
-            return;
-        }
-
-
-        if (!editForm.term) {
-
-            setError(
-                "Term is required."
-            );
-
-            return;
-        }
-
-
-        if (!editForm.year) {
-
-            setError(
-                "Year is required."
-            );
-
-            return;
-        }
-
-
-        if (!editForm.startDate) {
-
-            setError(
-                "Start date is required."
-            );
-
-            return;
-        }
-
-
-        if (!editForm.endDate) {
-
-            setError(
-                "End date is required."
-            );
-
-            return;
-        }
-
-
-        if (
-            new Date(
-                editForm.endDate
-            ) <
-            new Date(
-                editForm.startDate
-            )
-        ) {
-
-            setError(
-                "End date cannot be before start date."
-            );
-
-            return;
-        }
-
-
-        try {
-
-            setGenerating(true);
-
-
-            const sessionId =
-                getId(
-                    editingSession
-                );
-
-
-            const payload = {
-
-                name:
-                    editForm.name.trim(),
-
-                term:
-                    editForm.term,
-
-                year:
-                    Number(
-                        editForm.year
-                    ),
-
-                startDate:
-                    editForm.startDate,
-
-                endDate:
-                    editForm.endDate,
-
-                isActive:
-                    Boolean(
-                        editForm.isActive
-                    ),
-            };
-
-
-            const response =
-                await updateSession(
-                    sessionId,
-                    payload
-                );
-
-
-            const updated =
-                response?.data ||
-                response ||
-                {};
-
-
-            setSessions(
-                (prev) =>
-                    prev.map(
-                        (item) =>
-                            String(
-                                getId(item)
-                            ) ===
-                            String(
-                                sessionId
-                            )
-                                ? {
-                                      ...item,
-                                      ...updated,
-                                      ...payload,
-                                  }
-                                : item
-                    )
-            );
-
-
-            setShowEditModal(false);
-
-            setEditingSession(null);
-
-            await fetchData();
-
-        } catch (err) {
-
-            console.error(
-                "Update session error:",
-                err
-            );
-
-
-            setError(
-                err?.response?.data?.message ||
-                err?.message ||
-                "Failed to update session."
-            );
-
-        } finally {
-
-            setGenerating(false);
-        }
-    };
-
-
-    // =====================================================
     // DELETE ALL SESSIONS OF DEGREE CLASS
     // =====================================================
 
@@ -1170,25 +888,6 @@ const Sessions = () => {
 
             startTerm: "Fall",
         });
-    };
-
-
-    // =====================================================
-    // CLOSE EDIT MODAL
-    // =====================================================
-
-    const closeEditModal = () => {
-
-        if (generating) {
-            return;
-        }
-
-
-        setShowEditModal(false);
-
-        setEditingSession(null);
-
-        setError("");
     };
 
 
@@ -1438,7 +1137,7 @@ const Sessions = () => {
 
             {error &&
                 !showGenerateModal &&
-                !showEditModal && (
+                (
 
                     <div className="session-page-error">
 
@@ -1966,31 +1665,6 @@ const Sessions = () => {
                                                             >
 
                                                                 <Eye
-                                                                    size={16}
-                                                                />
-
-                                                            </button>
-
-                                                        )}
-
-
-                                                        {group.sessions.length >
-                                                            0 && (
-
-                                                            <button
-                                                                className="edit-session-btn"
-                                                                title="Edit session"
-                                                                onClick={() =>
-                                                                    handleEdit(
-                                                                        group.sessions[
-                                                                            group.sessions.length -
-                                                                                1
-                                                                        ]
-                                                                    )
-                                                                }
-                                                            >
-
-                                                                <Pencil
                                                                     size={16}
                                                                 />
 
@@ -2738,275 +2412,6 @@ const Sessions = () => {
 
 
             {/* =================================================
-                EDIT MODAL
-            ================================================= */}
-
-            {showEditModal &&
-                editingSession && (
-
-                    <div className="session-modal-overlay">
-
-                        <div className="session-modal">
-
-                            <div className="session-modal-header">
-
-                                <div>
-
-                                    <h2>
-                                        Edit Academic Session
-                                    </h2>
-
-                                    <p>
-                                        Update existing session
-                                        information
-                                    </p>
-
-                                </div>
-
-
-                                <button
-                                    className="session-close-btn"
-                                    onClick={
-                                        closeEditModal
-                                    }
-                                    disabled={
-                                        generating
-                                    }
-                                >
-
-                                    <X
-                                        size={19}
-                                    />
-
-                                </button>
-
-                            </div>
-
-
-                            <form
-                                onSubmit={
-                                    handleUpdate
-                                }
-                            >
-
-                                {error && (
-
-                                    <div className="session-form-error">
-
-                                        <AlertCircle
-                                            size={17}
-                                        />
-
-                                        {error}
-
-                                    </div>
-
-                                )}
-
-
-                                <div className="session-form-group">
-
-                                    <label>
-                                        Session Name
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={
-                                            editForm.name
-                                        }
-                                        onChange={
-                                            handleEditChange
-                                        }
-                                        required
-                                    />
-
-                                </div>
-
-
-                                <div className="session-form-row">
-
-                                    <div className="session-form-group">
-
-                                        <label>
-                                            Term
-                                        </label>
-
-                                        <select
-                                            name="term"
-                                            value={
-                                                editForm.term
-                                            }
-                                            onChange={
-                                                handleEditChange
-                                            }
-                                            required
-                                        >
-
-                                            <option value="Spring">
-                                                Spring
-                                            </option>
-
-                                            <option value="Fall">
-                                                Fall
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-
-                                    <div className="session-form-group">
-
-                                        <label>
-                                            Year
-                                        </label>
-
-                                        <input
-                                            type="number"
-                                            name="year"
-                                            min="2020"
-                                            max="2100"
-                                            value={
-                                                editForm.year
-                                            }
-                                            onChange={
-                                                handleEditChange
-                                            }
-                                            required
-                                        />
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="session-form-row">
-
-                                    <div className="session-form-group">
-
-                                        <label>
-                                            Start Date
-                                        </label>
-
-                                        <input
-                                            type="date"
-                                            name="startDate"
-                                            value={
-                                                editForm.startDate
-                                            }
-                                            onChange={
-                                                handleEditChange
-                                            }
-                                            required
-                                        />
-
-                                    </div>
-
-
-                                    <div className="session-form-group">
-
-                                        <label>
-                                            End Date
-                                        </label>
-
-                                        <input
-                                            type="date"
-                                            name="endDate"
-                                            value={
-                                                editForm.endDate
-                                            }
-                                            onChange={
-                                                handleEditChange
-                                            }
-                                            required
-                                        />
-
-                                    </div>
-
-                                </div>
-
-
-                                <div className="session-form-group">
-
-                                    <label className="session-toggle-label">
-
-                                        <input
-                                            type="checkbox"
-                                            name="isActive"
-                                            checked={
-                                                editForm.isActive
-                                            }
-                                            onChange={
-                                                handleEditChange
-                                            }
-                                        />
-
-                                        Active session
-
-                                    </label>
-
-                                </div>
-
-
-                                <div className="session-modal-footer">
-
-                                    <button
-                                        type="button"
-                                        className="session-cancel-btn"
-                                        onClick={
-                                            closeEditModal
-                                        }
-                                        disabled={
-                                            generating
-                                        }
-                                    >
-                                        Cancel
-                                    </button>
-
-
-                                    <button
-                                        type="submit"
-                                        className="session-save-btn"
-                                        disabled={
-                                            generating
-                                        }
-                                    >
-
-                                        {generating ? (
-
-                                            <>
-
-                                                <FaSpinner
-                                                    className="session-button-spinner"
-                                                    size={15}
-                                                />
-
-                                                Saving...
-
-                                            </>
-
-                                        ) : (
-
-                                            "Update Session"
-
-                                        )}
-
-                                    </button>
-
-                                </div>
-
-                            </form>
-
-                        </div>
-
-                    </div>
-
-                )}
-
-
-            {/* =================================================
                 VIEW MODAL
             ================================================= */}
 
@@ -3156,52 +2561,9 @@ const Sessions = () => {
                                     </div>
 
 
-                                    <div>
-
-                                        <small>
-                                            Start Date
-                                        </small>
-
-                                        <strong
-                                            style={{
-                                                display:
-                                                    "block",
-                                                marginTop:
-                                                    4,
-                                            }}
-                                        >
-                                            {
-                                                formatDate(
-                                                    viewingSession.startDate
-                                                )
-                                            }
-                                        </strong>
-
-                                    </div>
+                                 
 
 
-                                    <div>
-
-                                        <small>
-                                            End Date
-                                        </small>
-
-                                        <strong
-                                            style={{
-                                                display:
-                                                    "block",
-                                                marginTop:
-                                                    4,
-                                            }}
-                                        >
-                                            {
-                                                formatDate(
-                                                    viewingSession.endDate
-                                                )
-                                            }
-                                        </strong>
-
-                                    </div>
 
                                 </div>
 

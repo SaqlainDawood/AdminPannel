@@ -1,795 +1,290 @@
-/* ==========================================
-   OVERLAY
-========================================== */
-
-.voucher-preview-overlay {
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+.vp-overlay {
   position: fixed;
   inset: 0;
+  background: rgba(0, 0, 0, 0.6);
   z-index: 9999;
-
-  background: rgba(15, 23, 42, 0.72);
-
   display: flex;
+  align-items: flex-start;
   justify-content: center;
-  align-items: center;
-
   padding: 20px;
-
-  overflow: auto;
+  overflow-y: auto;
 }
 
-/* ==========================================
-   MODAL
-========================================== */
-
-.voucher-preview-modal {
+.vp-modal {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 1600px;
   width: 100%;
-  max-width: 1500px;
-
-  max-height: 95vh;
-
-  background: #f4f6f9;
-
-  border-radius: 14px;
-
-  overflow: auto;
-
-  box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.25);
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-/* ==========================================
-   HEADER
-========================================== */
+/* =========================================================
+   PAGE MODE
+========================================================= */
+.vp-page {
+  padding: 16px;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
 
-.voucher-preview-header {
+.vp-toolbar {
   display: flex;
-
   justify-content: space-between;
   align-items: center;
-
-  padding: 20px 24px;
-
-  background: #ffffff;
-
-  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.voucher-preview-header h3 {
+.vp-toolbar h3 {
   margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
 
+.vp-toolbar > div {
   display: flex;
+  gap: 8px;
+}
+
+.vp-btn-print,
+.vp-btn-close,
+.vp-btn-back {
+  display: inline-flex;
   align-items: center;
-  gap: 9px;
-
-  color: #172033;
-
-  font-size: 20px;
-}
-
-.voucher-preview-header p {
-  margin: 5px 0 0;
-
-  color: #6b7280;
-
-  font-size: 13px;
-}
-
-.voucher-preview-close {
-  width: 38px;
-  height: 38px;
-
+  gap: 5px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
 
-  background: #f1f5f9;
+.vp-btn-print {
+  background: #2563eb;
+  color: #fff;
+}
+.vp-btn-print:hover { background: #1d4ed8; }
 
+.vp-btn-close {
+  background: #ef4444;
+  color: #fff;
+  padding: 6px 10px;
+}
+.vp-btn-close:hover { background: #dc2626; }
+
+.vp-btn-back {
+  background: #e5e7eb;
+  color: #111;
+}
+.vp-btn-back:hover { background: #d1d5db; }
+
+/* =========================================================
+   SHEET — 4 COPIES SIDE BY SIDE
+========================================================= */
+.vp-sheet {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.vp-copy {
+  background: #fff;
+  border: 1px solid #999;
+  padding: 8px 10px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #000;
+}
+
+.vp-copy-name {
+  text-align: center;
+  font-weight: 700;
+  font-size: 11px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+.vp-bank,
+.vp-university {
+  text-align: center;
+  font-weight: 700;
+  font-size: 11px;
+}
+.vp-university { font-size: 12px; margin-bottom: 6px; }
+
+/* META */
+.vp-meta > div {
+  display: flex;
+  gap: 4px;
+  font-size: 9.5px;
+  margin-bottom: 2px;
+}
+.vp-meta > div > span {
+  flex: 0 0 auto;
+  color: #333;
+}
+.vp-meta > div > strong {
+  flex: 1 1 auto;
+  font-weight: 600;
+  color: #000;
+  word-break: break-word;
+}
+
+.vp-row-2 {
+  display: flex;
+  gap: 6px;
+}
+.vp-row-2 > div {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+}
+
+/* TABLE */
+.vp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+  margin: 6px 0;
+}
+.vp-table th,
+.vp-table td {
+  border: 1px solid #000;
+  padding: 2px 4px;
+}
+.vp-table thead th {
+  background: #f2f2f2;
+  font-weight: 700;
+  text-align: center;
+}
+.vp-table .vp-total td {
+  font-weight: 700;
+  background: #fafafa;
+}
+
+/* WORDS */
+.vp-words {
+  font-size: 9px;
+  font-style: italic;
+  padding: 3px 0;
+  border-top: 1px dashed #999;
+  border-bottom: 1px dashed #999;
+  margin: 4px 0;
+}
+
+/* LINES */
+.vp-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  padding: 2px 0;
+}
+.vp-line-bold {
+  font-weight: 700;
+}
+
+/* NOTES */
+.vp-notes {
+  font-size: 7.5px;
+  margin-top: 6px;
+  line-height: 1.3;
+  border-top: 1px solid #ccc;
+  padding-top: 4px;
+}
+.vp-notes > div { margin-bottom: 2px; }
+
+/* LOADER / ERROR */
+.vp-page-state {
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  cursor: pointer;
-
-  color: #475569;
 }
-
-.voucher-preview-close:hover {
-  background: #e2e8f0;
-}
-
-/* ==========================================
-   ACTIONS
-========================================== */
-
-.voucher-preview-actions {
-  display: flex;
-  justify-content: flex-end;
-
-  gap: 10px;
-
-  padding: 14px 24px;
-
-  background: #ffffff;
-
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.voucher-preview-actions button {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-
-  padding: 10px 17px;
-
+.vp-loader { font-size: 15px; color: #555; }
+.vp-error {
+  text-align: center;
+  background: #fff;
+  padding: 30px;
   border-radius: 8px;
-
-  font-size: 14px;
-  font-weight: 600;
-
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.vp-error h3 { margin: 0 0 8px; }
+.vp-error p { color: #666; margin: 0 0 16px; }
+.vp-error button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.voucher-print-btn {
-  border: 1px solid #2563eb;
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.voucher-print-btn:hover {
-  background: #1d4ed8;
-}
-
-.voucher-download-btn {
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #374151;
-}
-
-.voucher-download-btn:hover {
-  background: #f8fafc;
-}
-
-/* ==========================================
-   VOUCHERS CONTAINER
-========================================== */
-
-.voucher-preview-vouchers {
-  padding: 25px;
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
-
-  gap: 12px;
-
-  align-items: stretch;
-}
-
-/* ==========================================
-   VOUCHER PAPER
-========================================== */
-
-.voucher-paper {
-  background: #ffffff;
-
-  border: 1px solid #cbd5e1;
-
-  padding: 12px;
-
-  min-width: 0;
-
-  color: #111827;
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-}
-
-/* ==========================================
-   COPY TITLE
-========================================== */
-
-.voucher-copy-title {
-  text-align: center;
-
-  font-size: 12px;
-
-  font-weight: 700;
-
-  color: #334155;
-
-  padding-bottom: 7px;
-
-  margin-bottom: 8px;
-
-  border-bottom: 1px dashed #94a3b8;
-}
-
-/* ==========================================
-   UNIVERSITY HEADER
-========================================== */
-
-.voucher-university-header {
-  text-align: center;
-
-  border-bottom: 1px solid #111827;
-
-  padding-bottom: 8px;
-}
-
-.voucher-bank-name {
-  font-size: 8px;
-
-  font-weight: 700;
-
-  margin-bottom: 3px;
-}
-
-.voucher-university-header h1 {
-  margin: 0;
-
-  font-size: 13px;
-
-  line-height: 1.2;
-}
-
-.voucher-university-header p {
-  margin: 3px 0 0;
-
-  font-size: 9px;
-
-  font-weight: 600;
-}
-
-/* ==========================================
-   META
-========================================== */
-
-.voucher-meta {
-  display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  border-bottom: 1px solid #d1d5db;
-
-  padding: 7px 0;
-
-  gap: 5px;
-}
-
-.voucher-meta div {
-  text-align: center;
-}
-
-.voucher-meta span {
-  display: block;
-
-  font-size: 7px;
-
-  color: #64748b;
-}
-
-.voucher-meta strong {
-  display: block;
-
-  margin-top: 2px;
-
-  font-size: 8px;
-}
-
-/* ==========================================
-   SECTION
-========================================== */
-
-.voucher-section {
-  margin-top: 8px;
-}
-
-.voucher-section-heading {
-  background: #eef2f7;
-
-  border: 1px solid #d7dee8;
-
-  padding: 5px 6px;
-
-  font-size: 8px;
-
-  font-weight: 700;
-
-  text-transform: uppercase;
-}
-
-/* ==========================================
-   STUDENT INFO
-========================================== */
-
-.voucher-info-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  border-left: 1px solid #d1d5db;
-
-  border-top: 1px solid #d1d5db;
-}
-
-.voucher-info-grid div {
-  min-width: 0;
-
-  padding: 5px;
-
-  border-right: 1px solid #d1d5db;
-
-  border-bottom: 1px solid #d1d5db;
-}
-
-.voucher-info-grid span {
-  display: block;
-
-  font-size: 6.5px;
-
-  color: #64748b;
-
-  margin-bottom: 2px;
-}
-
-.voucher-info-grid strong {
-  display: block;
-
-  font-size: 7.5px;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-}
-
-/* ==========================================
-   PAYMENT
-========================================== */
-
-.voucher-payment-info {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  border-left: 1px solid #d1d5db;
-
-  border-top: 1px solid #d1d5db;
-}
-
-.voucher-payment-info div {
-  padding: 5px;
-
-  border-right: 1px solid #d1d5db;
-
-  border-bottom: 1px solid #d1d5db;
-}
-
-.voucher-payment-info span {
-  display: block;
-
-  font-size: 6.5px;
-
-  color: #64748b;
-}
-
-.voucher-payment-info strong {
-  display: block;
-
-  margin-top: 2px;
-
-  font-size: 7px;
-}
-
-/* ==========================================
-   FEE TABLE
-========================================== */
-
-.voucher-fee-table {
-  width: 100%;
-
-  border-collapse: collapse;
-
-  font-size: 7px;
-}
-
-.voucher-fee-table th,
-.voucher-fee-table td {
-  border: 1px solid #cbd5e1;
-
-  padding: 5px 4px;
-
-  text-align: left;
-}
-
-.voucher-fee-table th {
-  background: #f1f5f9;
-
-  font-size: 6.5px;
-}
-
-.voucher-fee-table th:first-child,
-.voucher-fee-table td:first-child {
-  width: 25px;
-
-  text-align: center;
-}
-
-.voucher-fee-table th:last-child,
-.voucher-fee-table td:last-child {
-  text-align: right;
-}
-
-.voucher-total-row {
-  font-weight: 700;
-
-  background: #f8fafc;
-}
-
-/* ==========================================
-   AMOUNT
-========================================== */
-
-.voucher-amount-box {
-  margin-top: 8px;
-
-  padding: 8px;
-
-  border: 1px solid #111827;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  gap: 5px;
-}
-
-.voucher-amount-box span {
-  font-size: 7px;
-
-  font-weight: 600;
-}
-
-.voucher-amount-box strong {
-  font-size: 9px;
-
-  white-space: nowrap;
-}
-
-/* ==========================================
-   INSTRUCTIONS
-========================================== */
-
-.voucher-instructions {
-  margin-top: 8px;
-}
-
-.voucher-instructions h4 {
-  margin: 0 0 4px;
-
-  font-size: 7.5px;
-}
-
-.voucher-instructions ul {
-  margin: 0;
-
-  padding-left: 14px;
-}
-
-.voucher-instructions li {
-  font-size: 6.5px;
-
-  line-height: 1.4;
-
-  margin-bottom: 2px;
-}
-
-/* ==========================================
-   SIGNATURES
-========================================== */
-
-.voucher-signatures {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  gap: 12px;
-
-  margin-top: 18px;
-}
-
-.voucher-signatures div {
-  text-align: center;
-}
-
-.voucher-signatures span {
-  display: block;
-
-  border-top: 1px solid #111827;
-
-  margin-bottom: 4px;
-}
-
-.voucher-signatures p {
-  margin: 0;
-
-  font-size: 6.5px;
-}
-
-/* ==========================================
-   FOOTER
-========================================== */
-
-.voucher-footer {
-  margin-top: 10px;
-
-  padding-top: 7px;
-
-  border-top: 1px dashed #94a3b8;
-
-  text-align: center;
-}
-
-.voucher-footer p {
-  margin: 0 0 3px;
-
-  font-size: 6px;
-
-  color: #64748b;
-}
-
-.voucher-footer strong {
-  font-size: 6.5px;
-}
-
-/* ==========================================
-   RESPONSIVE SCREEN
-========================================== */
-
-@media (max-width: 1100px) {
-  .voucher-preview-vouchers {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 650px) {
-  .voucher-preview-overlay {
-    padding: 8px;
-  }
-
-  .voucher-preview-vouchers {
-    grid-template-columns: 1fr;
-    padding: 12px;
-  }
-
-  .voucher-preview-actions {
-    justify-content: stretch;
-  }
-
-  .voucher-preview-actions button {
-    flex: 1;
-    justify-content: center;
-  }
-}
-
-/* ==========================================
-   PRINT
-========================================== */
-
+/* =========================================================
+   PRINT — 4 COPIES LANDSCAPE A4
+========================================================= */
 @media print {
-
   @page {
     size: A4 landscape;
     margin: 5mm;
   }
 
-  html,
-  body {
-    margin: 0 !important;
+  body * { visibility: hidden; }
+
+  .vp-sheet,
+  .vp-sheet * { visibility: visible; }
+
+  .no-print,
+  .vp-toolbar { display: none !important; }
+
+  .vp-overlay,
+  .vp-modal,
+  .vp-page {
+    position: static !important;
+    background: transparent !important;
     padding: 0 !important;
-
-    background: #ffffff !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    max-width: none !important;
   }
 
-  body * {
-    visibility: hidden;
-  }
-
-  .voucher-preview-overlay,
-  .voucher-preview-overlay * {
-    visibility: visible;
-  }
-
-  .voucher-preview-overlay {
-    position: static;
-
-    display: block;
-
-    padding: 0;
-
-    margin: 0;
-
-    background: #ffffff;
-  }
-
-  .voucher-preview-modal {
+  .vp-sheet {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 3px !important;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-
-    max-width: none;
-
-    max-height: none;
-
-    overflow: visible;
-
-    background: #ffffff;
-
-    border-radius: 0;
-
-    box-shadow: none;
   }
 
-  .no-print {
-    display: none !important;
+  .vp-copy {
+    font-size: 7px !important;
+    line-height: 1.2 !important;
+    padding: 4px !important;
+    border: 1px solid #000 !important;
   }
 
-  .voucher-preview-vouchers {
-    display: grid;
-
-    grid-template-columns:
-      repeat(4, 1fr);
-
-    gap: 2mm;
-
-    padding: 0;
-
-    width: 100%;
-
-    align-items: stretch;
-  }
-
-  .voucher-paper {
-    width: auto;
-
-    min-width: 0;
-
-    padding: 2.5mm;
-
-    border: 1px solid #111827;
-
-    box-sizing: border-box;
-
-    break-inside: avoid;
-
-    page-break-inside: avoid;
-  }
-
-  .voucher-copy-title {
-    font-size: 7px;
-
-    padding-bottom: 2mm;
-
-    margin-bottom: 2mm;
-  }
-
-  .voucher-bank-name {
-    font-size: 5px;
-  }
-
-  .voucher-university-header h1 {
-    font-size: 8px;
-  }
-
-  .voucher-university-header p {
-    font-size: 6px;
-  }
-
-  .voucher-meta {
-    padding: 2mm 0;
-  }
-
-  .voucher-meta span {
-    font-size: 4.5px;
-  }
-
-  .voucher-meta strong {
-    font-size: 5px;
-  }
-
-  .voucher-section {
-    margin-top: 2mm;
-  }
-
-  .voucher-section-heading {
-    padding: 1.5mm;
-
-    font-size: 5px;
-  }
-
-  .voucher-info-grid div,
-  .voucher-payment-info div {
-    padding: 1.2mm;
-  }
-
-  .voucher-info-grid span,
-  .voucher-payment-info span {
-    font-size: 4px;
-  }
-
-  .voucher-info-grid strong,
-  .voucher-payment-info strong {
-    font-size: 4.5px;
-  }
-
-  .voucher-fee-table {
-    font-size: 4.5px;
-  }
-
-  .voucher-fee-table th,
-  .voucher-fee-table td {
-    padding: 1.2mm;
-  }
-
-  .voucher-fee-table th {
-    font-size: 4px;
-  }
-
-  .voucher-amount-box {
-    margin-top: 2mm;
-
-    padding: 1.8mm;
-  }
-
-  .voucher-amount-box span {
-    font-size: 4.5px;
-  }
-
-  .voucher-amount-box strong {
-    font-size: 5.5px;
-  }
-
-  .voucher-instructions {
-    margin-top: 2mm;
-  }
-
-  .voucher-instructions h4 {
-    font-size: 5px;
-  }
-
-  .voucher-instructions li {
-    font-size: 4px;
-
-    line-height: 1.2;
-  }
-
-  .voucher-signatures {
-    margin-top: 5mm;
-
-    gap: 4mm;
-  }
-
-  .voucher-signatures p {
-    font-size: 4px;
-  }
-
-  .voucher-footer {
-    margin-top: 2mm;
-
-    padding-top: 1.5mm;
-  }
-
-  .voucher-footer p,
-  .voucher-footer strong {
-    font-size: 3.8px;
-  }
+  .vp-copy-name { font-size: 8px !important; }
+  .vp-bank,
+  .vp-university { font-size: 8.5px !important; }
+  .vp-meta > div { font-size: 6.5px !important; margin-bottom: 1px !important; }
+  .vp-table { font-size: 6.5px !important; }
+  .vp-table th,
+  .vp-table td { padding: 1px 2px !important; }
+  .vp-words { font-size: 6px !important; }
+  .vp-line { font-size: 6.5px !important; padding: 1px 0 !important; }
+  .vp-notes { font-size: 5.5px !important; }
 }

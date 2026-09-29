@@ -516,9 +516,7 @@ const Department = () => {
                                 {department.name}
                               </strong>
 
-                              <small>
-                                ID: {department._id}
-                              </small>
+                            
 
                             </div>
 

@@ -1,0 +1,618 @@
+/* =========================================================
+   PAGE
+========================================================= */
+.jp-page {
+  padding: 20px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.jp-loading-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.jp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.jp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.jp-header-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jp-header-left h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.jp-header-left p {
+  margin: 2px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.jp-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.jp-btn-primary,
+.jp-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.jp-btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+.jp-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+.jp-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.jp-btn-secondary {
+  background: #fff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+.jp-btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+.jp-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.jp-stat {
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.jp-stat span {
+  display: block;
+  font-size: 12.5px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.jp-stat strong {
+  font-size: 22px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* =========================================================
+   ALERTS
+========================================================= */
+.jp-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+}
+
+.jp-alert.error {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+.jp-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+/* FILTERS */
+.jp-filters {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+.jp-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 220px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.jp-search svg {
+  color: #94a3b8;
+}
+
+.jp-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+.jp-filters select {
+  padding: 9px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13.5px;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+/* LOADING / EMPTY */
+.jp-loading,
+.jp-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.jp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.jp-empty svg {
+  color: #cbd5e1;
+  margin-bottom: 10px;
+}
+
+.jp-empty h3 {
+  margin: 0 0 6px;
+  color: #0f172a;
+  font-size: 17px;
+}
+
+.jp-empty p {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+.jp-table-wrap {
+  overflow-x: auto;
+}
+
+.jp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.jp-table th {
+  text-align: left;
+  padding: 12px 16px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 12.5px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.jp-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.jp-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.jp-title-cell strong {
+  display: block;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.jp-title-cell span {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.jp-location,
+.jp-vacancy,
+.jp-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.jp-location svg,
+.jp-vacancy svg,
+.jp-date svg {
+  color: #94a3b8;
+}
+
+/* BADGES */
+.jp-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.jp-badge.open {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.jp-badge.closed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.jp-badge.draft {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* ROW ACTIONS */
+.jp-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.jp-row-actions button {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: 0.15s;
+}
+
+.jp-row-actions .view:hover {
+  background: #dbeafe;
+  color: #2563eb;
+  border-color: #93c5fd;
+}
+
+.jp-row-actions .edit:hover {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fcd34d;
+}
+
+.jp-row-actions .delete:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+.jp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.jp-section {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 22px;
+}
+
+.jp-section h2 {
+  margin: 0 0 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.jp-grid-2,
+.jp-grid-3 {
+  display: grid;
+  gap: 16px;
+}
+
+.jp-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.jp-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.jp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jp-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.jp-field label span {
+  color: #dc2626;
+}
+
+.jp-field input,
+.jp-field select,
+.jp-field textarea {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: 0.15s;
+  background: #fff;
+}
+
+.jp-field input:focus,
+.jp-field select:focus,
+.jp-field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.jp-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.jp-checkbox-field {
+  justify-content: flex-end;
+}
+
+.jp-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+  padding: 10px 0;
+}
+
+.jp-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+}
+
+.jp-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+/* =========================================================
+   VIEW PAGE
+========================================================= */
+.jp-view-hero {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.jp-view-hero .jp-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 12px;
+}
+
+.jp-view-meta {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.jp-view-meta > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-view-meta span {
+  font-size: 11.5px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+.jp-view-meta strong {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.jp-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 18px;
+}
+
+.jp-view-main,
+.jp-view-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.jp-view-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+}
+
+.jp-view-card h3 {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.jp-view-desc {
+  margin: 0;
+  color: #475569;
+  font-size: 13.5px;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.jp-view-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px dashed #f1f5f9;
+}
+
+.jp-view-row:last-child {
+  border-bottom: none;
+}
+
+.jp-view-row svg {
+  color: #64748b;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.jp-view-row > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.jp-view-row span {
+  font-size: 11.5px;
+  color: #94a3b8;
+  margin-bottom: 3px;
+}
+
+.jp-view-row strong {
+  font-size: 13.5px;
+  color: #0f172a;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* =========================================================
+   SPINNER
+========================================================= */
+.spin {
+  animation: jp-spin 1s linear infinite;
+}
+
+@keyframes jp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 900px) {
+  .jp-grid-3,
+  .jp-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .jp-view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jp-stats {
+    grid-template-columns: 1fr;
+  }
+}
