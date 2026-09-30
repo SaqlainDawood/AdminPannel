@@ -6,75 +6,64 @@ import {
 } from "react-router-dom";
 
 import HeroLanding from "../Components/MainFrontPage/auth/login";
-
 import CoordinatorLogin from "../CoordinatorForm/Login";
-
 import ForgotPassword from "../Components/MainFrontPage/auth/ForgotPassword";
 import ResetPassword from "../Components/MainFrontPage/auth/ResetPassword";
-
 import Dashboard from "../Pages/AdminDashboard/Dashboard/AdminDashboard";
 import AdminSidebar from "../Pages/AdminDashboard/AdminSN";
-
 import StudentList from "../Pages/AdminDashboard/StudentManage/StudentList";
 import StudentApprovals from "../Pages/AdminDashboard/StudentManage/StudentApprovals";
 import StudentAssign from "../Pages/AdminDashboard/StudentManage/StudentAssign";
 import StudentView from "../Pages/AdminDashboard/StudentManage/StudentView";
 import StudentUpdate from "../Pages/AdminDashboard/StudentManage/StudentUpdate";
-
 import FacultyList from "../Pages/AdminDashboard/FacultyManage/FacultyList";
 import FacultyAdd from "../Pages/AdminDashboard/FacultyManage/FacultyAdd";
 import UpdateFaculty from "../Pages/AdminDashboard/FacultyManage/UpdateFaculty";
 import ViewFaculty from "../Pages/AdminDashboard/FacultyManage/ViewFaculty";
-
 import CoodList from "../Pages/AdminDashboard/CoordinatorsManage/CoodList";
 import CoodAdd from "../Pages/AdminDashboard/CoordinatorsManage/CoodAdd";
 import CoodView from "../Pages/AdminDashboard/CoordinatorsManage/CoodView";
 import CoodUpdate from "../Pages/AdminDashboard/CoordinatorsManage/CoodUpdate";
-
 import FeeManagement from "../Pages/AdminDashboard/FeeManage/FeeVouchers";
 import FeeVerify from "../Pages/AdminDashboard/FeeManage/FeeVerify";
 import Voucher from "../Pages/AdminDashboard/FeeManage/Voucher";
 import VoucherPage from "../Pages/AdminDashboard/FeeManage/VoucherPage";
 import FeeConfig from "../Pages/AdminDashboard/FeeManage/FeeConfig";
 import VoucherPreview from "../Pages/AdminDashboard/FeeManage/VoucherPreview";
-
 import ExamAnnouncements from "../Pages/AdminDashboard/ExaminationManage/ExamAnnouncements";
 import ExamDatesheets from "../Pages/AdminDashboard/ExaminationManage/ExamDatesheets";
 import ExamResults from "../Pages/AdminDashboard/ExaminationManage/ExamResults";
-
 import Books from "../Pages/AdminDashboard/Books/Books";
-
 import AdminProfile from "../Pages/AdminDashboard/Settings/AdminProfile";
 import Access from "../Pages/AdminDashboard/Settings/Access";
 import SystemSett from "../Pages/AdminDashboard/Settings/SystemSett";
-
 import CreateClass from "../Pages/AdminDashboard/Classes/CreateClass";
 import ClassList from "../Pages/AdminDashboard/Classes/ClassList";
 import ClassDetails from "../Pages/AdminDashboard/Classes/ClassDetails";
 import EditClass from "../Pages/AdminDashboard/Classes/EditClass";
 import ManageEnrollment from "../Pages/AdminDashboard/Classes/ManageEnrollment";
-
 import AttendanceOverview from "../Pages/AdminDashboard/Attendence/Overview";
 import ClassAttendance from "../Pages/AdminDashboard/Attendence/ByCourse";
 import StudentAttendance from "../Pages/AdminDashboard/Attendence/ByStudent";
 import DepartmentAttendance from "../Pages/AdminDashboard/Attendence/ByDept";
-
 import Department from "../Pages/AdminDashboard/StudentEnrolment/Department";
 import DegreeClasses from "../Pages/AdminDashboard/StudentEnrolment/DegreeClasses";
 import Sessions from "../Pages/AdminDashboard/StudentEnrolment/Sessions";
 import Batch from "../Pages/AdminDashboard/StudentEnrolment/Batch";
 import Campus from "../Pages/AdminDashboard/StudentEnrolment/Campus";
-
 import Subject from "../Pages/AdminDashboard/Subjects/Subject";
-
 import JobPostingList from "../Pages/AdminDashboard/JobPosting/JobPostingList";
 import JobPostingForm from "../Pages/AdminDashboard/JobPosting/JobPostingForm";
 import JobPostingView from "../Pages/AdminDashboard/JobPosting/JobPostingView";
-
+import StaffApplications from "../Pages/AdminDashboard/JobPosting/StaffApplications";
 import CoordinatorDashboard from "../CoordinatorDashboard/CoordSideNav/CoordSideNav";
-
 import ProtectedRoute from "./ProtectedRoute";
-import RolesManager from "../Pages/AdminDashboard/JobPosting/RolesManager";
+import RolesManager from "../Pages/AdminDashboard/roles/RolesManager";
+
+import Teacher from "../Pages/AdminDashboard/Teacher/Teachers";
+
+
+
 
 const AppRoutes = () => {
   return (
@@ -99,6 +88,14 @@ const AppRoutes = () => {
         path="/forgot-password"
         element={<ForgotPassword />}
       />
+
+      <Route
+        path="/Teacher"
+        element={<Teacher/>}
+      />
+
+      
+
 
       <Route
         path="/reset-password/:token"
@@ -149,6 +146,12 @@ const AppRoutes = () => {
             element={<Batch />}
           />
 
+
+          {/* Teachers */}
+          <Route
+            path="teachers"
+            element={<Teacher />}
+          />
 
           {/* Students */}
           <Route path="students">
@@ -430,7 +433,11 @@ const AppRoutes = () => {
   element={<RolesManager />}
 />
 
-          
+<Route
+  path="jobs/approvals"
+  element={<StaffApplications />}
+/>
+
             
             <Route
               path="create"

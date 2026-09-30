@@ -69,6 +69,7 @@ const AdminSidebar = () => {
       submenu: [
         { id: 'faculty-list', title: 'All Faculty', icon: 'fa-list', path: '/admin/dashboard/faculty/list' },
         { id: 'faculty-add', title: 'Register Faculty', icon: 'fa-user-plus', path: '/admin/dashboard/faculty/add' },
+        { id: 'teacher-list', title: 'Teachers', icon: 'fa-chalkboard-teacher', path: '/admin/dashboard/teachers' },
         // { id:'faculty-update',title:'Update Faculty' , icon:'fa-user-plus', path:'/admin/dashboard/faculty/update/:id'},
         // { id:'faculty-view', title:'View Faculty' , icon:'fa-list' ,path:'/admin/dashboard/faculty/view/:id'},
       ]
@@ -90,10 +91,9 @@ const AdminSidebar = () => {
       icon: 'fa-briefcase',
       // path: '/admin/dashboard/jobs',
       submenu: [
-        { id: 'job-list', title: 'JObs', icon: 'fa-list', path: '/admin/dashboard/jobs' },
-         { id: 'role-list', title: 'Roles', icon: 'fa-list', path: '/admin/dashboard/jobs/roles' },
-
-       
+        { id: 'job-list', title: 'Jobs', icon: 'fa-list', path: '/admin/dashboard/jobs' },
+        { id: 'job-approvals', title: 'Applications', icon: 'fa-clipboard-check', path: '/admin/dashboard/jobs/approvals' },
+        { id: 'role-list', title: 'Roles', icon: 'fa-list', path: '/admin/dashboard/jobs/roles' },
       ]
     },
 

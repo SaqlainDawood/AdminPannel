@@ -1,16 +1,16 @@
 // src/pages/cms/RolesManager.jsx
 import { Fragment, useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import {
+  createRole,
+  deleteRole,
+  getRoles,
+  toggleRoleStatus,
+  updateRole,
+} from "../../../services/roleService";
+import { getPermissions, groupPermissions } from "../../../services/permissionService";
+import { getErrorMessage } from "../../../services/api";
 
-/* ---------- API (token key / baseURL apne hisab se change karo) ---------- */
-const api = axios.create({ baseURL: "/api/cms" });
-api.interceptors.request.use((cfg) => {
-  const token = sessionStorage.getItem("token");
-  if (token) cfg.headers.Authorization = `Bearer ${token}`;
-  return cfg;
-});
-
-const errMsg = (e) => e?.response?.data?.message || e.message || "Something went wrong";
+const errMsg = (e) => getErrorMessage(e);
 
 /* Role.permissions array of objects ho ya grouped object, dono se keys nikalo */
 const toKeys = (perms) => {
@@ -85,11 +85,16 @@ function RoleModal({ role, groups, onClose, onSaved }) {
     setError("");
     try {
       const permissions = [...selected];
+      const payload = {
+        name: name.trim(),
+        description: description.trim(),
+        permissions,
+      };
+
       if (isEdit) {
-        await api.put(`/roles/${role._id}`, { name: name.trim(), description });
-        if (!isSuperAdmin) await api.patch(`/roles/${role._id}/permissions`, { permissions });
+        await updateRole(role._id, payload);
       } else {
-        await api.post("/roles", { name: name.trim(), description, permissions });
+        await createRole(payload);
       }
       onSaved();
     } catch (e) {
@@ -244,12 +249,9 @@ export default function RolesManager() {
     setLoading(true);
     setError("");
     try {
-      const [r, p] = await Promise.all([
-        api.get("/roles"),
-        api.get("/permissions/grouped", { params: { groupBy: "category" } }),
-      ]);
-      setRoles(r.data.roles);
-      setGroups(p.data.grouped);
+      const [rolesData, permissionsData] = await Promise.all([getRoles(), getPermissions()]);
+      setRoles(Array.isArray(rolesData) ? rolesData : []);
+      setGroups(groupPermissions(Array.isArray(permissionsData) ? permissionsData : []));
     } catch (e) {
       setError(errMsg(e));
     } finally {
@@ -263,7 +265,7 @@ export default function RolesManager() {
 
   const handleToggle = async (role) => {
     try {
-      await api.patch(`/roles/${role._id}/toggle`);
+      await toggleRoleStatus(role._id);
       load();
     } catch (e) {
       setError(errMsg(e));
@@ -273,7 +275,7 @@ export default function RolesManager() {
   const handleDelete = async (role) => {
     if (!window.confirm(`Delete role "${role.name}"?`)) return;
     try {
-      await api.delete(`/roles/${role._id}`);
+      await deleteRole(role._id);
       load();
     } catch (e) {
       setError(errMsg(e));
