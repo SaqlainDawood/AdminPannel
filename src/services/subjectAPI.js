@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const SubjectAPI = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:8000"}`,
 });
 
 SubjectAPI.interceptors.request.use((config) => {
@@ -12,27 +12,27 @@ SubjectAPI.interceptors.request.use((config) => {
 
 // params: { departmentId, isActive }
 export const getSubjects = async (params = {}) => {
-  const response = await SubjectAPI.get("/api/subject", { params });
+  const response = await SubjectAPI.get("/api/subjects", { params });
   return response.data;
 };
 
 export const getSubjectById = async (id) => {
-  const response = await SubjectAPI.get(`/api/subject/${id}`);
+  const response = await SubjectAPI.get(`/api/subjects/${id}`);
   return response.data;
 };
 
 export const createSubject = async (subjectData) => {
-  const response = await SubjectAPI.post("/api/subject", subjectData);
+  const response = await SubjectAPI.post("/api/subjects", subjectData);
   return response.data;
 };
 
 export const updateSubject = async (id, subjectData) => {
-  const response = await SubjectAPI.put(`/api/subject/${id}`, subjectData);
+  const response = await SubjectAPI.put(`/api/subjects/${id}`, subjectData);
   return response.data;
 };
 
 // Soft delete (isActive: false)
 export const deactivateSubject = async (id) => {
-  const response = await SubjectAPI.patch(`/api/subject/${id}/deactivate`);
+  const response = await SubjectAPI.patch(`/api/subjects/${id}/deactivate`);
   return response.data;
 };

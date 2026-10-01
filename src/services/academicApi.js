@@ -47,6 +47,14 @@ export const reassignTeacher = (id, teacherId) =>
   unwrap(academicApi.put(`/teacher-assignments/${id}/reassign`, { teacherId }));
 export const deactivateAssignment = (id) => academicApi.patch(`/teacher-assignments/${id}/deactivate`);
 
+export const getTimetableForBatch = (batchId) =>
+  unwrap(academicApi.get(`/timetable/batches/${batchId}/summary`));
+export const createTimetableEntry = (body) => unwrap(academicApi.post("/timetable", body));
+export const updateTimetableEntry = (id, body) => unwrap(academicApi.put(`/timetable/${id}`, body));
+export const deleteTimetableEntry = (id) => unwrap(academicApi.delete(`/timetable/${id}`));
+export const getTeacherWorkload = (teacherId) =>
+  unwrap(academicApi.get(`/timetable/teachers/${teacherId}/workload`));
+
 export const errMsg = (e) => e?.response?.data?.message || e.message || "Kuch ghalat ho gaya";
 export const idOf = (v) => (v && typeof v === "object" ? v._id : v);
 
