@@ -79,10 +79,15 @@ const AdminSidebar = () => {
       submenu: [
         { id: 'faculty-list', title: 'All Faculty', icon: 'fa-list', path: '/admin/dashboard/faculty/list' },
         { id: 'faculty-add', title: 'Register Faculty', icon: 'fa-user-plus', path: '/admin/dashboard/faculty/add' },
-        { id: 'teacher-list', title: 'Teachers', icon: 'fa-chalkboard-teacher', path: '/admin/dashboard/teachers' },
         // { id:'faculty-update',title:'Update Faculty' , icon:'fa-user-plus', path:'/admin/dashboard/faculty/update/:id'},
         // { id:'faculty-view', title:'View Faculty' , icon:'fa-list' ,path:'/admin/dashboard/faculty/view/:id'},
       ]
+    },
+    {
+      id: 'teachers',
+      title: 'Teachers',
+      icon: 'fa-chalkboard-teacher',
+      path: '/admin/dashboard/teachers',
     },
     {
       id: 'coordinators',
@@ -114,8 +119,10 @@ const AdminSidebar = () => {
       path: '/admin/dashboard/fee',
       submenu: [
         { id: 'fee-vouchers', title: 'Fee Vouchers', icon: 'fa-file-invoice-dollar', path: '/admin/dashboard/fee/vouchers' },
+        { id: 'fee-voucher', title: 'Voucher', icon: 'fa-receipt', path: '/admin/dashboard/fee/Voucher' },
+        { id: 'fee-generate', title: 'Generate Voucher', icon: 'fa-file-alt', path: '/admin/dashboard/fee/generatevoucher' },
         { id: 'config', title: 'Fee Configuration', icon: 'fa-sliders-h', path: '/admin/dashboard/fee/config' },
-         { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-circle-check', path: '/admin/dashboard/fee/verify' },
+        { id: 'fee-verify', title: 'Verify Payments', icon: 'fa-circle-check', path: '/admin/dashboard/fee/verify' },
       ]
     },
     {
@@ -137,6 +144,8 @@ const AdminSidebar = () => {
       submenu: [
         { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
         { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path: '/admin/dashboard/classes/listclass' },
+        { id: 'semester-subject-assignment', title: 'Semester Subject Assignment', icon: 'fa-book', path: '/admin/dashboard/classes/semester-subject-assignment' },
+        { id: 'timetable-management', title: 'Timetable Management', icon: 'fa-calendar', path: '/admin/dashboard/classes/timetable' },
       ]
     },
     {
@@ -145,12 +154,10 @@ const AdminSidebar = () => {
       icon: 'fa-clipboard-check',
       path: '/admin/dashboard/attendance',
       submenu: [
-        {
-          id: 'overview',
-          title: 'Overview',
-          icon: 'fa-chart-line',
-          path: '/admin/dashboard/attendance/overview'
-        }
+        { id: 'overview', title: 'Overview', icon: 'fa-chart-line', path: '/admin/dashboard/attendance/overview' },
+        { id: 'attendance-by-dept', title: 'By Department', icon: 'fa-building', path: '/admin/dashboard/attendance/department' },
+        { id: 'attendance-by-class', title: 'By Class', icon: 'fa-chalkboard', path: '/admin/dashboard/attendance/class' },
+        { id: 'attendance-by-student', title: 'By Student', icon: 'fa-user-graduate', path: '/admin/dashboard/attendance/student' },
       ]
     },
     {

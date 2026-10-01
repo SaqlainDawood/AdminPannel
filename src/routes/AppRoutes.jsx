@@ -42,6 +42,8 @@ import ClassList from "../Pages/AdminDashboard/Classes/ClassList";
 import ClassDetails from "../Pages/AdminDashboard/Classes/ClassDetails";
 import EditClass from "../Pages/AdminDashboard/Classes/EditClass";
 import ManageEnrollment from "../Pages/AdminDashboard/Classes/ManageEnrollment";
+import SemesterSubjectAssignment from "../Pages/AdminDashboard/Classes/SemesterSubjectAssignment";
+import TimetableManager from "../Pages/AdminDashboard/Classes/TimetableManager";
 import AttendanceOverview from "../Pages/AdminDashboard/Attendence/Overview";
 import ClassAttendance from "../Pages/AdminDashboard/Attendence/ByCourse";
 import StudentAttendance from "../Pages/AdminDashboard/Attendence/ByStudent";
@@ -376,6 +378,16 @@ const AppRoutes = () => {
             <Route
               path="listclass"
               element={<ClassList />}
+            />
+
+            <Route
+              path="semester-subject-assignment"
+              element={<SemesterSubjectAssignment />}
+            />
+
+            <Route
+              path="timetable"
+              element={<TimetableManager />}
             />
 
             <Route
