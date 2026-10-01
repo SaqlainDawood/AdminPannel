@@ -74,16 +74,16 @@ const StudentAssign = () => {
 
   const fetchUnassignRollStd = async () => {
     try {
-      const token = localStorage.getItem("adminToken");
+      const token =
+        sessionStorage.getItem("token") ||
+        sessionStorage.getItem("adminToken") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("adminToken");
       if (!token) {
-        navigate("/admin/login");
+        navigate("/login");
         return;
       }
-      const res = await AdminAPI.get("/stats/students/unassign", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await AdminAPI.get("/stats/students/unassign");
 
       //  setUnassignedCount(res.data.count);
       console.log("API Response:", res.data); // Debug log
@@ -95,8 +95,10 @@ const StudentAssign = () => {
     } catch (error) {
       console.error("Failed to fetch students:", error);
       if (error.response?.status === 401) {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("adminToken");
         localStorage.removeItem("adminToken");
-        navigate("/admin/login");
+        navigate("/login");
       }
     } finally {
       setLoading(false);
@@ -121,19 +123,9 @@ const StudentAssign = () => {
       return;
     }
     try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        toast.error("No Token exist , Unauthorized");
-        return;
-      }
       const res = await AdminAPI.put(
         "/stats/students/assign/",
-        { assignedStudents: studentsToAssign },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        { assignedStudents: studentsToAssign }
       );
       console.log("Server Response:", res.data);
       toast.success(

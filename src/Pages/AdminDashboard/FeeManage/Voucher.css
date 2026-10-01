@@ -3,9 +3,9 @@
 ========================================================= */
 
 .voucher-page {
-  min-height: 100%;
-  padding: 28px;
-  background: #f7f9fc;
+  min-height: auto;
+  padding: 0;
+  background: transparent;
   color: #172033;
 }
 

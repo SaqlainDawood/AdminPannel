@@ -2,9 +2,9 @@
    PAGE
 ========================================================= */
 .jp-page {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: 100vh;
+  padding: 0;
+  background: transparent;
+  min-height: auto;
 }
 
 .jp-loading-page {

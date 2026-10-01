@@ -1,16 +1,10 @@
 import AdminAPI from "../api";
 
-const token = localStorage.getItem("adminToken");
-const config = {
-  headers: { Authorization: `Bearer ${token}` }
-};
-
 // Enroll single student
 export const enrollSingleStudent = async (classId, studentId) => {
   const response = await AdminAPI.post(
     `/classes/${classId}/enroll/single`,
-    { studentId },
-    config
+    { studentId }
   );
   return response.data;
 };
@@ -19,8 +13,7 @@ export const enrollSingleStudent = async (classId, studentId) => {
 export const enrollBulkStudents = async (classId, studentIds) => {
   const response = await AdminAPI.post(
     `/classes/${classId}/enroll/bulk`,
-    { studentIds },
-    config
+    { studentIds }
   );
   return response.data;
 };
@@ -28,8 +21,7 @@ export const enrollBulkStudents = async (classId, studentIds) => {
 // Remove student from class
 export const removeStudentFromClass = async (classId, studentId) => {
   const response = await AdminAPI.delete(
-    `/classes/${classId}/students/${studentId}`,
-    config
+    `/classes/${classId}/students/${studentId}`
   );
   return response.data;
 };
@@ -37,8 +29,7 @@ export const removeStudentFromClass = async (classId, studentId) => {
 // Get class students
 export const getClassStudents = async (classId, page = 1, limit = 20, status = '') => {
   const response = await AdminAPI.get(
-    `/classes/${classId}/students?page=${page}&limit=${limit}&status=${status}`,
-    config
+    `/classes/${classId}/students?page=${page}&limit=${limit}&status=${status}`
   );
   return response.data;
 };
@@ -52,15 +43,14 @@ export const getAvailableStudents = async (classId, filters = {}) => {
   if (semester) url += `&semester=${semester}`;
   if (search) url += `&search=${search}`;
   
-  const response = await AdminAPI.get(url, config);
+  const response = await AdminAPI.get(url);
   return response.data;
 };
 
 // Get student schedule
 export const getStudentSchedule = async (studentId) => {
   const response = await AdminAPI.get(
-    `/classes/students/${studentId}/schedule`,
-    config
+    `/classes/students/${studentId}/schedule`
   );
   return response.data;
 };
@@ -69,8 +59,7 @@ export const getStudentSchedule = async (studentId) => {
 export const updateStudentStatus = async (classId, studentId, status) => {
   const response = await AdminAPI.patch(
     `/classes/${classId}/students/${studentId}/status`,
-    { status },
-    config
+    { status }
   );
   return response.data;
 };
@@ -78,8 +67,7 @@ export const updateStudentStatus = async (classId, studentId, status) => {
 // Get enrollment statistics
 export const getEnrollmentStats = async (classId) => {
   const response = await AdminAPI.get(
-    `/classes/${classId}/enrollment-stats`,
-    config
+    `/classes/${classId}/enrollment-stats`
   );
   return response.data;
 };

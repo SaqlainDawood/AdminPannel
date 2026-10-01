@@ -119,27 +119,23 @@ const CoodUpdate = () => {
   useEffect(() => {
     const fetchCoordinator = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
           toast.error("Un-Authorized");
-          navigate("/admin/login");
+          navigate("/login");
           return;
         }
         if (!id || id === ":id") {
           toast.error("Coordinator Not Found!!!");
-          navigate("/admin/dashboard/coordinator/list");
+          navigate("/admin/dashboard/coordinators/list");
           return;
         }
 
-        const res = await AdminAPI.get(
-          `/coordinator/view/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const res = await AdminAPI.get(`/coordinator/view/${id}`);
         if (res.status === 201 && res.data.success) {
           setCoord(res.data.data);
         } else {
@@ -192,18 +188,12 @@ const CoodUpdate = () => {
 
     try {
       setUpdating(true);
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        toast.error("Authentication Required!!!! Please Login.");
-        return;
-      }
 
       const res = await AdminAPI.put(
         `/coordinator/update/${id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },

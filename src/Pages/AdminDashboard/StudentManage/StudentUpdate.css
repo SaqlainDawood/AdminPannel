@@ -1,7 +1,7 @@
-.student-update-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem 0;
+﻿.student-update-container {
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
 .card {
@@ -23,13 +23,13 @@
 }
 
 .form-control:focus, .form-select:focus {
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-check-input:checked {
-  background-color: #667eea;
-  border-color: #667eea;
+  background-color: #2563eb;
+  border-color: #2563eb;
 }
 
 .loader-container, .notfound-container {
@@ -49,13 +49,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
+  background: var(--ums-primary-mid, #2d6a9f);
+  border-color: var(--ums-primary-mid, #2d6a9f);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45,106,159,0.3);
 }
 /* ===========Loading Spinner============= */
 
@@ -65,8 +65,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {

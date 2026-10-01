@@ -1,4 +1,4 @@
-/* Teacher Assignment Container */
+﻿/* Teacher Assignment Container */
 .teacher-assignment-container {
   padding: 1.5rem;
   background-color: #fff;
@@ -140,13 +140,13 @@
   left: 0;
   right: 0;
   height: 6px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #6b8cff 100%);
+  background: linear-gradient(90deg, #1e3a5f 0%, #2d6a9f 60%, #3b82c4 100%);
   z-index: 10;
 }
 
 /* Modal Header */
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 1.5rem 2rem;
   border: none;
   position: relative;
@@ -223,7 +223,7 @@
 }
 
 .modal-body::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   border-radius: 10px;
 }
 /* /* =======================Loading================/ */
@@ -233,8 +233,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -284,7 +284,7 @@
   left: 0;
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #1e3a5f, #2d6a9f);
   border-radius: 2px;
 }
 
@@ -315,9 +315,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  background: linear-gradient(135deg, rgba(37,99,235,0.08) 0%, #1d4ed815 100%);
   border-radius: 10px;
-  color: #667eea;
+  color: #2563eb;
 }
 
 .info-item span {
@@ -343,7 +343,7 @@
 }
 
 .section-title i {
-  color: #667eea;
+  color: #2563eb;
   font-size: 1.5rem;
 }
 
@@ -365,7 +365,7 @@
 }
 
 .schedule-table thead th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   font-weight: 500;
   text-transform: uppercase;
@@ -392,8 +392,8 @@
 }
 
 .class-code-badge {
-  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-  color: #667eea;
+  background: linear-gradient(135deg, rgba(37,99,235,0.08) 0%, #1d4ed815 100%);
+  color: #2563eb;
   padding: 0.4rem 1rem;
   border-radius: 30px;
   font-weight: 600;
@@ -406,7 +406,7 @@
 .total-classes {
   margin-top: 1.5rem;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   border-radius: 50px;
   text-align: center;
   color: white;
@@ -431,7 +431,7 @@
 
 .no-classes i {
   font-size: 4rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 1rem;
@@ -480,7 +480,7 @@
 }
 
 .modal-footer .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
@@ -525,8 +525,8 @@
   width: 60px;
   height: 60px;
   border: 4px solid rgba(102, 126, 234, 0.1);
-  border-top: 4px solid #667eea;
-  border-right: 4px solid #764ba2;
+  border-top: 4px solid #2563eb;
+  border-right: 4px solid #1d4ed8;
   border-radius: 50%;
   animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
   margin-bottom: 1.5rem;
@@ -823,7 +823,7 @@
   padding: 8px 16px;
   border-radius: 30px;
   background: white !important;
-  color: #667eea !important;
+  color: #2563eb !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 

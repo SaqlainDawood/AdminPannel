@@ -87,12 +87,7 @@ const CreateClass = () => {
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      const response = await AdminAPI("/faculty/all", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await AdminAPI.get("/faculty/all");
       console.log("All Teachers Data", response.data);
 
       if (response.data && Array.isArray(response.data.data)) {
@@ -116,11 +111,7 @@ const CreateClass = () => {
   const fetchTeacherSchedule = async (teacherId) => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      
-      const response = await AdminAPI(`/classes/faculty/${teacherId}/schedule`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await AdminAPI.get(`/classes/faculty/${teacherId}/schedule`);
 
       console.log("Schedule response:", response.data);
 
@@ -318,8 +309,12 @@ const CreateClass = () => {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      
+      const token =
+        sessionStorage.getItem("token") ||
+        sessionStorage.getItem("adminToken") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("adminToken");
+
       if (!token) {
         toast.error("Authentication token not found. Please login again.");
         return;
@@ -344,15 +339,7 @@ const CreateClass = () => {
         schedule: scheduleEntries,
       };
 
-      const response = await AdminAPI({
-        method: 'POST',
-        url: '/classes/create',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        data: payload,
-      });
+      const response = await AdminAPI.post('/classes/create', payload);
 
       if (response.data && response.data.success) {
         toast.success("Class created successfully!");

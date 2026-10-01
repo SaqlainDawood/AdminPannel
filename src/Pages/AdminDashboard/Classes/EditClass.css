@@ -1,4 +1,4 @@
-/* EditClass.css */
+﻿/* EditClass.css */
 
 .edit-class-container {
   max-width: 1400px;
@@ -10,8 +10,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 380px;
+  background: transparent;
 }
 
 .spinner {
@@ -121,7 +121,7 @@
 .avatar-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -265,7 +265,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   border: none;
 }
 

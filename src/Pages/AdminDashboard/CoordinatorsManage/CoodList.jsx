@@ -38,21 +38,17 @@ const CoodList = () => {
   useEffect(() => {
     const fetchCoordinator = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
           console.log("No Token Found. Redirecting to Login Page");
           window.location.href = "/login";
           return;
         }
-        const res = await AdminAPI.get(
-          "/coordinator/all",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const res = await AdminAPI.get("/coordinator/all");
         console.log("API Response:", res.data);
         if (res.data.success) {
           setCoordinators(res.data.data?.coordinators || []);
@@ -60,6 +56,8 @@ const CoodList = () => {
       } catch (error) {
         console.log("Error for fetching the coordinator data : ", error);
         if (error.response?.status === 401) {
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("adminToken");
           localStorage.removeItem("adminToken");
           localStorage.removeItem("adminData");
           window.location.href = "/login";
@@ -78,20 +76,8 @@ const CoodList = () => {
     if (!confirmDelCoord) return;
     const coordMember = coordinators.find((c) => c._id === id);
     try {
-      const token = localStorage.getItem("adminToken");
-      if(!token){
-        toast.error("No Token Found!! Admin not loggin");
-        return;
-      }
-       toast.info("Deleting coordinator...");
-      const res = await axios.delete(
-        `http://localhost:8000/api/admin/coordinator/delete/${id}`,{
-          headers:{
-            'Authorization':`Bearer ${token}`,
-            'Content-Type':'application/json',
-          }
-        }
-      );
+      toast.info("Deleting coordinator...");
+      const res = await AdminAPI.delete(`/coordinator/delete/${id}`);
       if (res.status === 200 && res.data.success) {
         toast.success(`Coordinator ${coordMember?.name|| ""} deleted successfully`);
         setCoordinators((prev) => prev.filter((cord) => cord._id !== id));

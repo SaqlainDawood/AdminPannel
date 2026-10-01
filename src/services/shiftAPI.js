@@ -4,6 +4,19 @@ const ShiftAPI = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 });
 
+ShiftAPI.interceptors.request.use((config) => {
+    const token =
+        sessionStorage.getItem("token") ||
+        sessionStorage.getItem("adminToken") ||
+        localStorage.getItem("adminToken") ||
+        localStorage.getItem("token");
+    if (token) {
+        const cleanToken = token.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "");
+        config.headers.Authorization = `Bearer ${cleanToken}`;
+    }
+    return config;
+});
+
 // ============================================
 // GET ALL SHIFTS
 // ============================================

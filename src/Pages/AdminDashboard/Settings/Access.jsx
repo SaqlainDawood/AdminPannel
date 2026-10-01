@@ -1,9 +1,8 @@
-import React from 'react'
+import React from 'react';
+import RolesManager from '../roles/RolesManager';
 
 const Access = () => {
-  return (
-    <div>Access</div>
-  )
-}
+  return <RolesManager />;
+};
 
-export default Access
+export default Access;

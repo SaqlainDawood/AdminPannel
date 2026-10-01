@@ -1,8 +1,8 @@
 /* Faculty List Container */
 .faculty-list-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
 /* View Toggle */
@@ -28,11 +28,11 @@
 
 .view-btn:hover {
   background: white;
-  color: #667eea;
+  color: #2563eb;
 }
 
 .view-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
 }
 
@@ -58,8 +58,8 @@
 
 .filter-select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Faculty Grid */
@@ -85,7 +85,7 @@
 }
 
 .faculty-card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 2rem;
   text-align: center;
   position: relative;
@@ -121,7 +121,7 @@
 
 .faculty-designation {
   font-size: 1rem;
-  color: #667eea;
+  color: #2563eb;
   font-weight: 600;
   text-align: center;
   margin-bottom: 1.5rem;
@@ -140,7 +140,7 @@
 .faculty-emp-id i,
 .faculty-dept i,
 .faculty-detail i {
-  color: #667eea;
+  color: #2563eb;
   width: 20px;
 }
 
@@ -161,7 +161,7 @@
 
 .meta-item i {
   font-size: 1.5rem;
-  color: #667eea;
+  color: #2563eb;
 }
 
 .meta-item span {
@@ -251,7 +251,7 @@
 }
 
 .courses-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
@@ -426,8 +426,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -453,9 +453,33 @@
 
 /* Faculty Add Container */
 .faculty-add-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
+}
+
+.faculty-add-container .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
+}
+
+.faculty-add-container .page-title {
+  color: var(--ums-gray-800, #1e293b);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.faculty-add-container .page-subtitle {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
+  margin-bottom: 0;
 }
 
 /* Profile Upload Card */
@@ -513,7 +537,7 @@
   display: block;
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   text-align: center;
   border-radius: 12px;
@@ -537,7 +561,7 @@
 
 /* Quick Info Box */
 .quick-info-box {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(30, 58, 138, 0.08) 100%);
   padding: 1.5rem;
   border-radius: 12px;
   margin-top: 2rem;
@@ -591,7 +615,7 @@
 }
 
 .section-title i {
-  color: #667eea;
+  color: #2563eb;
 }
 
 /* Form Controls */
@@ -615,7 +639,7 @@
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -748,7 +772,7 @@ select.form-control {
 }
 
 .faculty-details .detail-item i {
-  color: #667eea;
+  color: #2563eb;
   font-size: 1.2rem;
   width: 25px;
   text-align: center;
@@ -951,4 +975,5 @@ select.form-control {
 .back-btn:hover {
   background-color: #0056b3;
 }
+
 

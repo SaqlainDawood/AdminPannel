@@ -21,7 +21,7 @@ const Header = () => {
       sessionStorage.clear();
       setMenuOpen(false);
 
-      navigate('/admin/login');
+      navigate('/login');
   }
 
 

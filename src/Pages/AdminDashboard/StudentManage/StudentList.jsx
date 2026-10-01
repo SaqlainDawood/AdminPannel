@@ -104,23 +104,20 @@ const StudentList = () => {
   useEffect(() => {
     const fetchallStudentList = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
-          navigate('/admin/login');
+          navigate('/login');
           return;
         }
-        const res = await AdminAPI.get("/stats/students/all", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+        const res = await AdminAPI.get("/stats/students/all");
         console.log('API Response:', res.data);
 
         if (res.data && res.data.success) {
           setStudents(res.data.students);
-        //    console.log('Received students with statuses:', 
-        //   res.data.students.map(s => ({ name: s.firstName, status: s.status }))
-        // );
         }
         else {
           toast.error('Failed to fetch students');
@@ -129,8 +126,10 @@ const StudentList = () => {
         console.log("Failed to fetch student records", error);
         if (error.response?.status === 401) {
           toast.error("Unauthorized --- Please Login");
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("adminToken");
           localStorage.removeItem("adminToken");
-          navigate('/admin/login');
+          navigate('/login');
         }
         else if (error.response?.status === 403) {
           toast.error('Forbidden - You do not have permission');
@@ -151,12 +150,7 @@ const StudentList = () => {
       return;
     }
     try {
-      const token = localStorage.getItem("adminToken")
-      const res = await AdminAPI.delete(`/student/delete/${studentId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const res = await AdminAPI.delete(`/student/delete/${studentId}`);
       if (res.data.success) {
         toast.success(`Student ${studentName} was deleted successfully`);
         setStudents(prevStudent => prevStudent.filter(student => student._id !== studentId))
@@ -170,8 +164,10 @@ const StudentList = () => {
       console.error("Error deleting student:", error);
       if (error.response?.status === 401) {
         toast.error("Unauthorized! Please login again.");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("adminToken");
         localStorage.removeItem("adminToken");
-        navigate('/admin/login');
+        navigate('/login');
       } else if (error.response?.status === 404) {
         toast.error("Student not found!");
       } else if (error.response?.data?.message) {
@@ -197,16 +193,10 @@ const StudentList = () => {
     }
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      const res = await AdminAPI.post("/student/delete-bulk",
-        { studentIds: selectedStudents },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
+      const res = await AdminAPI.post(
+        "/student/delete-bulk",
+        { studentIds: selectedStudents }
+      );
       if (res.data.success) {
         toast.success(`${res.data.deletedCount} student(s) deleted successfully!`)
         setStudents(prevStudents =>
@@ -221,8 +211,10 @@ const StudentList = () => {
       console.error("Error in bulk delete:", error);
       if (error.response?.status === 401) {
         toast.error("Unauthorized! Please login again.");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("adminToken");
         localStorage.removeItem("adminToken");
-        navigate('/admin/login');
+        navigate('/login');
       } else if (error.response?.data?.message) {
         toast.error(error.response.data.message);
       } else {

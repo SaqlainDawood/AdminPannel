@@ -111,26 +111,24 @@ const AttendanceOverview = () => {
     <div className="attendance-container">
       {/* Header */}
       <div className="attendance-header">
-        <div className="header-content">
-          <div className="header-title">
-            <div className="header-icon">
-              <MdOutlineDashboard size={32} />
-            </div>
-            <div>
-              <h1>Attendance Management</h1>
-              <p>Monitor and track attendance across all departments</p>
-            </div>
+        <div className="header-title">
+          <div className="header-icon">
+            <MdOutlineDashboard size={24} />
           </div>
-          <div className="header-actions">
-            <button className="btn-filter">
-              <FaFilter size={16} />
-              Filter
-            </button>
-            <button className="btn-export">
-              <FaDownload size={16} />
-              Export Report
-            </button>
+          <div>
+            <h1>Attendance Management</h1>
+            <p>Monitor and track attendance across all departments</p>
           </div>
+        </div>
+        <div className="header-actions">
+          <button className="btn-filter">
+            <FaFilter size={16} />
+            Filter
+          </button>
+          <button className="btn-export">
+            <FaDownload size={16} />
+            Export Report
+          </button>
         </div>
       </div>
 

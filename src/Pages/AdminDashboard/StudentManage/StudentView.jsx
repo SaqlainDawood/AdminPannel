@@ -16,10 +16,14 @@ const StudentView = () => {
   useEffect(() => {
     const fetchStudentById = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
           toast.error("Not Authorized User");
-          navigate('/admin/login');
+          navigate('/login');
           return;
         }
 
@@ -31,13 +35,7 @@ const StudentView = () => {
           }, 2000);
           return;
         }
-        const res = await AdminAPI.get(`/student/view/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        const res = await AdminAPI.get(`/student/view/${id}`);
         if (res.data.success && res.data.student) {
           setStudent(res.data.student);
         } else {
@@ -53,8 +51,10 @@ const StudentView = () => {
           toast.error("Student not found!");
         } else if (error.response && error.response.status === 401) {
           toast.error("Unauthorized! Please login again.");
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("adminToken");
           localStorage.removeItem("adminToken");
-          navigate('/admin/login');
+          navigate('/login');
         } else {
           toast.error("Error fetching Student details!");
         }

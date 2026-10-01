@@ -51,11 +51,7 @@ const ClassList = () => {
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-
-      const response = await AdminAPI.get("/classes/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await AdminAPI.get("/classes/all");
 
       console.log("Classes response:", response.data);
 
@@ -142,10 +138,7 @@ const ClassList = () => {
   const handleDeleteClass = async (id) => {
     if (window.confirm("Are you sure you want to deactivate this class?")) {
       try {
-        const token = localStorage.getItem("adminToken");
-        await AdminAPI.delete(`/classes/${id}/delete`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await AdminAPI.delete(`/classes/${id}/delete`);
 
         toast.success("Class deactivated successfully");
         fetchClasses(); // Refresh the list

@@ -5,13 +5,14 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/cms`,
 });
 
-const TOKEN_KEYS = ["adminToken", "token", "Bearer", "bearer", "accessToken", "authToken"];
+const TOKEN_KEYS = ["token", "adminToken", "accessToken", "authToken", "Bearer", "bearer"];
 
 const getToken = () => {
   for (const key of TOKEN_KEYS) {
-    const value = localStorage.getItem(key) || sessionStorage.getItem(key);
-    if (!value) continue;
-    return value.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "");
+    const value = sessionStorage.getItem(key) || localStorage.getItem(key);
+    if (!value || value === "null" || value === "undefined") continue;
+    const clean = value.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "").trim();
+    if (clean && clean !== "null" && clean !== "undefined") return clean;
   }
   return null;
 };

@@ -1,8 +1,8 @@
-/* Coordinator List Container */
+﻿/* Coordinator List Container */
 .cood-list-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
 /* Coordinators Grid */
@@ -29,7 +29,7 @@
 }
 
 .coord-card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 2rem;
   text-align: center;
   position: relative;
@@ -58,8 +58,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -136,7 +136,7 @@
   display: block;
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   text-align: center;
   border-radius: 12px;
@@ -171,7 +171,7 @@
 
 .coord-role {
   font-size: 1rem;
-  color: #667eea;
+  color: #2563eb;
   font-weight: 600;
   text-align: center;
   margin-bottom: 1.5rem;
@@ -190,7 +190,7 @@
 .coord-id i,
 .coord-dept i,
 .coord-detail i {
-  color: #667eea;
+  color: #2563eb;
   width: 20px;
 }
 
@@ -213,7 +213,7 @@
 
 .program-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
@@ -240,7 +240,7 @@
 
 .stat-item i {
   font-size: 1.5rem;
-  color: #667eea;
+  color: #2563eb;
 }
 
 .stat-item span {
@@ -375,9 +375,33 @@
 /* coodinatorAdd */
 /* Coordinator Add Container */
 .cood-add-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
+}
+
+.cood-add-container .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
+}
+
+.cood-add-container .page-title {
+  color: var(--ums-gray-800, #1e293b);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.cood-add-container .page-subtitle {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
+  margin-bottom: 0;
 }
 
 /* Form Hint */
@@ -410,7 +434,7 @@
 }
 
 .program-tag {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;

@@ -10,10 +10,15 @@ const DepartmentAPI = axios.create({
 // ============================================
 DepartmentAPI.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem("token");
+    const token =
+      sessionStorage.getItem("token") ||
+      sessionStorage.getItem("adminToken") ||
+      localStorage.getItem("token") ||
+      localStorage.getItem("adminToken");
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      const cleanToken = token.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "");
+      config.headers.Authorization = `Bearer ${cleanToken}`;
     }
 
     return config;

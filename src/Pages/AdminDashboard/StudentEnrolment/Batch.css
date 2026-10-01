@@ -3,9 +3,9 @@
 ========================================================= */
 
 .batches-page {
-    padding: 24px;
-    background: #f7f8fc;
-    min-height: 100vh;
+    padding: 0;
+    background: transparent;
+    min-height: auto;
     color: #1f2937;
 }
 

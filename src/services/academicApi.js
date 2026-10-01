@@ -5,8 +5,14 @@ const academicApi = axios.create({
 });
 
 const getAdminToken = () => {
-  const token = localStorage.getItem("adminToken") || sessionStorage.getItem("token");
-  return token ? token.replace(/^Bearer\s+/i, "") : null;
+  const token =
+    sessionStorage.getItem("token") ||
+    sessionStorage.getItem("adminToken") ||
+    localStorage.getItem("adminToken") ||
+    localStorage.getItem("token");
+  if (!token || token === "null" || token === "undefined") return null;
+  const clean = token.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "").trim();
+  return (clean && clean !== "null" && clean !== "undefined") ? clean : null;
 };
 
 academicApi.interceptors.request.use((config) => {

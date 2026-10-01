@@ -36,10 +36,7 @@ const ClassDetails = () => {
   const fetchClassDetails = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      const response = await AdminAPI.get(`/classes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await AdminAPI.get(`/classes/${id}`);
 
       if (response.data && response.data.success) {
         setClassData(response.data.data);

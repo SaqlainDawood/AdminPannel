@@ -7,10 +7,10 @@ const StaffAdminAPI = axios.create({
 StaffAdminAPI.interceptors.request.use(
   (config) => {
     const token =
-      localStorage.getItem("adminToken") ||
+      sessionStorage.getItem("token") ||
       sessionStorage.getItem("adminToken") ||
       localStorage.getItem("token") ||
-      sessionStorage.getItem("token");
+      localStorage.getItem("adminToken");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

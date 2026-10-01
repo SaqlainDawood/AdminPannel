@@ -44,10 +44,7 @@ const EditClass = () => {
   const fetchClassData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
-      const response = await AdminAPI.get(`/classes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await AdminAPI.get(`/classes/${id}`);
 
       if (response.data && response.data.success) {
         const classData = response.data.data;
@@ -85,10 +82,7 @@ const EditClass = () => {
 
   const fetchTeachers = async () => {
     try {
-      const token = localStorage.getItem("adminToken");
-      const response = await AdminAPI.get("/faculty/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await AdminAPI.get("/faculty/all");
 
       if (response.data && response.data.success) {
         setTeachers(response.data.data);
@@ -195,7 +189,6 @@ const EditClass = () => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("adminToken");
 
       // Prepare payload
       const payload = {
@@ -216,12 +209,7 @@ const EditClass = () => {
         schedule: formData.schedule
       };
 
-      const response = await AdminAPI.put(`/classes/update/${id}`, payload, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = await AdminAPI.put(`/classes/update/${id}`, payload);
 
       if (response.data && response.data.success) {
         toast.success("Class updated successfully!");

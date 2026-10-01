@@ -27,29 +27,25 @@ const CoodView = () => {
   useEffect(() => {
     const fetchCoordinator = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
           console.log("No Token Found. Redirect to the Login Page.");
           toast.error("No Token Found....");
-          navigate("/api/admin/login");
+          navigate("/login");
           return;
         }
         if (!id || id === ":id") {
-          toast.error("Invalid Student ID! Redirecting to Student List...");
+          toast.error("Invalid Coordinator ID! Redirecting to Coordinators List...");
           setTimeout(() => {
-            navigate("/admin/dashboard/students/list");
+            navigate("/admin/dashboard/coordinators/list");
           }, 2000);
           return;
         }
-        const res = await AdminAPI.get(
-          `/coordinator/view/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
+        const res = await AdminAPI.get(`/coordinator/view/${id}`);
         console.log("API Response:", res.data);
         if (res.data.success) {
           setViewCoord(res.data.data);

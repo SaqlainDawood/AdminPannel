@@ -1,20 +1,30 @@
 // AdminSidebar.jsx
-import React, { useState } from 'react';
-import './AdminSidebar.css'; // Import the CSS file below
-import { Link, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import './AdminSidebar.css';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Header from './AdminHeader/Header';
 const AdminSidebar = () => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
-  const handleLogOut = () => {
-    const confirmLogOut = toast.info("Are you sure you want to Logout!!!!")
-    if (confirmLogOut) {
-      navigate('/admin/login')
+  // Close sidebar automatically on mobile when route changes
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
     }
+  }, [location.pathname]);
 
-  }
+  const handleLogOut = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    localStorage.removeItem('userRole');
+    sessionStorage.clear();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -164,7 +174,7 @@ const AdminSidebar = () => {
       id: 'logout',
       title: 'Logout',
       icon: 'fa-sign-out-alt',
-      path: '/admin/login',
+      path: '/login',
       className: 'logout-item'
     }
   ];
@@ -254,9 +264,10 @@ const AdminSidebar = () => {
 
       {/* Toggle Button */}
       <button
-        className="sidebar-toggle-btn btn btn-primary"
+        className="sidebar-toggle-btn"
         onClick={toggleSidebar}
-        style={{ left: isSidebarOpen ? '280px' : '80px' }}
+        style={{ left: isSidebarOpen ? '249px' : '54px' }}
+        title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
       >
         <i className={`fas fa-${isSidebarOpen ? 'chevron-left' : 'chevron-right'}`}></i>
       </button>
@@ -271,10 +282,11 @@ const AdminSidebar = () => {
 
       {/* Main Content Area */}
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-        {/* Your page content goes here */}
-        <div className="container-fluid p-4">
+        <div className="container-fluid">
           <Header />
-          <Outlet />
+          <div style={{ padding: '1.5rem' }}>
+            <Outlet />
+          </div>
         </div>
       </div>
     </>

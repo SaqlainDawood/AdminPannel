@@ -10,8 +10,10 @@ const StudentAdminAPI = axios.create({
 StudentAdminAPI.interceptors.request.use(
   (config) => {
     const token =
+      sessionStorage.getItem("token") ||
       sessionStorage.getItem("adminToken") ||
-      sessionStorage.getItem("token");
+      localStorage.getItem("token") ||
+      localStorage.getItem("adminToken");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

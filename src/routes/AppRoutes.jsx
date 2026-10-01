@@ -236,6 +236,11 @@ const AppRoutes = () => {
 
           </Route>
 
+          <Route
+            path="teachers"
+            element={<Teacher />}
+          />
+
 
           {/* Coordinators */}
           <Route path="coordinators">
@@ -421,42 +426,17 @@ const AppRoutes = () => {
 
           </Route>
 
-<Route>
           {/* Jobs */}
-        <Route
-  path="jobs"
-  element={<JobPostingList />}
-/>
-
-<Route
-  path="jobs/roles"
-  element={<RolesManager />}
-/>
-
-<Route
-  path="jobs/approvals"
-  element={<StaffApplications />}
-/>
-
-            
-            <Route
-              path="create"
-              element={<JobPostingForm />}
-            />
-
-            <Route
-              path="edit/:id"
-              element={<JobPostingForm />}
-            />
-
-            <Route
-              path="view/:id"
-              element={<JobPostingView />}
-            />
-                
-            
-
+          <Route path="jobs">
+            <Route index element={<JobPostingList />} />
+            <Route path="roles" element={<RolesManager />} />
+            <Route path="approvals" element={<StaffApplications />} />
+            <Route path="create" element={<JobPostingForm />} />
+            <Route path="edit/:id" element={<JobPostingForm />} />
+            <Route path="view/:id" element={<JobPostingView />} />
           </Route>
+
+
 
 
           {/* Other Admin Pages */}

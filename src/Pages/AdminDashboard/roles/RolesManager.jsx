@@ -7,7 +7,7 @@ import RoleModal from "./RoleModal";
 
 const cap = (s = "") => s.charAt(0).toUpperCase() + s.slice(1);
 
-// Role ki permissions ko { module: [actions] } me badlo
+// Role permissions mapped to { module: [actions] }
 const groupByModule = (perms = []) =>
   perms.reduce((acc, p) => {
     (acc[p.module] ||= []).push(p.action);
@@ -21,6 +21,7 @@ export default function RolesManager() {
   const [error, setError] = useState("");
   const [modal, setModal] = useState(null); // null | "create" | roleObject
   const [expanded, setExpanded] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -50,127 +51,214 @@ export default function RolesManager() {
     }
   };
 
+  const filteredRoles = roles.filter((role) =>
+    role.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    role.slug?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    role.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="mx-auto max-w-6xl p-6">
-      <div className="mb-6 flex items-center justify-between">
+    <div className="roles-manager-page" style={{ padding: 0 }}>
+      {/* Page Header */}
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Roles</h1>
-          <p className="text-sm text-slate-500">Create roles and choose what each one can do.</p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--ums-gray-800, #1e293b)', margin: 0 }}>
+            <i className="fas fa-user-shield me-2" style={{ color: 'var(--ums-primary-mid, #2d6a9f)' }}></i>
+            Roles & Permissions
+          </h2>
+          <p style={{ color: 'var(--ums-gray-500, #64748b)', margin: '4px 0 0 0', fontSize: '0.88rem' }}>
+            Configure institutional user roles, access privileges, and capability limits
+          </p>
         </div>
-        <button
-          onClick={() => setModal("create")}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-        >
-          + Create role
-        </button>
+        <div>
+          <button
+            onClick={() => setModal("create")}
+            className="btn d-flex align-items-center gap-2"
+            style={{
+              backgroundColor: 'var(--ums-primary-mid, #2d6a9f)',
+              color: '#ffffff',
+              borderRadius: '10px',
+              fontSize: '0.9rem',
+              fontWeight: 600
+            }}
+          >
+            <i className="fas fa-plus"></i> Create Role
+          </button>
+        </div>
       </div>
 
-      {error && <p className="mb-4 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>}
+      {error && (
+        <div className="alert alert-danger d-flex align-items-center justify-content-between mb-4" role="alert" style={{ borderRadius: '12px' }}>
+          <div>
+            <i className="fas fa-exclamation-circle me-2"></i>
+            {error}
+          </div>
+          <button className="btn btn-sm btn-outline-danger" onClick={load}>Retry</button>
+        </div>
+      )}
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-600">
-            <tr>
-              <th className="px-4 py-3 font-medium">Role</th>
-              <th className="px-4 py-3 font-medium">Permissions</th>
-              <th className="px-4 py-3 font-medium">Users</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 text-right font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {loading && (
+      {/* Search Bar */}
+      <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '14px', background: '#ffffff' }}>
+        <div className="card-body p-3">
+          <div className="row g-2 align-items-center">
+            <div className="col-12 col-md-6">
+              <div className="input-group">
+                <span className="input-group-text bg-transparent border-end-0 text-muted">
+                  <i className="fas fa-search"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control border-start-0"
+                  placeholder="Search roles by title, code or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ fontSize: '0.9rem' }}
+                />
+              </div>
+            </div>
+            <div className="col-12 col-md-6 text-md-end text-muted" style={{ fontSize: '0.88rem' }}>
+              Showing <strong>{filteredRoles.length}</strong> of <strong>{roles.length}</strong> roles
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Roles Table */}
+      <div className="card border-0 shadow-sm" style={{ borderRadius: '14px', background: '#ffffff', overflow: 'hidden' }}>
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0" style={{ fontSize: '0.9rem' }}>
+            <thead style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">Loading roles...</td>
+                <th className="py-3 px-3" style={{ fontWeight: 700, color: '#475569' }}>Role</th>
+                <th className="py-3 px-3" style={{ fontWeight: 700, color: '#475569' }}>Permissions</th>
+                <th className="py-3 px-3" style={{ fontWeight: 700, color: '#475569' }}>Assigned Users</th>
+                <th className="py-3 px-3" style={{ fontWeight: 700, color: '#475569' }}>Status</th>
+                <th className="py-3 px-3 text-end" style={{ fontWeight: 700, color: '#475569' }}>Actions</th>
               </tr>
-            )}
-            {!loading && !roles.length && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
-                  No roles yet. Create your first role.
-                </td>
-              </tr>
-            )}
-            {roles.map((role) => (
-              <Fragment key={role._id}>
-                <tr className="hover:bg-slate-50">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2 font-medium text-slate-900">
-                      {role.name}
-                      {role.isSystemRole && (
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs font-normal text-slate-600">
-                          System
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs text-slate-500">{role.description || role.slug}</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => setExpanded(expanded === role._id ? null : role._id)}
-                      className="text-indigo-600 hover:underline"
-                    >
-                      {role.permissions?.length || 0} {expanded === role._id ? "▲" : "▼"}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3 text-slate-700">{role.userCount ?? 0}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        role.isActive ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"
-                      }`}
-                    >
-                      {role.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => setModal(role)}
-                        className="rounded-lg border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                      >
-                        Edit
-                      </button>
-                      {!role.isSystemRole && (
-                        <button
-                          onClick={() => handleDelete(role)}
-                          className="rounded-lg border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
+            </thead>
+            <tbody>
+              {loading && (
+                <tr>
+                  <td colSpan={5} className="py-5 text-center text-muted">
+                    <div className="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                    Loading roles & permissions...
                   </td>
                 </tr>
+              )}
 
-                {expanded === role._id && (
-                  <tr className="bg-slate-50">
-                    <td colSpan={5} className="px-4 py-4">
-                      {!role.permissions?.length ? (
-                        <p className="text-sm text-slate-500">No permissions assigned.</p>
-                      ) : (
-                        <div className="grid gap-x-8 gap-y-2 sm:grid-cols-2">
-                          {Object.entries(groupByModule(role.permissions)).map(([module, actions]) => (
-                            <div key={module} className="flex items-start gap-3 text-sm">
-                              <span className="w-40 shrink-0 font-medium text-slate-800">{cap(module)}</span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {actions.map((a) => (
-                                  <span key={a} className="rounded bg-indigo-50 px-2 py-0.5 text-xs text-indigo-700">
-                                    {a}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+              {!loading && filteredRoles.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-5 text-center text-muted">
+                    <i className="fas fa-shield-alt fa-2x mb-2 d-block text-secondary"></i>
+                    {roles.length === 0 ? "No roles configured yet. Click '+ Create Role' to begin." : "No roles match your search query."}
+                  </td>
+                </tr>
+              )}
+
+              {!loading && filteredRoles.map((role) => (
+                <Fragment key={role._id}>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td className="py-3 px-3">
+                      <div className="d-flex align-items-center gap-2">
+                        <strong style={{ color: '#1e293b' }}>{role.name}</strong>
+                        {role.isSystemRole && (
+                          <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontSize: '0.75rem', fontWeight: 600 }}>
+                            System
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{role.description || role.slug}</div>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <button
+                        onClick={() => setExpanded(expanded === role._id ? null : role._id)}
+                        className="btn btn-sm btn-light d-inline-flex align-items-center gap-1"
+                        style={{ borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600, color: '#2563eb' }}
+                      >
+                        <i className="fas fa-key text-muted"></i>
+                        {role.permissions?.length || 0} permissions
+                        <i className={`fas fa-chevron-${expanded === role._id ? 'up' : 'down'} ms-1`} style={{ fontSize: '0.7rem' }}></i>
+                      </button>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <span className="badge bg-light text-dark border" style={{ fontWeight: 600 }}>
+                        <i className="fas fa-users me-1 text-muted"></i> {role.userCount ?? 0}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <span
+                        className="badge"
+                        style={{
+                          background: role.isActive ? '#dcfce7' : '#f1f5f9',
+                          color: role.isActive ? '#15803d' : '#64748b',
+                          fontWeight: 600,
+                          borderRadius: '6px',
+                          padding: '5px 10px'
+                        }}
+                      >
+                        {role.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-3 text-end">
+                      <div className="d-inline-flex gap-2">
+                        <button
+                          onClick={() => setModal(role)}
+                          className="btn btn-sm btn-light text-primary"
+                          title="Edit Role & Permissions"
+                        >
+                          <i className="fas fa-edit me-1"></i> Edit
+                        </button>
+                        {!role.isSystemRole && (
+                          <button
+                            onClick={() => handleDelete(role)}
+                            className="btn btn-sm btn-light text-danger"
+                            title="Delete Role"
+                          >
+                            <i className="fas fa-trash-alt me-1"></i> Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
-                )}
-              </Fragment>
-            ))}
-          </tbody>
-        </table>
+
+                  {expanded === role._id && (
+                    <tr style={{ background: '#f8fafc' }}>
+                      <td colSpan={5} className="p-3">
+                        {!role.permissions?.length ? (
+                          <p className="text-muted mb-0" style={{ fontSize: '0.85rem' }}>No individual permissions assigned to this role.</p>
+                        ) : (
+                          <div className="row g-2">
+                            {Object.entries(groupByModule(role.permissions)).map(([module, actions]) => (
+                              <div key={module} className="col-12 col-md-6 col-lg-4">
+                                <div className="p-2 border rounded bg-white" style={{ fontSize: '0.84rem' }}>
+                                  <div className="fw-bold text-dark mb-1 d-flex align-items-center gap-1">
+                                    <i className="fas fa-cube text-primary" style={{ fontSize: '0.75rem' }}></i>
+                                    {cap(module)}
+                                  </div>
+                                  <div className="d-flex flex-wrap gap-1">
+                                    {actions.map((a) => (
+                                      <span key={a} className="badge bg-light text-primary border" style={{ fontSize: '0.72rem' }}>
+                                        {a}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {modal && (

@@ -77,10 +77,14 @@ const StudentUpdate = () => {
   useEffect(() => {
     const fetchStudentById = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          sessionStorage.getItem("token") ||
+          sessionStorage.getItem("adminToken") ||
+          localStorage.getItem("token") ||
+          localStorage.getItem("adminToken");
         if (!token) {
           toast.error("Not Authorized User");
-          navigate("/admin/login");
+          navigate("/login");
           return;
         }
 
@@ -90,12 +94,7 @@ const StudentUpdate = () => {
           return;
         }
 
-        const res = await axios.get(
-          `http://localhost:8000/api/admin/student/view/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const res = await AdminAPI.get(`/student/view/${id}`);
 
         if (res.data.success && res.data.student) {
           const studentData = res.data.student;
@@ -163,8 +162,10 @@ const StudentUpdate = () => {
           toast.error("Student not found!");
         } else if (error.response?.status === 401) {
           toast.error("Unauthorized! Please login again.");
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("adminToken");
           localStorage.removeItem("adminToken");
-          navigate("/admin/login");
+          navigate("/login");
         } else {
           toast.error("Error fetching student details!");
         }
@@ -205,18 +206,11 @@ const StudentUpdate = () => {
     try {
       setUpdating(true);
 
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        toast.error("Not Authorized !!!!");
-        navigate("/admin/dashboard/students/list");
-        return;
-      }
       const res = await AdminAPI.put(
         `/student/update/${id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },
@@ -233,8 +227,10 @@ const StudentUpdate = () => {
 
       if (error.response?.status === 401) {
         toast.error("Unauthorized! Please login again.");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("adminToken");
         localStorage.removeItem("adminToken");
-        navigate("/admin/login");
+        navigate("/login");
       } else if (error.response?.status === 400) {
         // Validation errors or duplicate field
         if (error.response.data.errors) {

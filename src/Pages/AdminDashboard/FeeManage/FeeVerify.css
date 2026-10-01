@@ -1,7 +1,7 @@
-.fee-verify-page {
-  padding: 28px;
-  min-height: 100vh;
-  background: #f8fafc;
+﻿.fee-verify-page {
+  padding: 0;
+  min-height: auto;
+  background: transparent;
 }
 
 /* ================= HEADER ================= */
@@ -263,7 +263,7 @@
   height: 43px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
   display: flex;
   align-items: center;

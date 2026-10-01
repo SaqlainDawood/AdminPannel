@@ -1,6 +1,6 @@
 /* ===== VARIABLES ===== */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-gradient: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --success-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
   --danger-gradient: linear-gradient(135deg, #f43b47 0%, #453a94 100%);
@@ -11,9 +11,9 @@
 }
 /* ===== CONTAINER STYLES ===== */
 .class-list-container {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
-  padding: 20px;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
 /* ===== HEADER CARD ===== */
@@ -87,7 +87,7 @@
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #667eea;
+  color: #2563eb;
   font-size: 1rem;
 }
 
@@ -103,7 +103,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
@@ -150,7 +150,7 @@
 }
 
 .filter-toggle-btn:hover {
-  border-color: #667eea;
+  border-color: #2563eb;
   transform: translateY(-2px);
 }
 
@@ -216,14 +216,14 @@
   cursor: pointer;
   transition: all 0.3s ease;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
@@ -268,7 +268,7 @@
   height: 40px;
   border: none;
   background: #f0f3ff;
-  color: #667eea;
+  color: #2563eb;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -289,8 +289,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -355,7 +355,7 @@
   width: 30px;
   height: 30px;
   background: linear-gradient(135deg, #f0f3ff 0%, #e0e7ff 100%);
-  color: #667eea;
+  color: #2563eb;
   border-radius: 50%;
   text-align: center;
   line-height: 30px;
@@ -377,7 +377,7 @@
 }
 
 .class-code {
-  color: #667eea;
+  color: #2563eb;
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -420,7 +420,7 @@
 }
 
 .schedule-count {
-  color: #667eea;
+  color: #2563eb;
   font-weight: 600;
   font-size: 0.85rem;
   cursor: help;
@@ -492,7 +492,7 @@
 
 .more-teachers {
   font-size: 0.7rem;
-  color: #667eea;
+  color: #2563eb;
   background: #e0e7ff;
   padding: 2px 6px;
   border-radius: 30px;
@@ -541,7 +541,7 @@
 }
 
 .view-btn {
-  background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+  background: linear-gradient(135deg, #4299e1 0%, #2563eb 100%);
   box-shadow: 0 4px 10px rgba(66, 153, 225, 0.3);
 }
 

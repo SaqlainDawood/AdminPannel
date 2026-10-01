@@ -1,262 +1,252 @@
-/* AdminSidebar.css */
+/* ===== AdminSidebar.css ===== */
 
-/* Sidebar Container */
+/* ---- Sidebar Container ---- */
 .admin-sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 280px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  transition: all 0.3s ease;
+  width: 265px;
+  background: linear-gradient(160deg, #1e3a5f 0%, #2d6a9f 60%, #3b82c4 100%);
+  transition: width 0.3s ease, transform 0.3s ease;
   z-index: 1050;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 3px 0 20px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
 
 .admin-sidebar.closed {
-  width: 80px;
+  width: 70px;
 }
 
-/* Scrollbar Styling */
-.admin-sidebar::-webkit-scrollbar {
-  width: 6px;
-}
+/* Scrollbar */
+.admin-sidebar::-webkit-scrollbar { width: 4px; }
+.admin-sidebar::-webkit-scrollbar-track { background: transparent; }
+.admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
 
-.admin-sidebar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.admin-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-.admin-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-/* Logo Section */
+/* ---- Logo Section ---- */
 .sidebar-logo {
-  padding: 30px 20px;
+  padding: 24px 16px 20px;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  min-height: 150px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .logo-icon {
-  width: 70px;
-  height: 70px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
-.admin-sidebar.closed .sidebar-logo h4,
-.admin-sidebar.closed .sidebar-logo p {
-  display: none;
+.logo-icon i {
+  font-size: 22px !important;
 }
 
-/* Navigation */
-.sidebar-nav {
-  flex: 1;
-  padding: 20px 0;
+.admin-sidebar .sidebar-logo h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  letter-spacing: -0.01em;
 }
 
-.sidebar-nav .nav {
-  padding: 0;
+.admin-sidebar .sidebar-logo p {
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  opacity: 0.65;
   margin: 0;
 }
 
+/* Hide text when collapsed */
+.admin-sidebar.closed .sidebar-logo h4,
+.admin-sidebar.closed .sidebar-logo p { display: none; }
+
+/* ---- Navigation ---- */
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+}
+
+.sidebar-nav .nav { padding: 0; margin: 0; }
+
 .sidebar-nav .nav-item {
-  margin: 5px 10px;
+  margin: 2px 8px;
 }
 
 .sidebar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.8);
-  padding: 15px 20px;
-  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 10px 14px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
   text-decoration: none;
-  position: relative;
-  font-size: 15px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  gap: 0;
 }
 
 .sidebar-nav .nav-link:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.14);
   color: white;
-  transform: translateX(5px);
 }
 
 .sidebar-nav .nav-link.active {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Icon */
 .nav-icon {
-  font-size: 20px;
-  width: 25px;
-  margin-right: 15px;
+  font-size: 16px;
+  width: 22px;
+  min-width: 22px;
   text-align: center;
+  margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .admin-sidebar.closed .nav-icon {
   margin-right: 0;
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .nav-text {
   flex: 1;
-  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.admin-sidebar.closed .nav-text {
-  display: none;
-}
+.admin-sidebar.closed .nav-text,
+.admin-sidebar.closed .ms-auto { display: none; }
 
-/* Submenu */
+/* ---- Submenu ---- */
 .submenu {
   list-style: none;
-  padding: 0;
-  margin: 5px 0 10px 0;
-  background: rgba(0, 0, 0, 0.1);
+  padding: 4px 0 4px 8px;
+  margin: 0 0 4px 0;
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.submenu li {
-  margin: 0;
-}
+.submenu li { margin: 0; }
 
 .submenu-link {
-  display: block;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 12px 20px 12px 50px;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.68);
+  padding: 9px 12px 9px 36px;
   text-decoration: none;
-  font-size: 14px;
-  transition: all 0.3s ease;
+  font-size: 0.83rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, padding 0.15s;
+  border-radius: 7px;
 }
 
 .submenu-link:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  padding-left: 55px;
 }
 
 .submenu-link.active {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
   color: white;
   font-weight: 600;
-  border-left: 3px solid white;
+  border-left: 3px solid rgba(255,255,255,0.6);
 }
 
-/* Logout Item */
+/* ---- Logout item ---- */
 .logout-item {
-  margin-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 20px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
 }
 
-.logout-item:hover {
-  background: rgba(255, 59, 48, 0.3) !important;
+.nav-link.logout-item:hover {
+  background: rgba(239, 68, 68, 0.25) !important;
+  color: #fca5a5 !important;
 }
 
-/* User Profile Footer */
-.sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-}
-
-.user-info h6 {
-  font-size: 14px;
-  margin: 0;
-  font-weight: 600;
-}
-
-.user-info small {
-  font-size: 12px;
-}
-
-.admin-sidebar.closed .sidebar-footer {
-  display: none;
-}
-
-/* Toggle Button */
+/* ---- Toggle Button ---- */
 .sidebar-toggle-btn {
   position: fixed;
-  top: 20px;
-  left: 280px;
-  z-index: 1051;
-  width: 40px;
-  height: 40px;
+  top: 14px;
+  z-index: 1060;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease, transform 0.2s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
   border: none;
+  background: #2d6a9f;
+  color: white;
+  padding: 0;
 }
 
 .sidebar-toggle-btn:hover {
   transform: scale(1.1);
+  background: #1e5a8e;
 }
 
-/* Main Content */
+/* ---- Main Content ---- */
 .main-content {
-  margin-left: 280px;
-  transition: all 0.3s ease;
+  margin-left: 265px;
+  transition: margin-left 0.3s ease;
   min-height: 100vh;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content.sidebar-closed {
-  margin-left: 80px;
+  margin-left: 70px;
 }
 
-/* Mobile Overlay */
+/* Remove extra container padding since we use flex layout now */
+.main-content .container-fluid {
+  padding: 0 !important;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Mobile Overlay ---- */
 .sidebar-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1049;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1040;
+  backdrop-filter: blur(2px);
 }
 
-/* Responsive Design */
+/* ---- Responsive ---- */
 @media (max-width: 768px) {
   .admin-sidebar {
     transform: translateX(-100%);
+    width: 265px !important;
   }
 
   .admin-sidebar.open {
@@ -268,37 +258,42 @@
   }
 
   .sidebar-toggle-btn {
-    left: 20px !important;
-  }
-
-  .admin-sidebar.open ~ .sidebar-toggle-btn {
-    left: 260px !important;
+    left: 16px !important;
+    top: 14px;
   }
 }
 
-/* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+@media (min-width: 769px) {
+  .sidebar-toggle-btn {
+    left: calc(265px - 16px);
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  .admin-sidebar.closed ~ .sidebar-toggle-btn,
+  .sidebar-toggle-btn.collapsed {
+    left: calc(70px - 16px);
   }
 }
 
-.nav-item {
-  animation: slideIn 0.3s ease forwards;
+/* ---- Nav item animations ---- */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.nav-item:nth-child(1) { animation-delay: 0.05s; }
-.nav-item:nth-child(2) { animation-delay: 0.1s; }
-.nav-item:nth-child(3) { animation-delay: 0.15s; }
-.nav-item:nth-child(4) { animation-delay: 0.2s; }
-.nav-item:nth-child(5) { animation-delay: 0.25s; }
-.nav-item:nth-child(6) { animation-delay: 0.3s; }
-.nav-item:nth-child(7) { animation-delay: 0.35s; }
-.nav-item:nth-child(8) { animation-delay: 0.4s; }
-.nav-item:nth-child(9) { animation-delay: 0.45s; }
-.nav-item:nth-child(10) { animation-delay: 0.5s; }
+.sidebar-nav .nav-item {
+  animation: fadeSlideIn 0.25s ease forwards;
+  opacity: 0;
+}
+
+.sidebar-nav .nav-item:nth-child(1)  { animation-delay: 0.03s; }
+.sidebar-nav .nav-item:nth-child(2)  { animation-delay: 0.06s; }
+.sidebar-nav .nav-item:nth-child(3)  { animation-delay: 0.09s; }
+.sidebar-nav .nav-item:nth-child(4)  { animation-delay: 0.12s; }
+.sidebar-nav .nav-item:nth-child(5)  { animation-delay: 0.15s; }
+.sidebar-nav .nav-item:nth-child(6)  { animation-delay: 0.18s; }
+.sidebar-nav .nav-item:nth-child(7)  { animation-delay: 0.21s; }
+.sidebar-nav .nav-item:nth-child(8)  { animation-delay: 0.24s; }
+.sidebar-nav .nav-item:nth-child(9)  { animation-delay: 0.27s; }
+.sidebar-nav .nav-item:nth-child(10) { animation-delay: 0.30s; }
+.sidebar-nav .nav-item:nth-child(11) { animation-delay: 0.33s; }
+.sidebar-nav .nav-item:nth-child(12) { animation-delay: 0.36s; }

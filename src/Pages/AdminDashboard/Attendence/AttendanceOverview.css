@@ -2,43 +2,61 @@
 
 /* Container */
 .attendance-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: auto;
+  background: transparent;
+  font-family: var(--ums-font-base, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
 }
 
 /* Header */
 .attendance-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
 }
 
 .header-title h1 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #111827;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ums-gray-800, #1e293b);
   margin: 0;
 }
 
 .header-title p {
-  color: #6b7280;
-  margin-top: 0.25rem;
+  color: var(--ums-gray-500, #64748b);
+  margin: 4px 0 0 0;
   font-size: 0.875rem;
+}
+
+.header-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .header-actions {
@@ -79,9 +97,7 @@
 
 /* Main Content */
 .attendance-main {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
 }
 
 /* Stats Grid */
@@ -276,8 +292,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -301,11 +317,11 @@
 
 /* Error & Empty States */
 .error-container, .empty-container {
-  min-height: 100vh;
+  min-height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f9fafb;
+  background: transparent;
   padding: 1.5rem;
 }
 
@@ -361,6 +377,11 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .attendance-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .header-content {
     flex-direction: column;
     align-items: flex-start;
@@ -368,10 +389,6 @@
   
   .stats-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .attendance-main {
-    padding: 1rem;
   }
   
   .section-header {

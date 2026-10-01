@@ -2,26 +2,22 @@ import axios from "axios";
 
 const JobAPI = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
-});
-
-// Token interceptor
-JobAPI.interceptors.request.use((config) => {
-  const token =
-    sessionStorage.getItem("adminToken") || sessionStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  validateStatus: (status) => (status >= 200 && status < 300) || status === 304,
 });
 
 // Token interceptor
 JobAPI.interceptors.request.use(
   (config) => {
     const token =
+      sessionStorage.getItem("token") ||
       sessionStorage.getItem("adminToken") ||
-      sessionStorage.getItem("token");
+      localStorage.getItem("token") ||
+      localStorage.getItem("adminToken");
 
     if (token) {
+      const cleanToken = token.replace(/^Bearer\s+/i, "").replace(/^"|"$/g, "");
       config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${cleanToken}`;
     }
 
     return config;

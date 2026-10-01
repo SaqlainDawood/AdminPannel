@@ -3,15 +3,9 @@
 ========================================================= */
 
 .fee-management-page {
-  min-height: 100%;
-  padding: 30px;
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(37, 99, 235, 0.055),
-      transparent 28%
-    ),
-    #f8fafc;
+  min-height: auto;
+  padding: 0;
+  background: transparent;
   color: #172033;
 }
 

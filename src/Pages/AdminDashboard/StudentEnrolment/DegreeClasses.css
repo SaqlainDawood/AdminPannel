@@ -1,9 +1,9 @@
 .degree-classes-page {
   width: 100%;
-  min-height: 100%;
-  padding: 28px;
+  min-height: auto;
+  padding: 0;
   box-sizing: border-box;
-  background: #f6f8fb;
+  background: transparent;
   color: #172033;
 }
 

@@ -229,60 +229,84 @@ const navigate = useNavigate();
 
           {/* Grid View */}
           {selectedView === 'grid' && (
-            <div className="faculty-grid">
-              {filteredFaculty.map(member => (
-                <div key={member._id} className="faculty-card">
-                  <div className="faculty-card-header">
-                    <img src={member.image} alt={member.name} className="faculty-avatar" />
-                    {getStatusBadge(member.status)}
+            filteredFaculty.length === 0 ? (
+              <div className="card border-0 shadow-sm text-center py-5" style={{ borderRadius: '16px', background: '#ffffff', width: '100%' }}>
+                <i className="fas fa-chalkboard-teacher fa-2x mb-2 d-block text-secondary"></i>
+                <h5 style={{ color: '#1e293b', fontWeight: 700 }}>No faculty members found</h5>
+                <p className="text-muted mb-3" style={{ fontSize: '0.88rem' }}>
+                  {faculty.length === 0 ? "No faculty members have been registered yet." : "Try adjusting your search query or filters."}
+                </p>
+                {faculty.length === 0 && (
+                  <div>
+                    <Link to="/admin/dashboard/faculty/add" className="btn btn-primary btn-sm">
+                      <i className="fas fa-user-plus me-1"></i> Register Faculty
+                    </Link>
                   </div>
-                  <div className="faculty-card-body">
-                    <h3 className="faculty-name">{member.name}</h3>
-                    <p className="faculty-designation">{member.designation}</p>
-                    <p className="faculty-emp-id">
-                      <i className="fas fa-id-badge me-2"></i>
-                      {member.employeeID}
-                    </p>
-                    <p className="faculty-dept">
-                      <i className="fas fa-building me-2"></i>
-                      {member.department}
-                    </p>
-                    <p className="faculty-detail">
-                      <i className="fas fa-envelope me-2"></i>
-                      {member.email}
-                    </p>
-                    <p className="faculty-detail">
-                      <i className="fas fa-phone me-2"></i>
-                      {member.phone}
-                    </p>
-                    <div className="faculty-meta">
-                      <div className="meta-item">
-                        <i className="fas fa-book"></i>
-                        <span>{member.coursesAssigned} Courses</span>
-                      </div>
-                      <div className="meta-item">
-                        <i className="fas fa-clock"></i>
-                        <span>{member.experience}</span>
+                )}
+              </div>
+            ) : (
+              <div className="faculty-grid">
+                {filteredFaculty.map(member => (
+                  <div key={member._id} className="faculty-card">
+                    <div className="faculty-card-header">
+                      <img
+                        src={member.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'Faculty')}&background=2d6a9f&color=fff`}
+                        alt={member.name}
+                        className="faculty-avatar"
+                        onError={(e) => {
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'Faculty')}&background=2d6a9f&color=fff`;
+                        }}
+                      />
+                      {getStatusBadge(member.status)}
+                    </div>
+                    <div className="faculty-card-body">
+                      <h3 className="faculty-name">{member.name}</h3>
+                      <p className="faculty-designation">{member.designation}</p>
+                      <p className="faculty-emp-id">
+                        <i className="fas fa-id-badge me-2"></i>
+                        {member.employeeID}
+                      </p>
+                      <p className="faculty-dept">
+                        <i className="fas fa-building me-2"></i>
+                        {member.department}
+                      </p>
+                      <p className="faculty-detail">
+                        <i className="fas fa-envelope me-2"></i>
+                        {member.email}
+                      </p>
+                      <p className="faculty-detail">
+                        <i className="fas fa-phone me-2"></i>
+                        {member.phone}
+                      </p>
+                      <div className="faculty-meta">
+                        <div className="meta-item">
+                          <i className="fas fa-book"></i>
+                          <span>{member.coursesAssigned} Courses</span>
+                        </div>
+                        <div className="meta-item">
+                          <i className="fas fa-clock"></i>
+                          <span>{member.experience}</span>
+                        </div>
                       </div>
                     </div>
+                    <div className="faculty-card-footer">
+                      <button className="btn-action btn-view" title="View Details"
+                      onClick={()=>navigate(`/admin/dashboard/faculty/view/${member._id}`)}>
+                        <i className="fas fa-eye"></i>
+                      </button>
+                      <button className="btn-action btn-edit" title="Edit"
+                      onClick={()=>navigate(`/admin/dashboard/faculty/update/${member._id}`)}>
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button className="btn-action btn-delete" title="Delete"
+                        onClick={()=>handleDelete(member._id)}>
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
                   </div>
-                  <div className="faculty-card-footer">
-                    <button className="btn-action btn-view" title="View Details"
-                    onClick={()=>navigate(`/admin/dashboard/faculty/view/${member._id}`)}>
-                      <i className="fas fa-eye"></i>
-                    </button>
-                    <button className="btn-action btn-edit" title="Edit"
-                    onClick={()=>navigate(`/admin/dashboard/faculty/update/${member._id}`)}>
-                      <i className="fas fa-edit"></i>
-                    </button>
-                    <button className="btn-action btn-delete" title="Delete"
-                      onClick={()=>handleDelete(member._id)}>
-                      <i className="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           )}
 
           {/* Table View */}
@@ -301,42 +325,66 @@ const navigate = useNavigate();
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredFaculty.map(member => (
-                    <tr key={member._id}>
-                      <td>
-                        <div className="faculty-info-table">
-                          <img src={member.image} alt={member?.name} className="faculty-avatar-small" />
-                          <div>
-                            <div className="faculty-name-table">{member.name}</div>
-                            <div className="faculty-email-table">{member.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="emp-id-badge">{member.employeeID}</span>
-                      </td>
-                      <td>{member.department}</td>
-                      <td>{member.designation}</td>
-                      <td>
-                        <span className="courses-badge">{member.coursesAssigned}</span>
-                      </td>
-                      <td>{getStatusBadge(member.status)}</td>
-                      <td>
-                        <div className="action-buttons">
-                          <button className="btn-action btn-view" title="View">
-                            <i className="fas fa-eye"></i>
-                          </button>
-                          <button className="btn-action btn-edit" title="Edit">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="btn-action btn-delete" title="Delete"
-                          onClick={()=>handleDelete(member._id)}>
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </div>
+                  {filteredFaculty.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="text-center py-5 text-muted">
+                        <i className="fas fa-chalkboard-teacher fa-2x mb-2 d-block text-secondary"></i>
+                        No faculty members match your criteria.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    filteredFaculty.map(member => (
+                      <tr key={member._id}>
+                        <td>
+                          <div className="faculty-info-table">
+                            <img
+                              src={member.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name || 'Faculty')}&background=2d6a9f&color=fff`}
+                              alt={member?.name}
+                              className="faculty-avatar-small"
+                              onError={(e) => {
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member?.name || 'Faculty')}&background=2d6a9f&color=fff`;
+                              }}
+                            />
+                            <div>
+                              <div className="faculty-name-table">{member.name}</div>
+                              <div className="faculty-email-table">{member.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="emp-id-badge">{member.employeeID}</span>
+                        </td>
+                        <td>{member.department}</td>
+                        <td>{member.designation}</td>
+                        <td>
+                          <span className="courses-badge">{member.coursesAssigned}</span>
+                        </td>
+                        <td>{getStatusBadge(member.status)}</td>
+                        <td>
+                          <div className="action-buttons">
+                            <button
+                              className="btn-action btn-view"
+                              title="View"
+                              onClick={()=>navigate(`/admin/dashboard/faculty/view/${member._id}`)}
+                            >
+                              <i className="fas fa-eye"></i>
+                            </button>
+                            <button
+                              className="btn-action btn-edit"
+                              title="Edit"
+                              onClick={()=>navigate(`/admin/dashboard/faculty/update/${member._id}`)}
+                            >
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button className="btn-action btn-delete" title="Delete"
+                            onClick={()=>handleDelete(member._id)}>
+                              <i className="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

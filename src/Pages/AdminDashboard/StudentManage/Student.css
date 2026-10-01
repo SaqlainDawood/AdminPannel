@@ -1,34 +1,46 @@
 /* Student List Container */
 .student-list-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
 /* Page Header */
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
 }
 
 .student-list-container .page-title {
-    color: white !important;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  color: var(--ums-gray-800, #1e293b) !important;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.student-list-container .page-title i {
+  color: var(--ums-primary-mid, #2d6a9f);
+}
+
 .page-subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.1rem;
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
   margin-bottom: 0;
 }
 .header-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 /* =================Lodaing Spinner================= */
 
@@ -37,8 +49,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9fafb;
+  min-height: 300px;
+  background: transparent;
 }
 
 .spinner {
@@ -235,7 +247,7 @@
 
 /* === Gradient Icon Colors === */
 .stat-icon.bg-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
 }
 
 .stat-icon.bg-success {
@@ -309,7 +321,7 @@
 
 .search-box input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -338,13 +350,13 @@
 
 .form-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 /* Bulk Actions Bar */
 .bulk-actions-bar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 1rem 1.5rem;
   border-radius: 12px;
   display: flex;
@@ -543,7 +555,7 @@
 }
 
 .semester-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
@@ -686,7 +698,7 @@ input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: #2563eb;
 }
 
 /* Responsive Design */
@@ -840,7 +852,7 @@ input[type="checkbox"] {
   width: 50px;
   height: 50px;
   border: 5px solid #f3f3f3;
-  border-top: 5px solid #667eea;
+  border-top: 5px solid #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -874,31 +886,32 @@ input[type="checkbox"] {
 /* =================Student Approvals================*/
 /* Approvals Container */
 .approvals-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
 }
 
-/* Page Header */
-.page-header {
+.approvals-container .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
 }
 
-.page-title {
-  color: white;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+.approvals-container .page-title {
+  color: var(--ums-gray-800, #1e293b);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
 }
 
-.page-subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1.1rem;
+.approvals-container .page-subtitle {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
   margin-bottom: 0;
 }
 
@@ -908,20 +921,22 @@ input[type="checkbox"] {
 }
 
 .stat-badge {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  padding: 1rem 1.5rem;
-  border-radius: 15px;
-  color: white;
+  background: #ffffff;
+  border: 1px solid var(--ums-gray-200, #e2e8f0);
+  padding: 0.65rem 1.15rem;
+  border-radius: 12px;
+  color: var(--ums-gray-800, #1e293b);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 1.1rem;
+  gap: 0.65rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .stat-badge i {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--ums-primary-mid, #2d6a9f);
 }
 
 /* Filter Section */
@@ -959,13 +974,13 @@ input[type="checkbox"] {
 }
 
 .filter-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #2563eb;
+  color: #2563eb;
   transform: translateY(-2px);
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   border-color: transparent;
 }
@@ -995,7 +1010,7 @@ input[type="checkbox"] {
 
 /* Card Header */
 .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 1.5rem;
   color: white;
   position: relative;
@@ -1072,7 +1087,7 @@ input[type="checkbox"] {
 }
 
 .dept-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 8px;
@@ -1103,7 +1118,7 @@ input[type="checkbox"] {
 }
 
 .completion-badge {
-  background: #667eea;
+  background: #2563eb;
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
@@ -1286,7 +1301,7 @@ input[type="checkbox"] {
 }
 
 .detail-item i {
-  color: #667eea;
+  color: #2563eb;
   font-size: 1.2rem;
   width: 25px;
 }
@@ -1304,7 +1319,7 @@ input[type="checkbox"] {
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1609,9 +1624,33 @@ input[type="checkbox"] {
 /* ===============Student Assign rollNumbers=========== */
 /* Assign Container */
 .assign-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 2rem;
+  background: transparent;
+  min-height: auto;
+  padding: 0;
+}
+
+.assign-container .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
+}
+
+.assign-container .page-title {
+  color: var(--ums-gray-800, #1e293b);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.assign-container .page-subtitle {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
+  margin-bottom: 0;
 }
 
 /* Stats Cards */
@@ -1650,7 +1689,7 @@ input[type="checkbox"] {
 }
 
 .card-title i {
-  color: #667eea;
+  color: #2563eb;
 }
 
 /* Generator Options */
@@ -1677,7 +1716,7 @@ input[type="checkbox"] {
   height: 20px;
   margin-right: 1rem;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: #2563eb;
 }
 
 .toggle-text {
@@ -1714,7 +1753,7 @@ input[type="checkbox"] {
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1729,7 +1768,7 @@ input[type="checkbox"] {
 .btn-generate {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -1807,7 +1846,7 @@ input[type="checkbox"] {
 
 /* Info Box */
 .info-box {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(30, 58, 138, 0.08) 100%);
   padding: 1.5rem;
   border-radius: 12px;
   margin-top: 2rem;
@@ -1816,7 +1855,7 @@ input[type="checkbox"] {
 }
 
 .info-box i {
-  color: #667eea;
+  color: #2563eb;
   font-size: 1.5rem;
   flex-shrink: 0;
 }
@@ -1847,7 +1886,7 @@ input[type="checkbox"] {
 }
 
 .card-header-assign {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -1906,7 +1945,7 @@ input[type="checkbox"] {
 }
 
 .student-assign-card.selected {
-  border-color: #667eea;
+  border-color: #2563eb;
   background: white;
   box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
 }
@@ -1921,7 +1960,7 @@ input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: #2563eb;
 }
 
 .student-checkbox input[type="checkbox"]:disabled {
@@ -1999,7 +2038,7 @@ input[type="checkbox"] {
 .control-input:focus,
 .control-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -2069,7 +2108,7 @@ input[type="checkbox"] {
 }
 
 .students-list-assign::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: #2563eb;
   border-radius: 10px;
 }
 
