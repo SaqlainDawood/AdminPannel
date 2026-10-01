@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const StudentAdminAPI = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-project-ums-cmwj.vercel.app",
 });
 
 // ============================================================

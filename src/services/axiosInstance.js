@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const normalizeBaseUrl = (value) =>
+  (value || "https://backend-project-ums-cmwj.vercel.app").replace(/\/+$/, "");
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_API_URL),
 });
 
 axiosInstance.interceptors.request.use(
