@@ -14,6 +14,38 @@ import {
 } from "mdb-react-ui-kit";
 import AdminAPI from "../../../api";
 
+const fetchStudentDetail = async (studentId) => {
+  const candidateRoutes = [
+    `/student/view/${studentId}`,
+    `/student/${studentId}`,
+    `/students/${studentId}`,
+  ];
+
+  let lastError = null;
+
+  for (const route of candidateRoutes) {
+    try {
+      const res = await AdminAPI.get(route);
+      const payload = res?.data?.student || res?.data?.data?.student || res?.data?.data;
+
+      if (res?.data?.success && payload) {
+        return payload;
+      }
+    } catch (error) {
+      lastError = error;
+      if (!error?.response || error.response.status !== 404) {
+        throw error;
+      }
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  throw new Error('Student not found');
+};
+
 const StudentUpdate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -94,10 +126,10 @@ const StudentUpdate = () => {
           return;
         }
 
-        const res = await AdminAPI.get(`/student/view/${id}`);
+        const response = await fetchStudentDetail(id);
+        const studentData = response?.student || response?.data?.student || response;
 
-        if (res.data.success && res.data.student) {
-          const studentData = res.data.student;
+        if (studentData) {
           setStudent(studentData);
 
           // Populate form with existing data

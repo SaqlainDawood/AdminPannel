@@ -1,11 +1,87 @@
-import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify'
-import { MDBNavbar, MDBContainer, MDBTable, MDBTableHead, MDBTableBody, MDBNavbarBrand, MDBCard, MDBCardBody } from 'mdb-react-ui-kit';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import {
+  MDBContainer,
+  MDBTable,
+  MDBTableHead,
+  MDBTableBody,
+  MDBCard,
+  MDBCardBody,
+} from 'mdb-react-ui-kit';
 import AdminAPI from '../../../api';
 import { FaSpinner } from 'react-icons/fa';
+
+const fetchStudentDetail = async (studentId) => {
+  const candidateRoutes = [
+    `/student/view/${studentId}`,
+    `/student/${studentId}`,
+    `/students/${studentId}`,
+  ];
+
+  let lastError = null;
+
+  for (const route of candidateRoutes) {
+    try {
+      const res = await AdminAPI.get(route);
+      const payload = res?.data?.student || res?.data?.data?.student || res?.data?.data;
+
+      if (res?.data?.success && payload) {
+        return payload;
+      }
+    } catch (error) {
+      lastError = error;
+      if (!error?.response || error.response.status !== 404) {
+        throw error;
+      }
+    }
+  }
+
+  if (lastError) throw lastError;
+  throw new Error('Student not found');
+};
+
+const formatDate = (value, withTime = false) => {
+  if (!value) return 'N/A';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return 'N/A';
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}),
+  });
+};
+
+const yesNo = (v) => (v ? 'Yes' : 'No');
+const val = (v) => (v === undefined || v === null || v === '' ? 'N/A' : v);
+
+// items: [[label, value], ...] -> 2 pairs per row
+const Section = ({ title, cls, items }) => {
+  const rows = [];
+  for (let i = 0; i < items.length; i += 2) rows.push([items[i], items[i + 1]]);
+
+  return (
+    <>
+      <tr className={cls}>
+        <th colSpan={4} className="text-center">{title}</th>
+      </tr>
+      {rows.map(([a, b], idx) => (
+        <tr key={`${title}-${idx}`}>
+          <th scope="col">{a[0]}</th>
+          <td colSpan={b ? 1 : 3} className="fw-bold">{val(a[1])}</td>
+          {b && (
+            <>
+              <th scope="col">{b[0]}</th>
+              <td className="fw-bold">{val(b[1])}</td>
+            </>
+          )}
+        </tr>
+      ))}
+    </>
+  );
+};
+
 const StudentView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,50 +93,42 @@ const StudentView = () => {
     const fetchStudentById = async () => {
       try {
         const token =
-          sessionStorage.getItem("token") ||
-          sessionStorage.getItem("adminToken") ||
-          localStorage.getItem("token") ||
-          localStorage.getItem("adminToken");
+          sessionStorage.getItem('token') ||
+          sessionStorage.getItem('adminToken') ||
+          localStorage.getItem('token') ||
+          localStorage.getItem('adminToken');
         if (!token) {
-          toast.error("Not Authorized User");
+          toast.error('Not Authorized User');
           navigate('/login');
           return;
         }
 
-        // Check if ID is valid
-        if (!id || id === ":id") {
-          toast.error("Invalid Student ID! Redirecting to Student List...");
-          setTimeout(() => {
-            navigate("/admin/dashboard/students/list");
-          }, 2000);
+        if (!id || id === ':id') {
+          toast.error('Invalid Student ID! Redirecting to Student List...');
+          setTimeout(() => navigate('/admin/dashboard/students/list'), 2000);
           return;
         }
-        const res = await AdminAPI.get(`/student/view/${id}`);
-        if (res.data.success && res.data.student) {
-          setStudent(res.data.student);
-        } else {
-          toast.error("Student data not found in response");
-          setNotFound(true);
-        }
+
+        const studentData = await fetchStudentDetail(id);
+        setStudent(studentData);
         setLoading(false);
       } catch (error) {
-        console.log("Error fetching Student by id:", error);
-        // FIXED: error.response instead of error.res
+        console.log('Error fetching Student by id:', error);
         if (error.response && error.response.status === 404) {
           setNotFound(true);
-          toast.error("Student not found!");
+          toast.error('Student not found!');
         } else if (error.response && error.response.status === 401) {
-          toast.error("Unauthorized! Please login again.");
-          sessionStorage.removeItem("token");
-          sessionStorage.removeItem("adminToken");
-          localStorage.removeItem("adminToken");
+          toast.error('Unauthorized! Please login again.');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('adminToken');
+          localStorage.removeItem('adminToken');
           navigate('/login');
         } else {
-          toast.error("Error fetching Student details!");
+          toast.error('Error fetching Student details!');
         }
         setLoading(false);
       }
-    }
+    };
     fetchStudentById();
   }, [id, navigate]);
 
@@ -80,226 +148,228 @@ const StudentView = () => {
       <div className="notfound-container">
         <h2>Student Not Found</h2>
         <p>The requested Student record doesn't exist.</p>
-        <button
-          className="back-btn"
-          onClick={() => navigate("/admin/dashboard/students/list")}
-        >
+        <button className="back-btn" onClick={() => navigate('/admin/dashboard/students/list')}>
           ← Back to Student List
         </button>
       </div>
     );
   }
 
-  // Format date function
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  const profileMissing = !student.personalInfo;
+  const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim();
+  const status = String(student.status || '').toLowerCase();
+  const statusClass =
+    ['active', 'approved', 'assign'].includes(status) ? 'bg-success'
+    : ['suspend', 'suspended', 'pending'].includes(status) ? 'bg-warning'
+    : status === 'rejected' ? 'bg-danger'
+    : 'bg-secondary';
+
+  const fam = student.familyInfo || student.family || {};
+  const addr = student.addressInfo || {};
+  const dis = student.disabilityInfo || {};
+  const other = student.otherInfo || {};
+  const education = Array.isArray(student.education) ? student.education : [];
+  const enr = student.enrollment || {};
+  const image = student.profileImage?.url;
 
   return (
-    <div className='table-responsive'>
-      <MDBContainer className='py-4'>
-        <MDBCard className='shadow-4'>
-          <MDBCardBody className=''>
+    <div className="table-responsive">
+      <MDBContainer className="py-4">
+        <MDBCard className="shadow-4">
+          <MDBCardBody>
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h3 className='text-primary fw-bold'>Student Information</h3>
-              <button 
+              <div className="d-flex align-items-center">
+                {image && (
+                  <img
+                    src={image}
+                    alt={fullName || 'Student'}
+                    style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', marginRight: 16 }}
+                  />
+                )}
+                <h3 className="text-primary fw-bold mb-0">
+                  {fullName || 'Student Information'}
+                </h3>
+              </div>
+              <button
                 className="btn btn-outline-primary"
-                onClick={() => navigate("/admin/dashboard/students/list")}
+                onClick={() => navigate('/admin/dashboard/students/list')}
               >
-               <i className="fas fa-arrow-left me-2"></i>
+                <i className="fas fa-arrow-left me-2"></i>
               </button>
             </div>
-            
+
+            {profileMissing && (
+              <div className="alert alert-warning">
+                Is user ka student profile abhi maujood nahi hai (students collection mein koi record nahi mila).
+                Sirf account ki basic info dikh rahi hai.
+              </div>
+            )}
+
             <MDBTable bordered hover responsive className="align-middle custom-table">
               <MDBTableHead>
-                <tr className='text-center table-primary'>
+                <tr className="text-center table-primary">
                   <th colSpan={4}>Student Details</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-                {/* Personal Information */}
-                
-                <tr>
-                  <th scope='col'>Roll Number</th>
-                  <td className='text-success fw-bold'>{student.rollNo || 'N/A'}</td>
-                  <th scope='col'>Full Name</th>
-                  <td className='text-success fw-bold'>
-                    {student.firstName} {student.lastName}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope='col'>Email</th>
-                  <td className='text-warning fw-bold'>{student?.user?.email}</td>
-                  <th scope='col'>Phone Number</th>
-                  <td className='text-warning fw-bold'>{student.phoneNo || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>CNIC</th>
-                  <td className='text-info fw-bold'>{student.cnic || 'N/A'}</td>
-                  <th scope='col'>Date of Birth</th>
-                  <td className='text-info fw-bold'>{formatDate(student.DOB)}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>Gender</th>
-                  <td className='text-warning fw-bold'>{student.gender || 'N/A'}</td>
-                  <th scope='col'>Blood Group</th>
-                  <td className='text-warning fw-bold'>{student.bloodGroup || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>Marital Status</th>
-                  <td className='text-info fw-bold'>{student.maritalStatus || 'N/A'}</td>
-                  <th scope='col'>Religion</th>
-                  <td className='text-info fw-bold'>{student.religion || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>Nationality</th>
-                  <td className='text-success fw-bold'>{student.nationality || 'N/A'}</td>
-                  <th scope='col'>Status</th>
-                  <td className='text-warning fw-bold'>
-                    <span className={`badge ${
-                      student.status === 'Active' || student.status === 'Assigned' ? 'bg-success' :
-                      student.status === 'Suspended' ? 'bg-warning' :
-                      student.status === 'rejected' ? 'bg-danger' : 'bg-secondary'
-                    }`}>
-                      {student.status}
-                    </span>
-                  </td>
-                </tr>
+                <Section
+                  title="Personal Information"
+                  cls="table-primary"
+                  items={[
+                    ['Roll Number', student.rollNo],
+                    ['Full Name', fullName],
+                    ['Email', student?.user?.email || student.email],
+                    ['Phone Number', student.phoneNo],
+                    ['CNIC', student.cnic],
+                    ['Date of Birth', formatDate(student.DOB)],
+                    ['Gender', student.gender],
+                    ['Blood Group', student.bloodGroup],
+                    ['Marital Status', student.maritalStatus],
+                    ['Religion', student.religion],
+                    ['Nationality', student.nationality],
+                    ['Status', <span key="st" className={`badge ${statusClass}`}>{student.status || 'N/A'}</span>],
+                  ]}
+                />
 
-                {/* Address Information */}
-                <tr>
-                  <th scope='col'>Present Address</th>
-                  <td colSpan={3}>{student.presentAddress || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>Permanent Address</th>
-                  <td colSpan={3}>{student.permanentAddress || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th scope='col'>Province</th>
-                  <td className='text-success fw-bold'>{student.province || 'N/A'}</td>
-                  <th scope='col'>Domicile</th>
-                  <td className='text-warning fw-bold'>{student.domicile || 'N/A'}</td>
-                </tr>
+                <Section
+                  title="Address Information"
+                  cls="table-info"
+                  items={[
+                    ['Present Address', addr.presentAddress],
+                    ['Permanent Address', addr.permanentAddress],
+                    ['Province', addr.province],
+                    ['City', addr.city],
+                    ['Domicile', addr.domicile],
+                    ['Postal Code', addr.postalCode],
+                  ]}
+                />
 
-                {/* Academic Information */}
-                {student.enrollment && (
-                  <>
-                    <tr className="table-info">
-                      <th colSpan={4} className="text-center">Academic Information</th>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Department</th>
-                      <td className='text-success fw-bold'>{student.enrollment.department}</td>
-                      <th scope='col'>Program</th>
-                      <td className='text-success fw-bold'>{student.enrollment.program}</td>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Semester</th>
-                      <td className='text-warning fw-bold'>{student.enrollment.semester}</td>
-                      <th scope='col'>Session</th>
-                      <td className='text-warning fw-bold'>{student.enrollment.session}</td>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Campus</th>
-                      <td className='text-info fw-bold'>{student.enrollment.campus}</td>
-                      <th scope='col'>Shift</th>
-                      <td className='text-info fw-bold'>{student.enrollment.shift}</td>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Applied On</th>
-                      <td colSpan={3} className='text-warning fw-bold'>
-                        {formatDate(student.enrollment.appliedOn)}
+                <Section
+                  title="Academic Information"
+                  cls="table-info"
+                  items={[
+                    ['Department', enr.department],
+                    ['Program', enr.program],
+                    ['Semester', enr.semester],
+                    ['Session', enr.session],
+                    ['Campus', enr.campus],
+                    ['Shift', enr.shift],
+                    ['Registration No', student.registrationNo],
+                    ['Section', student.section],
+                    ['CGPA', student.cgpa ? Number(student.cgpa).toFixed(2) : 'N/A'],
+                    ['Applied On', formatDate(enr.appliedOn)],
+                  ]}
+                />
+
+                <Section
+                  title="Family Information"
+                  cls="table-warning"
+                  items={[
+                    ["Father's Name", fam.fatherName],
+                    ["Mother's Name", fam.motherName],
+                    ["Father's CNIC", fam.fatherCnic],
+                    ["Mother's CNIC", fam.motherCnic],
+                    ["Father's Occupation", fam.fatherOccupation],
+                    ["Mother's Occupation", fam.motherOccupation],
+                    ["Father's Mobile", fam.fatherMobile],
+                    ["Mother's Mobile", fam.motherMobile],
+                    ['Guardian Name', fam.guardianName],
+                    ['Guardian Relation', fam.guardianRelation],
+                    ['Guardian Mobile', fam.guardianMobile],
+                  ]}
+                />
+
+                <Section
+                  title="Disability Information"
+                  cls="table-danger"
+                  items={[
+                    ['Has Disability', yesNo(dis.hasDisability)],
+                    ['Disability Type', dis.disabilityType],
+                    ['Description', dis.disabilityDescription],
+                    [
+                      'Certificate',
+                      dis.disabilityCertificate?.url ? (
+                        <a key="dc" href={dis.disabilityCertificate.url} target="_blank" rel="noreferrer">View</a>
+                      ) : 'N/A',
+                    ],
+                  ]}
+                />
+
+                <Section
+                  title="Other Information"
+                  cls="table-success"
+                  items={[
+                    ['Extra Curricular', other.extraCurricular],
+                    ['Achievements', other.achievements],
+                    ['Hobbies', other.hobbies],
+                    ['Additional Notes', other.additionalNotes],
+                  ]}
+                />
+
+                <Section
+                  title="Account Information"
+                  cls="table-secondary"
+                  items={[
+                    ['Email Verified', yesNo(student.isEmailVerified)],
+                    ['Profile Complete', yesNo(student.isProfileComplete)],
+                    ['Last Step Completed', student.lastStepCompleted],
+                    ['Completed Steps', (student.completedSteps || []).join(', ')],
+                    ['Last Login', formatDate(student.lastLogin, true)],
+                    ['Account Active', student?.user?.isActive === undefined ? 'N/A' : yesNo(student.user.isActive)],
+                    ['Created At', formatDate(student.createdAt)],
+                    ['Updated At', formatDate(student.updatedAt)],
+                  ]}
+                />
+              </MDBTableBody>
+            </MDBTable>
+
+            {/* Education */}
+            <h5 className="text-primary fw-bold mt-4 mb-3">Education</h5>
+            <MDBTable bordered hover responsive className="align-middle">
+              <MDBTableHead>
+                <tr className="table-primary">
+                  <th>Level</th>
+                  <th>Qualification</th>
+                  <th>Institution</th>
+                  <th>Board / University</th>
+                  <th>Passing Year</th>
+                  <th>Roll No</th>
+                  <th>Marks</th>
+                  <th>%</th>
+                  <th>Marksheet</th>
+                </tr>
+              </MDBTableHead>
+              <MDBTableBody>
+                {education.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="text-center text-muted">No education records</td>
+                  </tr>
+                ) : (
+                  education.map((edu, idx) => (
+                    <tr key={idx}>
+                      <td>{val(edu.degreeLevel)}</td>
+                      <td>{val(edu.qualification)}</td>
+                      <td>{val(edu.institution)}</td>
+                      <td>{val(edu.boardUni)}</td>
+                      <td>{val(edu.passingYear)}</td>
+                      <td>{val(edu.rollNo)}</td>
+                      <td>{edu.totalMarks ? `${edu.obtainMarks} / ${edu.totalMarks}` : 'N/A'}</td>
+                      <td>{val(edu.percentage)}</td>
+                      <td>
+                        {edu.markSheet?.url ? (
+                          <a href={edu.markSheet.url} target="_blank" rel="noreferrer">View</a>
+                        ) : 'N/A'}
                       </td>
                     </tr>
-                  </>
+                  ))
                 )}
-
-                {/* Family Information */}
-                {student.family && (
-                  <>
-                    <tr className="table-warning">
-                      <th colSpan={4} className="text-center">Family Information</th>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Father's Name</th>
-                      <td className='text-success fw-bold'>{student.family.fatherName}</td>
-                      <th scope='col'>Mother's Name</th>
-                      <td className='text-success fw-bold'>{student.family.motherName}</td>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Father's CNIC</th>
-                      <td className='text-warning fw-bold'>{student.family.fatherCnic}</td>
-                      <th scope='col'>Father's Mobile</th>
-                      <td className='text-warning fw-bold'>{student.family.fatherMobile}</td>
-                    </tr>
-                  </>
-                )}
-
-                {/* Documents Information */}
-                {student.documents && (
-                  <>
-                    <tr className="table-success">
-                      <th colSpan={4} className="text-center">Documents Status</th>
-                    </tr>
-                    <tr>
-                      <th scope='col'>CNIC Document</th>
-                      <td>
-                        <span className={`badge ${student.documents.cnic ? 'bg-success' : 'bg-danger'}`}>
-                          {student.documents.cnic ? 'Verified' : 'Missing'}
-                        </span>
-                      </td>
-                      <th scope='col'>Marksheet</th>
-                      <td>
-                        <span className={`badge ${student.documents.marksheet ? 'bg-success' : 'bg-danger'}`}>
-                          {student.documents.marksheet ? 'Verified' : 'Missing'}
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope='col'>Photo</th>
-                      <td>
-                        <span className={`badge ${student.documents.photo ? 'bg-success' : 'bg-danger'}`}>
-                          {student.documents.photo ? 'Verified' : 'Missing'}
-                        </span>
-                      </td>
-                      <th scope='col'>Domicile</th>
-                      <td>
-                        <span className={`badge ${student.documents.domicile ? 'bg-success' : 'bg-danger'}`}>
-                          {student.documents.domicile ? 'Verified' : 'Missing'}
-                        </span>
-                      </td>
-                    </tr>
-                  </>
-                )}
-
-                {/* Additional Information */}
-                <tr>
-                  <th scope='col'>Registration No</th>
-                  <td className='text-info fw-bold'>{student.registrationNo || 'N/A'}</td>
-                  <th scope='col'>CGPA</th>
-                  <td className='text-info fw-bold'>
-                    {student.cgpa ? student.cgpa.toFixed(2) : 'N/A'}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope='col'>Created At</th>
-                  <td colSpan={3} className='text-muted'>
-                    {formatDate(student.createdAt)}
-                  </td>
-                </tr>
               </MDBTableBody>
             </MDBTable>
           </MDBCardBody>
         </MDBCard>
       </MDBContainer>
     </div>
-  )
-}
+  );
+};
 
-export default StudentView
+export default StudentView;

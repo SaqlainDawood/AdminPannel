@@ -101,6 +101,9 @@ const StudentList = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(null);
+
+  const getStatusKey = (status) => String(status || "active").trim().toLowerCase();
+
   useEffect(() => {
     const fetchallStudentList = async () => {
       try {
@@ -248,8 +251,8 @@ const filteredStudents = students.filter(student => {
   const matchesSemester = filterSemester === 'all' || studentSemester === filterSemester;
 
   // const matchesSemester = filterSemester === 'all' || student.semester === filterSemester;
-  const studentStatus = student.status || 'Unknown';
-  const matchesStatus = filterStatus === 'all' || studentStatus === filterStatus;
+  const studentStatus = getStatusKey(student.status);
+  const matchesStatus = filterStatus === 'all' || studentStatus === getStatusKey(filterStatus);
 
   // const matchesStatus = filterStatus === 'all' || student.status === filterStatus;
 
@@ -274,7 +277,7 @@ const toggleSelectAll = () => {
   if (selectedStudents.length === currentStudents.length) {
     setSelectedStudents([]);
   } else {
-    setSelectedStudents(currentStudents.map(s => s.id));
+    setSelectedStudents(currentStudents.map(s => s._id));
   }
 };
 
@@ -282,7 +285,14 @@ const toggleSelectAll = () => {
 const exportToCSV = () => {
   const headers = ['Roll No', 'Name', 'Email', 'Phone', 'Department', 'Semester', 'CGPA', 'Status'];
   const csvData = filteredStudents.map(s => [
-    s.rollNo, s.name, s.email, s.phone, s.department, s.semester, s.cgpa, s.status
+    s.rollNo,
+    `${s.firstName || ""} ${s.lastName || ""}`.trim(),
+    s.email || s.user?.email || "",
+    s.phoneNo || "",
+    s.enrollment?.department || s.department || "",
+    s.enrollment?.semester || s.semester || "",
+    s.cgpa ?? "",
+    getStatusKey(s.status)
   ]);
 
   const csvContent = [
@@ -299,59 +309,20 @@ const exportToCSV = () => {
 };
 
 const getStatusBadge = (status) => {
+   const normalizedStatus = getStatusKey(status);
    const statusConfig = {
-    // Your actual database values from schema
-    'active': { 
-      class: 'badge-success', 
-      icon: 'fa-user-check',
-      label: 'Active'
-    },
-    'approved': { 
-      class: 'badge-primary', 
-      icon: 'fa-check',
-      label: 'Approved'
-    },
-    'pending': { 
-      class: 'badge-warning', 
-      icon: 'fa-clock',
-      label: 'Pending'
-    },
-    'assign': { 
-      class: 'badge-info', 
-      icon: 'fa-user-check',
-      label: 'Assigned'
-    },
-    'unassigned': { 
-      class: 'badge-secondary', 
-      icon: 'fa-user-times',
-      label: 'Unassigned'
-    },
-    'rejected': { 
-      class: 'badge-danger', 
-      icon: 'fa-times-circle',
-      label: 'Rejected'
-    },
-    'suspend': { 
-      class: 'badge-dark', 
-      icon: 'fa-pause-circle',
-      label: 'Suspended'
-    },
-    // Fallback for any unexpected status
-    'default': { 
-      class: 'badge-light', 
-      icon: 'fa-question-circle',
-      label: status || 'Unknown'
-    }
+    'active': { class: 'badge-success', icon: 'fa-user-check', label: 'Active' },
+    'approved': { class: 'badge-primary', icon: 'fa-check', label: 'Approved' },
+    'pending': { class: 'badge-warning', icon: 'fa-clock', label: 'Pending' },
+    'assign': { class: 'badge-info', icon: 'fa-user-check', label: 'Assigned' },
+    'unassigned': { class: 'badge-secondary', icon: 'fa-user-times', label: 'Unassigned' },
+    'rejected': { class: 'badge-danger', icon: 'fa-times-circle', label: 'Rejected' },
+    'suspend': { class: 'badge-dark', icon: 'fa-pause-circle', label: 'Suspended' },
+    'suspended': { class: 'badge-dark', icon: 'fa-pause-circle', label: 'Suspended' },
+    'inactive': { class: 'badge-secondary', icon: 'fa-user-slash', label: 'Inactive' },
+    'default': { class: 'badge-light', icon: 'fa-question-circle', label: normalizedStatus || 'Unknown' }
   };
-  const config = statusConfig[status] || statusConfig['default'];
-  
-  // const statusConfig = {
-  //   'Active': { class: 'badge-success', icon: 'fa-check-circle' },
-  //   'Suspended': { class: 'badge-warning', icon: 'fa-exclamation-circle' },
-  //   'Graduated': { class: 'badge-info', icon: 'fa-graduation-cap' },
-  //   'Inactive': { class: 'badge-secondary', icon: 'fa-times-circle' }
-  // };
-  // const config = statusConfig[status] || statusConfig['Active'];
+  const config = statusConfig[normalizedStatus] || statusConfig['default'];
   return (
    <span className={`badge ${config.class} p-2 d-inline-flex align-items-center`}>
       <i className={`fas ${config.icon} me-1`}></i>
@@ -402,7 +373,7 @@ return (
               <i className="fas fa-user-check"></i>
             </div>
             <div className="stat-info">
-              <h3>{students.filter(s => s.status === 'Active').length}</h3>
+              <h3>{students.filter(s => getStatusKey(s.status) === 'active').length}</h3>
               <p>Active Students</p>
             </div>
           </div>
@@ -413,7 +384,7 @@ return (
               <i className="fas fa-exclamation-triangle"></i>
             </div>
             <div className="stat-info">
-              <h3>{students.filter(s => s.status === 'Suspend').length}</h3>
+              <h3>{students.filter(s => ['suspend', 'suspended'].includes(getStatusKey(s.status))).length}</h3>
               <p>Suspended</p>
             </div>
           </div>
