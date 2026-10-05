@@ -61,6 +61,10 @@ export const getTimetableForBatch = (batchId) =>
 export const createTimetableEntry = (body) => unwrap(academicApi.post("/timetable", body));
 export const updateTimetableEntry = (id, body) => unwrap(academicApi.put(`/timetable/${id}`, body));
 export const deleteTimetableEntry = (id) => unwrap(academicApi.delete(`/timetable/${id}`));
+export const getTimetableAvailability = (params = {}) =>
+  academicApi.get("/timetable/availability", { params }).then((res) => res.data);
+export const generateTimetable = (batchId, body = {}) =>
+  academicApi.post(`/timetable/batches/${batchId}/generate`, body).then((res) => res.data);
 export const getTeacherWorkload = (teacherId) =>
   unwrap(academicApi.get(`/timetable/teachers/${teacherId}/workload`));
 
