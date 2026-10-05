@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const normalizeBaseUrl = (value) =>
+  (value || "http://localhost:8000").replace(/\/+$/, "");
+
 const AuthAPI = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_API_URL),
 });
 
 export const loginUser = async (credentials) => {

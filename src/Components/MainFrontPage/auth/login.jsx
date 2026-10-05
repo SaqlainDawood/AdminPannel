@@ -76,10 +76,14 @@ const handleSubmit = async (e) => {
     }
 
     // =========================================
-    // SAVE JWT IN SESSION STORAGE
+    // SAVE JWT IN STORAGE (common keys for all API clients)
     // =========================================
     if (response?.token) {
-      sessionStorage.setItem("token", response.token);
+      const token = response.token;
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("adminToken", token);
+      localStorage.setItem("token", token);
+      localStorage.setItem("adminToken", token);
     }
 
     // =========================================
@@ -87,6 +91,10 @@ const handleSubmit = async (e) => {
     // =========================================
     if (response?.user) {
       sessionStorage.setItem(
+        "user",
+        JSON.stringify(response.user)
+      );
+      localStorage.setItem(
         "user",
         JSON.stringify(response.user)
       );

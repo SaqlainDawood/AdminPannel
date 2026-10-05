@@ -1,8 +1,11 @@
 
 import axios from "axios";
 
+const normalizeBaseUrl = (value) =>
+  (value || "https://backend-project-ums-cmwj.vercel.app").replace(/\/+$/, "");
+
 const DepartmentAPI = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: normalizeBaseUrl(import.meta.env.VITE_API_URL),
 });
 
 // ============================================

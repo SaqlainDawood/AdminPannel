@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './CoordinatorLogin.css';
 
+const API_BASE = (import.meta.env.VITE_API_URL || 'https://backend-project-ums-cmwj.vercel.app').replace(/\/+$/, '');
+
 const CoordinatorLogin = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -32,8 +34,7 @@ const CoordinatorLogin = () => {
     }
 
     try {
-      // Simulate API call - replace with your actual API
-      const response = await fetch('http://localhost:8000/api/coordinator/login', {
+      const response = await fetch(`${API_BASE}/api/coordinator/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ const SystemSett = () => {
           </span>
         </div>
         <div className="text-muted pt-3 border-top" style={{ fontSize: '0.8rem' }}>
-          Backend Gateway: <code>{import.meta.env.VITE_API_URL || 'http://localhost:8000'}</code>
+          Backend Gateway: <code>{import.meta.env.VITE_API_URL || 'https://backend-project-ums-cmwj.vercel.app'}</code>
         </div>
       </div>
     </div>
