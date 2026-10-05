@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* ===================================================================
    UMS Global Design System
    University Management System - Global Styles
@@ -6,26 +8,30 @@
 /* ---- Google Fonts ---- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+
 /* ---- Reset & Base ---- */
-*, *::before, *::after {
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 :root {
   /* Primary Colors */
-  --ums-primary:       #1e3a5f;
-  --ums-primary-mid:   #2d6a9f;
+  --ums-primary: #1e3a5f;
+  --ums-primary-mid: #2d6a9f;
   --ums-primary-light: #3b82c4;
-  --ums-accent:        #0ea5e9;
+  --ums-accent: #0ea5e9;
 
   /* Semantic Colors */
-  --ums-success:  #10b981;
-  --ums-warning:  #f59e0b;
-  --ums-danger:   #ef4444;
-  --ums-info:     #3b82f6;
+  --ums-success: #10b981;
+  --ums-warning: #f59e0b;
+  --ums-danger: #ef4444;
+  --ums-info: #3b82f6;
 
   /* Neutrals */
-  --ums-gray-50:  #f8fafc;
+  --ums-gray-50: #f8fafc;
   --ums-gray-100: #f1f5f9;
   --ums-gray-200: #e2e8f0;
   --ums-gray-300: #cbd5e1;
@@ -40,18 +46,27 @@
   --ums-bg: #f4f6f9;
 
   /* Card */
-  --ums-card-bg:     #ffffff;
+  --ums-card-bg: #ffffff;
   --ums-card-radius: 12px;
-  --ums-card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.06);
+  --ums-card-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.06);
 
   /* Fonts */
-  --ums-font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ums-font-base:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 
   /* Transitions */
   --ums-transition: 0.2s ease;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -67,8 +82,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 /* ---- Typography ---- */
-h1, h2, h3, h4, h5, h6 {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--ums-font-base);
   font-weight: 700;
   line-height: 1.3;
@@ -76,18 +98,17 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
 }
 
+
 /* ===================================================================
    UMS PAGE LAYOUT HELPERS
    =================================================================== */
 
-/* Standard page wrapper used across all sub-pages */
 .ums-page {
   background: var(--ums-bg);
   min-height: 100%;
   padding: 0;
 }
 
-/* Page heading row */
 .ums-page-header {
   display: flex;
   justify-content: space-between;
@@ -126,6 +147,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
 }
 
+
 /* ===================================================================
    UMS CARDS
    =================================================================== */
@@ -162,6 +184,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 20px;
 }
 
+
 /* ===================================================================
    UMS STAT CARDS
    =================================================================== */
@@ -182,12 +205,14 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   gap: 16px;
-  transition: transform var(--ums-transition), box-shadow var(--ums-transition);
+  transition:
+    transform var(--ums-transition),
+    box-shadow var(--ums-transition);
 }
 
 .ums-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .ums-stat-icon {
@@ -202,12 +227,33 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
 }
 
-.ums-stat-icon.primary { background: linear-gradient(135deg, var(--ums-primary-mid), var(--ums-primary-light)); }
-.ums-stat-icon.success { background: linear-gradient(135deg, #059669, #10b981); }
-.ums-stat-icon.warning { background: linear-gradient(135deg, #d97706, #f59e0b); }
-.ums-stat-icon.danger  { background: linear-gradient(135deg, #dc2626, #ef4444); }
-.ums-stat-icon.info    { background: linear-gradient(135deg, #2563eb, #3b82f6); }
-.ums-stat-icon.purple  { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+.ums-stat-icon.primary {
+  background: linear-gradient(
+    135deg,
+    var(--ums-primary-mid),
+    var(--ums-primary-light)
+  );
+}
+
+.ums-stat-icon.success {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+
+.ums-stat-icon.warning {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+
+.ums-stat-icon.danger {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.ums-stat-icon.info {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.ums-stat-icon.purple {
+  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+}
 
 .ums-stat-info h3 {
   font-size: 1.7rem;
@@ -224,11 +270,11 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
 }
 
+
 /* ===================================================================
    UMS BUTTONS
    =================================================================== */
 
-/* Base button reset & shared style */
 .ums-btn {
   display: inline-flex;
   align-items: center;
@@ -246,41 +292,65 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.4;
 }
 
-.ums-btn:focus-visible { outline: 3px solid var(--ums-accent); outline-offset: 2px; }
+.ums-btn:focus-visible {
+  outline: 3px solid var(--ums-accent);
+  outline-offset: 2px;
+}
 
 .ums-btn-primary {
   background: var(--ums-primary-mid);
   color: #fff;
   border-color: var(--ums-primary-mid);
 }
-.ums-btn-primary:hover { background: var(--ums-primary); border-color: var(--ums-primary); color: #fff; }
+
+.ums-btn-primary:hover {
+  background: var(--ums-primary);
+  border-color: var(--ums-primary);
+  color: #fff;
+}
 
 .ums-btn-success {
   background: var(--ums-success);
   color: #fff;
   border-color: var(--ums-success);
 }
-.ums-btn-success:hover { background: #059669; border-color: #059669; color: #fff; }
+
+.ums-btn-success:hover {
+  background: #059669;
+  border-color: #059669;
+  color: #fff;
+}
 
 .ums-btn-danger {
   background: var(--ums-danger);
   color: #fff;
   border-color: var(--ums-danger);
 }
-.ums-btn-danger:hover { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+.ums-btn-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #fff;
+}
 
 .ums-btn-warning {
   background: var(--ums-warning);
   color: #fff;
   border-color: var(--ums-warning);
 }
-.ums-btn-warning:hover { background: #d97706; border-color: #d97706; color: #fff; }
+
+.ums-btn-warning:hover {
+  background: #d97706;
+  border-color: #d97706;
+  color: #fff;
+}
 
 .ums-btn-outline {
   background: transparent;
   color: var(--ums-primary-mid);
   border-color: var(--ums-primary-mid);
 }
+
 .ums-btn-outline:hover {
   background: var(--ums-primary-mid);
   color: #fff;
@@ -291,10 +361,22 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--ums-gray-700);
   border-color: var(--ums-gray-200);
 }
-.ums-btn-ghost:hover { background: var(--ums-gray-200); color: var(--ums-gray-800); }
 
-.ums-btn-sm { padding: 5px 12px; font-size: 0.8rem; }
-.ums-btn-lg { padding: 11px 24px; font-size: 0.95rem; }
+.ums-btn-ghost:hover {
+  background: var(--ums-gray-200);
+  color: var(--ums-gray-800);
+}
+
+.ums-btn-sm {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
+
+.ums-btn-lg {
+  padding: 11px 24px;
+  font-size: 0.95rem;
+}
+
 
 /* ===================================================================
    UMS TABLES
@@ -335,14 +417,20 @@ h1, h2, h3, h4, h5, h6 {
   transition: background var(--ums-transition);
 }
 
-.ums-table tbody tr:hover { background: var(--ums-gray-50); }
-.ums-table tbody tr:last-child { border-bottom: none; }
+.ums-table tbody tr:hover {
+  background: var(--ums-gray-50);
+}
+
+.ums-table tbody tr:last-child {
+  border-bottom: none;
+}
 
 .ums-table td {
   padding: 12px 16px;
   color: var(--ums-gray-700);
   vertical-align: middle;
 }
+
 
 /* ===================================================================
    UMS BADGES
@@ -360,13 +448,41 @@ h1, h2, h3, h4, h5, h6 {
   white-space: nowrap;
 }
 
-.ums-badge-success  { background: #d1fae5; color: #065f46; }
-.ums-badge-warning  { background: #fef3c7; color: #92400e; }
-.ums-badge-danger   { background: #fee2e2; color: #991b1b; }
-.ums-badge-info     { background: #dbeafe; color: #1e40af; }
-.ums-badge-primary  { background: #dbeafe; color: #1e3a5f; }
-.ums-badge-secondary{ background: var(--ums-gray-100); color: var(--ums-gray-600); }
-.ums-badge-dark     { background: var(--ums-gray-800); color: #fff; }
+.ums-badge-success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.ums-badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ums-badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.ums-badge-info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.ums-badge-primary {
+  background: #dbeafe;
+  color: #1e3a5f;
+}
+
+.ums-badge-secondary {
+  background: var(--ums-gray-100);
+  color: var(--ums-gray-600);
+}
+
+.ums-badge-dark {
+  background: var(--ums-gray-800);
+  color: #fff;
+}
+
 
 /* ===================================================================
    UMS FORMS
@@ -389,23 +505,29 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.88rem;
   color: var(--ums-gray-800);
   background: #fff;
-  transition: border-color var(--ums-transition), box-shadow var(--ums-transition);
+  transition:
+    border-color var(--ums-transition),
+    box-shadow var(--ums-transition);
   outline: none;
 }
 
 .ums-form-control:focus {
   border-color: var(--ums-primary-light);
-  box-shadow: 0 0 0 3px rgba(59,130,196,0.15);
+  box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.15);
 }
 
-.ums-form-control::placeholder { color: var(--ums-gray-400); }
+.ums-form-control::placeholder {
+  color: var(--ums-gray-400);
+}
 
 .ums-form-control.is-invalid {
   border-color: var(--ums-danger);
-  box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
 }
 
+
 /* Search input with icon */
+
 .ums-search-box {
   position: relative;
   display: flex;
@@ -424,8 +546,9 @@ h1, h2, h3, h4, h5, h6 {
   padding-left: 36px;
 }
 
+
 /* ===================================================================
-   UMS ACTION BUTTONS (table row actions)
+   UMS ACTION BUTTONS
    =================================================================== */
 
 .ums-action-group {
@@ -454,17 +577,46 @@ h1, h2, h3, h4, h5, h6 {
   cursor: not-allowed;
 }
 
-.ums-action-btn-view   { background: #dbeafe; color: #1d4ed8; }
-.ums-action-btn-view:hover   { background: #1d4ed8; color: #fff; }
+.ums-action-btn-view {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
 
-.ums-action-btn-edit   { background: #dcfce7; color: #15803d; }
-.ums-action-btn-edit:hover   { background: #15803d; color: #fff; }
+.ums-action-btn-view:hover {
+  background: #1d4ed8;
+  color: #fff;
+}
 
-.ums-action-btn-delete { background: #fee2e2; color: #dc2626; }
-.ums-action-btn-delete:hover { background: #dc2626; color: #fff; }
+.ums-action-btn-edit {
+  background: #dcfce7;
+  color: #15803d;
+}
 
-.ums-action-btn-warn   { background: #fef3c7; color: #b45309; }
-.ums-action-btn-warn:hover   { background: #b45309; color: #fff; }
+.ums-action-btn-edit:hover {
+  background: #15803d;
+  color: #fff;
+}
+
+.ums-action-btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.ums-action-btn-delete:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+.ums-action-btn-warn {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.ums-action-btn-warn:hover {
+  background: #b45309;
+  color: #fff;
+}
+
 
 /* ===================================================================
    UMS LOADING STATE
@@ -489,7 +641,12 @@ h1, h2, h3, h4, h5, h6 {
   animation: ums-spin 0.8s linear infinite;
 }
 
-@keyframes ums-spin { to { transform: rotate(360deg); } }
+@keyframes ums-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* ===================================================================
    UMS EMPTY STATE
@@ -505,8 +662,16 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-.ums-empty i { font-size: 2.5rem; margin-bottom: 1rem; }
-.ums-empty p { font-size: 0.9rem; margin: 0; }
+.ums-empty i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.ums-empty p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 
 /* ===================================================================
    UMS MODALS
@@ -515,7 +680,7 @@ h1, h2, h3, h4, h5, h6 {
 .modal-content {
   border-radius: 14px !important;
   border: none !important;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
   font-family: var(--ums-font-base) !important;
 }
 
@@ -543,6 +708,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0 0 14px 14px !important;
   gap: 8px;
 }
+
 
 /* ===================================================================
    UMS PAGINATION
@@ -598,7 +764,11 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-.ums-page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ums-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 
 /* ===================================================================
    UMS FILTER ROW / SEARCH SECTION
@@ -616,6 +786,7 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
   min-width: 200px;
 }
+
 
 /* ===================================================================
    RESPONSIVE HELPERS
@@ -656,6 +827,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+
 /* ===================================================================
    PRINT / UTILITIES
    =================================================================== */
@@ -667,31 +839,37 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 200px;
 }
 
+
 /* Override MDB / Bootstrap button consistency */
-.btn-primary, .btn-outline-primary {
+
+.btn-primary,
+.btn-outline-primary {
   --bs-btn-border-radius: 8px;
 }
 
+
 /* Prevent horizontal overflow globally */
+
 .main-content,
 .main-content * {
   max-width: 100%;
 }
 
+
 /* Table cells don't overflow */
-td, th {
+
+td,
+th {
   word-break: break-word;
 }
 
+
 /* ===================================================================
    GLOBAL PAGE CONTAINER OVERRIDES
-   Override old purple/indigo full-page gradients across all pages.
-   These are all the page-level container classes that used the
-   old #667eea → #764ba2 gradient as a page background.
-   Now pages live INSIDE the sidebar layout, so they need transparent/neutral bg.
    =================================================================== */
 
 /* Student Management */
+
 .student-list-container,
 .student-assign-container,
 .student-approvals-container,
@@ -701,7 +879,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Faculty Management */
+
 .faculty-list-container,
 .faculty-add-container,
 .faculty-update-container,
@@ -711,7 +891,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Coordinators */
+
 .cood-list-container,
 .cood-add-container,
 .cood-update-container {
@@ -720,7 +902,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Student Enrolment */
+
 .department-page,
 .campus-page,
 .degree-classes-page,
@@ -731,7 +915,9 @@ td, th {
   min-height: auto !important;
 }
 
+
 /* Classes */
+
 .class-list-container,
 .create-class-container,
 .class-details-container,
@@ -742,7 +928,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Fee Management */
+
 .fee-management-container,
 .fee-verify-container,
 .fee-config-container,
@@ -753,7 +941,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Attendance */
+
 .attendance-container,
 .attendance-overview,
 .attendance-by-course,
@@ -764,7 +954,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Examination */
+
 .exam-container,
 .exam-announcements,
 .exam-datesheets,
@@ -774,7 +966,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Jobs / CMS */
+
 .job-posting-container,
 .jobs-container,
 .staff-applications-container,
@@ -784,7 +978,9 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* Books & Settings */
+
 .books-container,
 .settings-container,
 .admin-profile-container,
@@ -795,23 +991,22 @@ td, th {
   padding: 0 !important;
 }
 
+
 /* ===================================================================
    PAGE CONTENT SPACING
-   All direct children of the outlet padding wrapper get standard spacing
    =================================================================== */
 
-/* The outlet content area provides 1.5rem padding, so nested containers
-   that had their own padding are balanced */
 .content-card,
 .main-card,
 .card.border-0.shadow-lg {
   border-radius: 12px !important;
 }
 
+
 /* ===================================================================
    CONSISTENT BUTTON SIZING OVERRIDES
-   Make sure btn-sm and btn-lg have consistent border-radius
    =================================================================== */
+
 .btn {
   border-radius: 8px;
   font-weight: 500;
@@ -819,32 +1014,42 @@ td, th {
   transition: all 0.2s ease;
 }
 
-.btn-sm { font-size: 0.82rem; }
-.btn-lg { font-size: 0.95rem; }
+.btn-sm {
+  font-size: 0.82rem;
+}
 
-/* Better MDB/Bootstrap button colors that match our palette */
+.btn-lg {
+  font-size: 0.95rem;
+}
+
+
+/* Better MDB/Bootstrap button colors */
+
 .btn-primary {
   background-color: var(--ums-primary-mid) !important;
   border-color: var(--ums-primary-mid) !important;
 }
+
 .btn-primary:hover {
   background-color: var(--ums-primary) !important;
   border-color: var(--ums-primary) !important;
 }
+
 .btn-outline-primary {
   color: var(--ums-primary-mid) !important;
   border-color: var(--ums-primary-mid) !important;
 }
+
 .btn-outline-primary:hover {
   background-color: var(--ums-primary-mid) !important;
   color: #fff !important;
 }
 
+
 /* ===================================================================
    TABLE IMPROVEMENTS GLOBALLY
    =================================================================== */
 
-/* All tables in the app get a consistent horizontal scroll wrapper */
 .table-responsive {
   border-radius: 10px;
   border: 1px solid var(--ums-gray-200);
@@ -852,7 +1057,6 @@ td, th {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Header row consistent */
 table thead th {
   font-size: 0.78rem !important;
   font-weight: 700 !important;
@@ -871,11 +1075,11 @@ table tbody tr:hover {
   background-color: var(--ums-gray-50) !important;
 }
 
+
 /* ===================================================================
    FORM CONSISTENCY
    =================================================================== */
 
-/* Ensure all form controls have consistent focus colors */
 .form-control:focus,
 .form-select:focus {
   border-color: var(--ums-primary-light) !important;
@@ -883,7 +1087,6 @@ table tbody tr:hover {
   outline: none !important;
 }
 
-/* Labels */
 .form-label {
   font-weight: 600;
   font-size: 0.84rem;
@@ -891,15 +1094,18 @@ table tbody tr:hover {
   margin-bottom: 5px;
 }
 
+
 /* ===================================================================
    BADGE CONSISTENCY
    =================================================================== */
+
 .badge {
   border-radius: 20px;
   font-weight: 600;
   padding: 4px 10px;
   font-size: 0.75rem;
 }
+
 
 /* ===================================================================
    SEARCH BOX CONSISTENCY
@@ -924,43 +1130,43 @@ table tbody tr:hover {
   border-radius: 8px !important;
   border: 1.5px solid var(--ums-gray-300) !important;
   font-size: 0.88rem !important;
-  transition: border-color 0.2s, box-shadow 0.2s !important;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s !important;
 }
 
 .search-box input:focus {
   border-color: var(--ums-primary-light) !important;
-  box-shadow: 0 0 0 3px rgba(59,130,196,0.12) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.12) !important;
   outline: none !important;
 }
+
 
 /* ===================================================================
    MOBILE OVERFLOW FIX
    =================================================================== */
 
 @media (max-width: 768px) {
-  /* Any page-level container */
   [class*="-container"],
   [class*="-page"],
   [class*="-wrapper"] {
     overflow-x: hidden;
   }
 
-  /* Header action buttons stack on mobile */
   .header-actions,
   .page-actions {
     flex-wrap: wrap;
     width: 100%;
   }
 
-  /* Stat cards 2-column on mobile */
   .row.g-3.mb-4 .col-6 {
     flex: 0 0 50%;
     max-width: 50%;
   }
 }
 
+
 @media (max-width: 480px) {
-  /* Single column stat cards on very small screens */
   .stat-card-small {
     flex-direction: row !important;
     gap: 12px !important;
