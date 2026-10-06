@@ -76,6 +76,25 @@ const Batch = () => {
     item?.campus ||
     "";
 
+  /* Batch -> campus (batch.departmentId.campusId se bhi) */
+  const getBatchCampusId = (batch) =>
+    getCampusId(batch) || getCampusId(batch?.departmentId);
+
+  const getBatchCampusName = (batch) =>
+    batch?.campusId?.name ||
+    batch?.campus?.name ||
+    batch?.departmentId?.campusId?.name ||
+    "";
+
+  const termOrder = { Spring: 0, Fall: 1 };
+
+  const sortSessions = (list) =>
+    [...list].sort(
+      (a, b) =>
+        Number(a.year) - Number(b.year) ||
+        (termOrder[a.term] ?? 0) - (termOrder[b.term] ?? 0)
+    );
+
   /* =====================================================
      MAIN DATA
   ===================================================== */
@@ -123,13 +142,7 @@ const Batch = () => {
   /* =====================================================
      ADD / EDIT FORM
 
-     Campus
-       ↓
-     Department
-       ↓
-     Degree Class
-       ↓
-     Starting Session
+     Campus -> Department -> Degree Class -> Starting Session (auto)
   ===================================================== */
 
   const emptyForm = {
@@ -188,8 +201,6 @@ const Batch = () => {
           getSessions(),
         ]);
 
-  
-
       const campusData = Array.isArray(campusResponse?.data)
         ? campusResponse.data
         : [];
@@ -206,10 +217,10 @@ const Batch = () => {
         ? sessionResponse.data
         : [];
 
-      setCampuses(Array.isArray(campusData) ? campusData : []);
-      setDepartments(Array.isArray(departmentData) ? departmentData : []);
-      setDegreeClasses(Array.isArray(classData) ? classData : []);
-      setSessions(Array.isArray(sessionData) ? sessionData : []);
+      setCampuses(campusData);
+      setDepartments(departmentData);
+      setDegreeClasses(classData);
+      setSessions(sessionData);
     } catch (err) {
       console.error("Fetch batch form data error:", err);
       setFormError(getErrorMessage(err));
@@ -229,8 +240,6 @@ const Batch = () => {
 
   /* =====================================================
      DEPARTMENTS BY CAMPUS
-
-     Campus -> Department
   ===================================================== */
 
   const filteredDepartments = useMemo(() => {
@@ -244,8 +253,6 @@ const Batch = () => {
 
   /* =====================================================
      DEGREE CLASSES BY DEPARTMENT
-
-     Department -> Degree Class
   ===================================================== */
 
   const filteredDegreeClasses = useMemo(() => {
@@ -258,46 +265,79 @@ const Batch = () => {
   }, [degreeClasses, formData.departmentId]);
 
   /* =====================================================
-     SESSION LIST
+     SESSIONS (ADD / EDIT FORM)
+     Sirf selected degree class ke sessions
   ===================================================== */
 
   const availableSessions = useMemo(() => {
-    return [...sessions].sort(
-      (a, b) => new Date(a.startDate) - new Date(b.startDate)
+    if (!formData.degreeClassId) return [];
+
+    return sortSessions(
+      sessions.filter(
+        (s) => String(getDegreeClassId(s)) === String(formData.degreeClassId)
+      )
     );
-  }, [sessions]);
+  }, [sessions, formData.degreeClassId]);
 
   /* =====================================================
-     SELECTED CLASS
+     SESSIONS (ADVANCE MODAL)
+     Sirf batch ki degree class ke sessions
+  ===================================================== */
+
+  const advanceSessions = useMemo(() => {
+    if (!advancingBatch) return [];
+
+    const classId = getDegreeClassId(advancingBatch);
+
+    return sortSessions(
+      sessions.filter(
+        (s) => String(getDegreeClassId(s)) === String(classId)
+      )
+    );
+  }, [sessions, advancingBatch]);
+
+  /* =====================================================
+     SELECTED ITEMS
   ===================================================== */
 
   const selectedClass = degreeClasses.find(
     (item) => String(getId(item)) === String(formData.degreeClassId)
   );
 
-  /* =====================================================
-     SELECTED SESSION
-  ===================================================== */
-
   const selectedSession = sessions.find(
     (item) => String(getId(item)) === String(formData.startSessionId)
   );
-
-  /* =====================================================
-     SELECTED CAMPUS
-  ===================================================== */
 
   const selectedCampus = campuses.find(
     (item) => String(getId(item)) === String(formData.campusId)
   );
 
-  /* =====================================================
-     SELECTED DEPARTMENT
-  ===================================================== */
-
   const selectedDepartment = departments.find(
     (item) => String(getId(item)) === String(formData.departmentId)
   );
+
+  /* =====================================================
+     AUTO SELECT STARTING SESSION
+     Class select hote hi earliest session khud select ho jaye
+     (backend bhi earliest hi auto-pick karta hai)
+  ===================================================== */
+
+  useEffect(() => {
+    if (editingBatch) return;
+    if (!formData.degreeClassId || formData.startSessionId) return;
+
+    if (availableSessions.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        startSessionId: getId(availableSessions[0]),
+      }));
+    }
+  }, [
+    formData.degreeClassId,
+    formData.startSessionId,
+    availableSessions,
+    editingBatch,
+  ]);
 
   /* =====================================================
      BATCH NAME PREVIEW
@@ -317,10 +357,6 @@ const Batch = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
 
-    /* -----------------------------------------------
-       CAMPUS CHANGED
-    ----------------------------------------------- */
-
     if (name === "campusId") {
       setFormData((prev) => ({
         ...prev,
@@ -332,10 +368,6 @@ const Batch = () => {
       return;
     }
 
-    /* -----------------------------------------------
-       DEPARTMENT CHANGED
-    ----------------------------------------------- */
-
     if (name === "departmentId") {
       setFormData((prev) => ({
         ...prev,
@@ -346,10 +378,6 @@ const Batch = () => {
       return;
     }
 
-    /* -----------------------------------------------
-       DEGREE CLASS CHANGED
-    ----------------------------------------------- */
-
     if (name === "degreeClassId") {
       setFormData((prev) => ({
         ...prev,
@@ -358,10 +386,6 @@ const Batch = () => {
       }));
       return;
     }
-
-    /* -----------------------------------------------
-       OTHER
-    ----------------------------------------------- */
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -382,7 +406,7 @@ const Batch = () => {
   ===================================================== */
 
   const handleEdit = (batch) => {
-    const campusId = getCampusId(batch);
+    const campusId = getBatchCampusId(batch);
     const departmentId = getDepartmentId(batch);
     const degreeClassId = getDegreeClassId(batch);
     const startSessionId = getId(batch.startSessionId);
@@ -401,7 +425,9 @@ const Batch = () => {
     if (!formData.campusId) return "Please select a campus.";
     if (!formData.departmentId) return "Please select a department.";
     if (!formData.degreeClassId) return "Please select a degree class.";
-    if (!formData.startSessionId) return "Please select a starting session.";
+    if (!formData.startSessionId) {
+      return "No starting session found for this class. Please create a session first.";
+    }
     return "";
   };
 
@@ -419,10 +445,6 @@ const Batch = () => {
       return;
     }
 
-    /* -----------------------------------------------
-       BACKEND PAYLOAD
-    ----------------------------------------------- */
-
     const payload = {
       campusId: formData.campusId,
       departmentId: formData.departmentId,
@@ -433,10 +455,6 @@ const Batch = () => {
     try {
       setSubmitting(true);
 
-      /* -------------------------------------------
-         UPDATE
-      -------------------------------------------- */
-
       if (editingBatch) {
         const batchId = getId(editingBatch);
         await updateBatch(batchId, payload);
@@ -444,10 +462,6 @@ const Batch = () => {
         closeModal();
         return;
       }
-
-      /* -------------------------------------------
-         CREATE
-      -------------------------------------------- */
 
       await createBatch(payload);
       await fetchBatches();
@@ -471,6 +485,19 @@ const Batch = () => {
     setEditingBatch(null);
     setFormData({ ...emptyForm });
     setFormError("");
+  };
+
+  /* =====================================================
+     BATCH NAME
+  ===================================================== */
+
+  const getBatchName = (batch) => {
+    if (batch?.name) return batch.name;
+
+    const classCode = batch?.degreeClassId?.code || "Batch";
+    const year = batch?.startSessionId?.year || "";
+
+    return `${classCode}-${year}`;
   };
 
   /* =====================================================
@@ -525,7 +552,7 @@ const Batch = () => {
   };
 
   /* =====================================================
-     OPEN ADVANCE
+     OPEN / CLOSE ADVANCE
   ===================================================== */
 
   const handleOpenAdvance = async (batch) => {
@@ -535,10 +562,6 @@ const Batch = () => {
 
     await loadSemesterInfo(getId(batch));
   };
-
-  /* =====================================================
-     CLOSE ADVANCE
-  ===================================================== */
 
   const closeAdvance = () => {
     if (advancingId) return;
@@ -588,19 +611,6 @@ const Batch = () => {
   };
 
   /* =====================================================
-     BATCH NAME
-  ===================================================== */
-
-  const getBatchName = (batch) => {
-    if (batch?.name) return batch.name;
-
-    const classCode = batch?.degreeClassId?.code || "Batch";
-    const year = batch?.startSessionId?.year || "";
-
-    return `${classCode}-${year}`;
-  };
-
-  /* =====================================================
      FILTER BATCHES
   ===================================================== */
 
@@ -609,7 +619,7 @@ const Batch = () => {
 
     return batches.filter((batch) => {
       const name = getBatchName(batch);
-      const campusName = batch?.campusId?.name || batch?.campus?.name || "";
+      const campusName = getBatchCampusName(batch);
       const departmentName = batch?.departmentId?.name || "";
       const className = batch?.degreeClassId?.name || "";
       const shiftName = batch?.shiftId?.name || "";
@@ -658,7 +668,7 @@ const Batch = () => {
 
   const totalBatches = batches.length;
   const activeBatches = batches.filter(
-    (batch) => batch.status === "ongoing"
+    (batch) => batch.status === "active"
   ).length;
   const completedBatches = batches.filter(
     (batch) => batch.status === "completed"
@@ -670,9 +680,7 @@ const Batch = () => {
 
   return (
     <div className="batches-page">
-      {/* =================================================
-          HEADER
-      ================================================= */}
+      {/* HEADER */}
 
       <div className="batches-header">
         <div className="batch-title-section">
@@ -682,9 +690,7 @@ const Batch = () => {
 
           <div>
             <h1>Student Batches</h1>
-            <p>
-              Manage academic batches, cohorts and semester progression
-            </p>
+            <p>Manage academic batches, cohorts and semester progression</p>
           </div>
         </div>
 
@@ -694,9 +700,7 @@ const Batch = () => {
         </button>
       </div>
 
-      {/* =================================================
-          ERROR
-      ================================================= */}
+      {/* ERROR */}
 
       {error && (
         <div className="batch-page-error">
@@ -708,9 +712,7 @@ const Batch = () => {
         </div>
       )}
 
-      {/* =================================================
-          STATS
-      ================================================= */}
+      {/* STATS */}
 
       <div className="batch-stats">
         <div className="batch-stat-card">
@@ -747,9 +749,7 @@ const Batch = () => {
         </div>
       </div>
 
-      {/* =================================================
-          TOOLBAR
-      ================================================= */}
+      {/* TOOLBAR */}
 
       <div className="batches-toolbar">
         <div className="batch-search">
@@ -781,7 +781,7 @@ const Batch = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="all">All Status</option>
-          <option value="ongoing">Ongoing</option>
+          <option value="active">Ongoing</option>
           <option value="completed">Completed</option>
         </select>
 
@@ -790,185 +790,218 @@ const Batch = () => {
         </span>
       </div>
 
-      {/* =================================================
-          TABLE
-      ================================================= */}
+      {/* TABLE */}
 
-      <div className="batches-table-card">
-        <div className="batches-table-wrapper">
-          <table className="batches-table">
-            <thead>
-              <tr>
-                <th>BATCH</th>
-                <th>DEPARTMENT</th>
-                <th>DEGREE CLASS</th>
-                <th>SHIFT</th>
-                <th>START SESSION</th>
-                <th>SEMESTER</th>
-                <th>STATUS</th>
-                <th>ACTIONS</th>
+     {/* TABLE */}
+
+<div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div className="overflow-x-auto">
+    <table className="w-full min-w-[1000px] border-collapse text-left">
+      <thead>
+        <tr className="border-b border-slate-200 bg-slate-50">
+          {[
+            "Batch",
+            "Department",
+            "Degree Class",
+            "Shift",
+            "Start Session",
+            "Semester",
+            "Status",
+            "Actions",
+          ].map((head) => (
+            <th
+              key={head}
+              className={`whitespace-nowrap px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-500 ${
+                head === "Actions" ? "text-right" : ""
+              }`}
+            >
+              {head}
+            </th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody className="divide-y divide-slate-100">
+        {loading ? (
+          <tr>
+            <td colSpan="8" className="px-5 py-16">
+              <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
+                <FaSpinner className="animate-spin text-indigo-600" size={32} />
+                <p className="text-sm">Loading batches...</p>
+              </div>
+            </td>
+          </tr>
+        ) : filteredBatches.length > 0 ? (
+          filteredBatches.map((batch) => {
+            const batchId = getId(batch);
+            const isCompleted = batch.status === "completed";
+
+            const startSem = Number(batch?.degreeClassId?.startSemester) || 1;
+            const total = Number(batch.totalSemesters) || 0;
+            const current = Number(batch.currentSemester) || startSem;
+            const done = Math.min(Math.max(current - startSem + 1, 0), total || 1);
+            const percent = total ? Math.round((done / total) * 100) : 0;
+
+            return (
+              <tr key={batchId} className="transition-colors hover:bg-slate-50/70">
+                {/* BATCH */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600">
+                      {(batch?.degreeClassId?.code || "BA")
+                        .substring(0, 2)
+                        .toUpperCase()}
+                    </div>
+                    <span className="text-sm font-semibold text-slate-900">
+                      {getBatchName(batch)}
+                    </span>
+                  </div>
+                </td>
+
+                {/* DEPARTMENT */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <Building2 size={15} className="shrink-0 text-slate-400" />
+                    <span>{batch?.departmentId?.name || "-"}</span>
+                  </div>
+                </td>
+
+                {/* DEGREE CLASS */}
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className="whitespace-nowrap text-sm font-medium text-slate-800">
+                      {batch?.degreeClassId?.name || "-"}
+                    </span>
+                    {batch?.degreeClassId?.code && (
+                      <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] font-semibold text-slate-500">
+                        {batch.degreeClassId.code}
+                      </span>
+                    )}
+                  </div>
+                </td>
+
+                {/* SHIFT */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+                    <Clock3 size={13} />
+                    {batch?.shiftId?.name || "-"}
+                  </span>
+                </td>
+
+                {/* START SESSION */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <CalendarDays size={15} className="shrink-0 text-slate-400" />
+                    <span>{batch?.startSessionId?.name || "-"}</span>
+                  </div>
+                </td>
+
+                {/* SEMESTER */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <div className="w-36">
+                    <div className="mb-1.5 flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-700">
+                        Semester {current}
+                      </span>
+                      <span className="text-slate-400">
+                        {done}/{total || "-"}
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          isCompleted ? "bg-purple-500" : "bg-indigo-500"
+                        }`}
+                        style={{ width: `${isCompleted ? 100 : percent}%` }}
+                      />
+                    </div>
+                  </div>
+                </td>
+
+                {/* STATUS */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+                      isCompleted
+                        ? "bg-purple-50 text-purple-700"
+                        : "bg-emerald-50 text-emerald-700"
+                    }`}
+                  >
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        isCompleted ? "bg-purple-500" : "bg-emerald-500"
+                      }`}
+                    />
+                    {isCompleted ? "Completed" : "Ongoing"}
+                  </span>
+                </td>
+
+                {/* ACTIONS */}
+                <td className="whitespace-nowrap px-5 py-4">
+                  <div className="flex items-center justify-end gap-1.5">
+                    <button
+                      title="View"
+                      onClick={() => handleView(batch)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                    >
+                      <Eye size={16} />
+                    </button>
+
+                    <button
+                      title="Advance"
+                      disabled={isCompleted}
+                      onClick={() => handleOpenAdvance(batch)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-500"
+                    >
+                      <ArrowRight size={16} />
+                    </button>
+
+                    <button
+                      title="Edit"
+                      onClick={() => handleEdit(batch)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      title="Delete"
+                      disabled={deletingId === batchId}
+                      onClick={() => handleDelete(batch)}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+                    >
+                      {deletingId === batchId ? (
+                        <FaSpinner className="animate-spin" size={15} />
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="8">
-                    <div className="batch-loading">
-                      <FaSpinner className="batch-spinner-icon" size={38} />
-                      <p>Loading batches...</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : filteredBatches.length > 0 ? (
-                filteredBatches.map((batch) => {
-                  const batchId = getId(batch);
-
-                  return (
-                    <tr key={batchId}>
-                      {/* BATCH */}
-
-                      <td>
-                        <div className="batch-name-cell">
-                          <div className="batch-avatar">
-                            {(batch?.degreeClassId?.code || "BA")
-                              .substring(0, 2)
-                              .toUpperCase()}
-                          </div>
-
-                          <div>
-                            <strong>{getBatchName(batch)}</strong>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* DEPARTMENT */}
-
-                      <td>
-                        <div className="batch-info-cell">
-                          <Building2 size={15} />
-                          <span>{batch?.departmentId?.name || "-"}</span>
-                        </div>
-                      </td>
-
-                      {/* CLASS */}
-
-                      <td>
-                        <div>
-                          <strong>{batch?.degreeClassId?.name || "-"}</strong>
-                          <small className="batch-code">
-                            {batch?.degreeClassId?.code || ""}
-                          </small>
-                        </div>
-                      </td>
-
-                      {/* SHIFT */}
-
-                      <td>
-                        <span className="shift-badge">
-                          <Clock3 size={14} />
-                          {batch?.shiftId?.name || "-"}
-                        </span>
-                      </td>
-
-                      {/* SESSION */}
-
-                      <td>
-                        <div className="batch-info-cell">
-                          <CalendarDays size={15} />
-                          <span>{batch?.startSessionId?.name || "-"}</span>
-                        </div>
-                      </td>
-
-                      {/* SEMESTER */}
-
-                      <td>
-                        <span className="semester-badge">
-                          Semester {batch.currentSemester || 1}/
-                          {batch.totalSemesters || "-"}
-                        </span>
-                      </td>
-
-                      {/* STATUS */}
-
-                      <td>
-                        <span
-                          className={`batch-status ${
-                            batch.status === "completed"
-                              ? "completed"
-                              : "active"
-                          }`}
-                        >
-                          {batch.status === "completed"
-                            ? "Completed"
-                            : "Ongoing"}
-                        </span>
-                      </td>
-
-                      {/* ACTIONS */}
-
-                      <td>
-                        <div className="batch-actions">
-                          <button
-                            className="batch-view-btn"
-                            title="View"
-                            onClick={() => handleView(batch)}
-                          >
-                            <Eye size={16} />
-                          </button>
-
-                          <button
-                            className="batch-advance-btn"
-                            title="Advance"
-                            disabled={batch.status === "completed"}
-                            onClick={() => handleOpenAdvance(batch)}
-                          >
-                            <ArrowRight size={16} />
-                          </button>
-
-                          <button
-                            className="batch-edit-btn"
-                            title="Edit"
-                            onClick={() => handleEdit(batch)}
-                          >
-                            <Pencil size={16} />
-                          </button>
-
-                          <button
-                            className="batch-delete-btn"
-                            title="Delete"
-                            disabled={deletingId === batchId}
-                            onClick={() => handleDelete(batch)}
-                          >
-                            {deletingId === batchId ? (
-                              <FaSpinner
-                                className="button-spinner-icon"
-                                size={15}
-                              />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="8">
-                    <div className="batch-empty">
-                      <GraduationCap size={45} />
-                      <h3>No batches found</h3>
-                      <p>Create a batch to get started.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            );
+          })
+        ) : (
+          <tr>
+            <td colSpan="8" className="px-5 py-16">
+              <div className="flex flex-col items-center justify-center gap-2 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                  <GraduationCap size={28} />
+                </div>
+                <h3 className="text-base font-semibold text-slate-800">
+                  No batches found
+                </h3>
+                <p className="text-sm text-slate-500">
+                  Create a batch to get started.
+                </p>
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
 
       {/* =================================================
           ADD / EDIT MODAL
@@ -1008,9 +1041,7 @@ const Batch = () => {
                 </div>
               ) : (
                 <>
-                  {/* =================================
-                       CAMPUS
-                  ================================= */}
+                  {/* CAMPUS */}
 
                   <div className="batch-form-group">
                     <label>Campus</label>
@@ -1039,9 +1070,7 @@ const Batch = () => {
                     </div>
                   </div>
 
-                  {/* =================================
-                       DEPARTMENT
-                  ================================= */}
+                  {/* DEPARTMENT */}
 
                   <div className="batch-form-group">
                     <label>Department</label>
@@ -1074,9 +1103,7 @@ const Batch = () => {
                     </div>
                   </div>
 
-                  {/* =================================
-                       DEGREE CLASS
-                  ================================= */}
+                  {/* DEGREE CLASS */}
 
                   <div className="batch-form-group">
                     <label>Degree Class</label>
@@ -1109,12 +1136,13 @@ const Batch = () => {
                     </div>
                   </div>
 
-                  {/* =================================
-                       STARTING SESSION
-                  ================================= */}
+                  {/* STARTING SESSION (AUTO) */}
 
                   <div className="batch-form-group">
-                    <label>Starting Session</label>
+                    <label>
+                      Starting Session
+                      <span className="optional-label">Auto</span>
+                    </label>
 
                     <div className="batch-input-with-icon">
                       <CalendarDays size={17} />
@@ -1130,7 +1158,7 @@ const Batch = () => {
                           {!formData.degreeClassId
                             ? "Select degree class first"
                             : availableSessions.length === 0
-                            ? "No sessions found"
+                            ? "No sessions found for this class"
                             : "Select Starting Session"}
                         </option>
 
@@ -1143,13 +1171,13 @@ const Batch = () => {
                     </div>
 
                     <small className="batch-field-help">
-                      Session is the academic period in which this batch starts.
+                      {formData.degreeClassId && availableSessions.length === 0
+                        ? "Is class ka koi session nahi hai. Pehle Session create karo."
+                        : "Class select karne par starting session automatic select hota hai. Zaroorat ho to change kar sakte ho."}
                     </small>
                   </div>
 
-                  {/* =================================
-                       NAME PREVIEW
-                  ================================= */}
+                  {/* NAME PREVIEW */}
 
                   <div className="batch-preview-box">
                     <div>
@@ -1165,9 +1193,7 @@ const Batch = () => {
                     </small>
                   </div>
 
-                  {/* =================================
-                       HIERARCHY SUMMARY
-                  ================================= */}
+                  {/* HIERARCHY SUMMARY */}
 
                   {formData.campusId &&
                     formData.departmentId &&
@@ -1196,9 +1222,7 @@ const Batch = () => {
                       </div>
                     )}
 
-                  {/* =================================
-                       ACTIONS
-                  ================================= */}
+                  {/* ACTIONS */}
 
                   <div className="batch-modal-actions">
                     <button
@@ -1264,9 +1288,7 @@ const Batch = () => {
 
               <div className="batch-view-hero">
                 <div className="batch-view-avatar">
-                  {getBatchName(viewingBatch)
-                    .substring(0, 2)
-                    .toUpperCase()}
+                  {getBatchName(viewingBatch).substring(0, 2).toUpperCase()}
                 </div>
 
                 <div>
@@ -1284,11 +1306,7 @@ const Batch = () => {
               <div className="batch-detail-grid">
                 <div className="batch-detail-item">
                   <span>Campus</span>
-                  <strong>
-                    {viewingBatch?.campusId?.name ||
-                      viewingBatch?.campus?.name ||
-                      "-"}
-                  </strong>
+                  <strong>{getBatchCampusName(viewingBatch) || "-"}</strong>
                 </div>
 
                 <div className="batch-detail-item">
@@ -1305,9 +1323,6 @@ const Batch = () => {
                   <span>Class Code</span>
                   <strong>{viewingBatch?.degreeClassId?.code || "-"}</strong>
                 </div>
-
-                {/* Keep existing data display
-                    if backend still returns it */}
 
                 <div className="batch-detail-item">
                   <span>Shift</span>
@@ -1447,7 +1462,7 @@ const Batch = () => {
                 <div className="advance-semester-info">
                   <div className="advance-info-card">
                     <span>Current</span>
-                    <strong>{semesterInfo.current || "-"}</strong>
+                    <strong>{semesterInfo.currentSemester || "-"}</strong>
                   </div>
 
                   <div className="advance-info-card">
@@ -1496,7 +1511,7 @@ const Batch = () => {
                       Automatic — use next chronological session
                     </option>
 
-                    {availableSessions.map((session) => (
+                    {advanceSessions.map((session) => (
                       <option key={getId(session)} value={getId(session)}>
                         {session.name} — {session.term} {session.year}
                       </option>
@@ -1508,8 +1523,8 @@ const Batch = () => {
                   <strong>How advance works</strong>
                   <p>
                     Leave Session empty to let the backend automatically find
-                    the next session by start date. Select a session only when
-                    you want manual advancement.
+                    the next session (Spring → Fall → Spring). Select a session
+                    only when you want manual advancement.
                   </p>
                 </div>
 
