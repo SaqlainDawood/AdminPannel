@@ -592,9 +592,8 @@ export default function Subject() {
                             {prereqs.map((p) => (
                               <span
                                 key={p.subjectId}
-                                className={`subject-prereq-chip ${
-                                  p.isMandatory ? "mandatory" : "optional"
-                                }`}
+                                className={`subject-prereq-chip ${p.isMandatory ? "mandatory" : "optional"
+                                  }`}
                                 title={p.isMandatory ? "Mandatory" : "Recommended"}
                               >
                                 {p.code || p.name}
@@ -893,9 +892,8 @@ export default function Subject() {
 
                           <button
                             type="button"
-                            className={`subject-prereq-type ${
-                              p.isMandatory ? "mandatory" : "optional"
-                            }`}
+                            className={`subject-prereq-type ${p.isMandatory ? "mandatory" : "optional"
+                              }`}
                             onClick={() => handleTogglePrerequisiteType(p.subjectId)}
                             title="Click to toggle"
                           >
@@ -1076,9 +1074,8 @@ export default function Subject() {
                           {p.code && <span className="subject-code">{p.code}</span>}
                         </div>
                         <span
-                          className={`subject-prereq-type static ${
-                            p.isMandatory ? "mandatory" : "optional"
-                          }`}
+                          className={`subject-prereq-type static ${p.isMandatory ? "mandatory" : "optional"
+                            }`}
                         >
                           {p.isMandatory ? "Mandatory" : "Recommended"}
                         </span>

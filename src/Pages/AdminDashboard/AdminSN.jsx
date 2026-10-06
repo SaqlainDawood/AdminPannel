@@ -134,20 +134,21 @@ const AdminSidebar = () => {
         { id: 'exam-announce', title: 'Announcements', icon: 'fa-bullhorn', path: '/admin/dashboard/exam/announcements' },
         { id: 'exam-datesheet', title: 'Date Sheets', icon: 'fa-calendar-alt', path: '/admin/dashboard/exam/datesheets' },
         { id: 'exam-results', title: 'Results', icon: 'fa-graduation-cap', path: '/admin/dashboard/exam/results' },
-      ]
-    },
-    {
-      id: 'classes',
-      title: 'Assign Classes',
-      icon: 'fa-tasks',
-      path: '/admin/dashboard/classes',
-      submenu: [
-        { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
-        { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path: '/admin/dashboard/classes/listclass' },
         { id: 'semester-subject-assignment', title: 'Semester Subject Assignment', icon: 'fa-book', path: '/admin/dashboard/classes/semester-subject-assignment' },
         { id: 'timetable-management', title: 'Timetable Management', icon: 'fa-calendar', path: '/admin/dashboard/classes/timetable' },
       ]
     },
+    // {
+    //   id: 'classes',
+    //   title: 'Assign Classes',
+    //   icon: 'fa-tasks',
+    //   path: '/admin/dashboard/classes',
+    //   submenu: [
+    //     { id: 'create-class', title: 'Create Class', icon: 'fa-bullhorn', path: '/admin/dashboard/classes/createclass' },
+    //     { id: 'list-class', title: 'List of Classes', icon: 'fa-calendar-alt', path: '/admin/dashboard/classes/listclass' },
+        
+    //   ]
+    // },
     {
       id: 'attendance',
       title: 'Attendance',
