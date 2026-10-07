@@ -14,6 +14,8 @@ const FacultyList = () => {
   const [filterDepartment, setFilterDepartment] = useState('all');
   const [filterDesignation, setFilterDesignation] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterRole, setFilterRole] = useState('all');
+  const [roleOptions, setRoleOptions] = useState([]);
   const [selectedView, setSelectedView] = useState('grid'); // 'grid' or 'table'
 const navigate = useNavigate(); 
     useEffect(()=>{
@@ -22,7 +24,6 @@ const navigate = useNavigate();
           const res = await AdminAPI.get("/faculty/all")
           if(res.data.success){
             setFaculty(res.data.data);
-            // console.log("Faculty Data:", res.data.data);
           }
         } catch (error) {
             console.error("Error fetching faculty:", error);
@@ -30,7 +31,22 @@ const navigate = useNavigate();
         setLoading(false);
       }
       }
+
+      const fetchRoleOptions = async () => {
+        try {
+          const token = sessionStorage.getItem('token') || localStorage.getItem('token') || sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
+          const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+          const response = await axios.get(`${baseURL}/api/cms/roles/options`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setRoleOptions(response.data?.options || response.data?.roles || []);
+        } catch (error) {
+          console.error('Failed to fetch roles:', error);
+        }
+      };
+
       fetchFaculties();
+      fetchRoleOptions();
     } , []);
 
    const handleDelete = async(id) => {
@@ -61,13 +77,16 @@ const navigate = useNavigate();
   const designations = ['all', 'Professor', 'Associate Professor', 'Assistant Professor', 'Lecturer'];
 
   const filteredFaculty = faculty.filter(member => {
+    const memberRole = member.user?.role?.name || member.user?.roleSlug || member.role?.name || member.roleSlug || '';
     const matchesSearch = member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         member.email?.toLowerCase().includes(searchTerm.toLowerCase());
+                         member.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         member.employeeID?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDepartment = filterDepartment === 'all' || member.department === filterDepartment;
     const matchesDesignation = filterDesignation === 'all' || member.designation === filterDesignation;
     const matchesStatus = filterStatus === 'all' || member.status === filterStatus;
+    const matchesRole = filterRole === 'all' || memberRole === roleOptions.find((role) => role.value === filterRole)?.label;
     
-    return matchesSearch && matchesDepartment&& matchesDesignation && matchesStatus;
+    return matchesSearch && matchesDepartment && matchesDesignation && matchesStatus && matchesRole;
   });
 
   const getStatusBadge = (status) => {
@@ -213,6 +232,16 @@ const navigate = useNavigate();
                 <option key={index} value={des}>
                   {des === 'all' ? 'All Designations' : des}
                 </option>
+              ))}
+            </select>
+            <select
+              className="filter-select"
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              {roleOptions.map((role) => (
+                <option key={role.value} value={role.value}>{role.label}</option>
               ))}
             </select>
             <select

@@ -14,6 +14,16 @@ const ViewFaculty = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   useEffect(() => {
     if (!id || id === ":id") {
       toast.error("Invalid Faculty ID! Redirecting to Faculty List...");
@@ -30,7 +40,7 @@ const ViewFaculty = () => {
         setLoading(false);
       } catch (error) {
         console.log("Error fetching Faculty by id:", error);
-        if (error.res && error.res.status === 404) {
+        if (error.response && error.response.status === 404) {
           setNotFound(true);
         }
         else {
@@ -46,7 +56,7 @@ const ViewFaculty = () => {
        <div className="loading-container">
         <div>
           <FaSpinner className="spinner" size={40} />
-          <p className="loading-text">Loading attendance data...</p>
+          <p className="loading-text">Loading faculty details...</p>
         </div>
       </div>
     );
@@ -66,16 +76,6 @@ const ViewFaculty = () => {
     );
   }
   if (!faculty) return <h1 className='text-center mt-10'>Loading.........</h1>
-// Add this function at the top of your component
-const formatDate = (dateString) => {
-  if (!dateString) return "N/A";
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
   return (
     <>
      <div className='table-responsive'>
@@ -113,6 +113,13 @@ const formatDate = (dateString) => {
               <td className='text-warning fw-bold'>{faculty?.user?.email || "N/A"}</td>
               <th scope='col'>Phone Number</th>
               <td className='text-warning fw-bold'>{faculty?.phone || "N/A"}</td>
+            </tr>
+
+            <tr>
+              <th scope='col'>Assigned Role</th>
+              <td className='text-primary fw-bold'>{faculty?.user?.role?.name || faculty?.user?.roleSlug || "N/A"}</td>
+              <th scope='col'>Role Slug</th>
+              <td className='text-primary fw-bold'>{faculty?.user?.roleSlug || "N/A"}</td>
             </tr>
             
             <tr>

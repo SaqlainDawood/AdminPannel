@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Faculty.css';
 import { toast } from 'react-toastify'
 import AdminAPI from '../../../api';
@@ -32,8 +33,10 @@ const FacultyAdd = () => {
     emergencyPerson: '',
     userName: '',
     password: '',
+    roleId: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [roleOptions, setRoleOptions] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [registeredFaculty, setRegisteredFaculty] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -41,6 +44,28 @@ const FacultyAdd = () => {
   const [sendingEmail, setSendingEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchRoleOptions = async () => {
+      try {
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token') || sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const response = await axios.get(`${baseURL}/api/cms/roles/options`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const roles = response.data?.options || response.data?.roles || [];
+        setRoleOptions(roles);
+      } catch (error) {
+        console.error('Failed to load roles:', error);
+        toast.error('Unable to load available roles.');
+      }
+    };
+
+    fetchRoleOptions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,6 +122,7 @@ const FacultyAdd = () => {
       emergencyPerson: '',
       userName: '',
       password: '',
+      roleId: '',
     });
     setProfileImage(null);
     setImagePreview('');
@@ -104,6 +130,11 @@ const FacultyAdd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.roleId) {
+      setError('Please select a role for this faculty account.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     
@@ -634,6 +665,21 @@ const FacultyAdd = () => {
                       onChange={handleChange}
                       required 
                     />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Role *</label>
+                    <select
+                      name='roleId'
+                      className='form-select'
+                      value={formData.roleId}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Select role</option>
+                      {roleOptions.map((role) => (
+                        <option key={role.value} value={role.value}>{role.label}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Password *</label>

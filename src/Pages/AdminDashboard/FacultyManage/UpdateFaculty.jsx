@@ -20,7 +20,7 @@ const UpdateFaculty = () => {
 
   const [formData, setFormData] = useState({
     employeeID: "",
-     name:"",
+    name:"",
     email: "",
     phone: "",
     cnic: "",
@@ -39,8 +39,28 @@ const UpdateFaculty = () => {
     bankName: "",
     emergencyContact: "",
     emergencyPerson: "",
+    roleId: "",
   });
+  const [roleOptions, setRoleOptions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRoleOptions = async () => {
+      try {
+        const token = sessionStorage.getItem('token') || localStorage.getItem('token') || sessionStorage.getItem('adminToken') || localStorage.getItem('adminToken');
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const response = await axios.get(`${baseURL}/api/cms/roles/options`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const roles = response.data?.options || response.data?.roles || [];
+        setRoleOptions(roles);
+      } catch (error) {
+        console.error('Failed to load roles:', error);
+      }
+    };
+
+    fetchRoleOptions();
+  }, []);
 
   // Fetch faculty data
   useEffect(() => {
@@ -55,8 +75,9 @@ const UpdateFaculty = () => {
         const res = await AdminAPI.get(`/faculty/view/${id}`);
         const facultyData = {
           ...res.data,
-          experience:res.data.experience?parseInt(res.data.experience)||0:0
-        }
+          experience:res.data.experience?parseInt(res.data.experience)||0:0,
+          roleId: res.data?.user?.role?._id || res.data?.user?.role || res.data?.roleId || "",
+        };
         setFormData(facultyData);
         setLoading(false);
       } catch (error) {
@@ -77,6 +98,12 @@ const UpdateFaculty = () => {
   // Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.roleId) {
+      toast.error("Please select a valid role for this faculty account.");
+      return;
+    }
+
     try {
       await AdminAPI.put(`/faculty/update/${id}`, formData);
       toast.success("Faculty updated successfully!");
@@ -177,6 +204,24 @@ const UpdateFaculty = () => {
                       className="form-control"
                     />
                   </td>
+                  <th>Role</th>
+                  <td>
+                    <select
+                      name="roleId"
+                      value={formData.roleId}
+                      onChange={handleChange}
+                      className="form-select"
+                      required
+                    >
+                      <option value="">Select role</option>
+                      {roleOptions.map((role) => (
+                        <option key={role.value} value={role.value}>{role.label}</option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+
+                <tr>
                   <th>Designation</th>
                   <td>
                     <input
@@ -185,6 +230,15 @@ const UpdateFaculty = () => {
                       value={formData.designation}
                       onChange={handleChange}
                       className="form-control"
+                    />
+                  </td>
+                  <th>Role Label</th>
+                  <td>
+                    <input
+                      type="text"
+                      value={roleOptions.find((role) => role.value === formData.roleId)?.label || "Not selected"}
+                      className="form-control"
+                      readOnly
                     />
                   </td>
                 </tr>
