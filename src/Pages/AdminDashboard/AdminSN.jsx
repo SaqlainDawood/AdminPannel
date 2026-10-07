@@ -69,6 +69,7 @@ const AdminSidebar = () => {
         { id: 'student-list', title: 'All Students', icon: 'fa-list', path: '/admin/dashboard/students/list' },
         { id: 'student-approval', title: 'Pending Approvals', icon: 'fa-clock', path: '/admin/dashboard/students/approvals' },
         { id: 'student-assign', title: 'Assign Roll Numbers', icon: 'fa-id-card', path: '/admin/dashboard/students/assign' },
+        { id: 'student-academic-numbers', title: 'Student Academic Numbers', icon: 'fa-sort-numeric-up', path: '/admin/dashboard/students/academic-numbers' },
       ]
     },
     {

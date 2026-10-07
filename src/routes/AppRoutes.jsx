@@ -14,6 +14,7 @@ import AdminSidebar from "../Pages/AdminDashboard/AdminSN";
 import StudentList from "../Pages/AdminDashboard/StudentManage/StudentList";
 import StudentApprovals from "../Pages/AdminDashboard/StudentManage/StudentApprovals";
 import StudentAssign from "../Pages/AdminDashboard/StudentManage/StudentAssign";
+import StudentAcademicNumbers from "../Pages/AdminDashboard/StudentManage/StudentAcademicNumbers";
 import StudentView from "../Pages/AdminDashboard/StudentManage/StudentView";
 import StudentUpdate from "../Pages/AdminDashboard/StudentManage/StudentUpdate";
 import FacultyList from "../Pages/AdminDashboard/FacultyManage/FacultyList";
@@ -181,6 +182,11 @@ const AppRoutes = () => {
             <Route
               path="assign"
               element={<StudentAssign />}
+            />
+
+            <Route
+              path="academic-numbers"
+              element={<StudentAcademicNumbers />}
             />
 
             <Route
