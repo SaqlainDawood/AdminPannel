@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -12,12 +13,14 @@ import {
   Building2,
   Loader2,
   Pencil,
+  UserCog,
 } from "lucide-react";
 import { getJobById } from "../../../services/jobPostingAPI";
 import "./JobPosting.css";
 
 const fmtDate = (val) => {
   if (!val) return "—";
+
   try {
     return new Date(val).toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -31,44 +34,79 @@ const fmtDate = (val) => {
 
 const fmtSalary = (range) => {
   if (!range) return "—";
-  const min = Number(range.min || 0);
-  const max = Number(range.max || 0);
+
+  const min = Number(range?.min || 0);
+  const max = Number(range?.max || 0);
+
   if (!min && !max) return "—";
 
   const minStr = `PKR ${min.toLocaleString()}`;
   const maxStr = `PKR ${max.toLocaleString()}`;
-  const neg = range.negotiable ? " (Negotiable)" : "";
+  const neg = range?.negotiable ? " (Negotiable)" : "";
 
   if (min && max) return `${minStr} - ${maxStr}${neg}`;
   if (min) return `From ${minStr}${neg}`;
+
   return `Up to ${maxStr}${neg}`;
 };
 
 const JobPostingView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const load = async () => {
+    const loadJob = async () => {
+      if (!id) {
+        setError("Job ID is missing.");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
+        setError("");
+
         const res = await getJobById(id);
-        setJob(res?.job || res?.data || res);
+
+        console.log("GET JOB BY ID RESPONSE:", res);
+
+        const jobData =
+          res?.jobPost ||
+          res?.job ||
+          res?.data?.jobPost ||
+          res?.data?.job ||
+          res?.data ||
+          res;
+
+        console.log("JOB DATA:", jobData);
+
+        if (!jobData || Array.isArray(jobData)) {
+          setError("Job not found.");
+          setJob(null);
+          return;
+        }
+
+        setJob(jobData);
       } catch (err) {
-        console.error(err);
+        console.error("Load job error:", err);
+
         setError(
           err?.response?.data?.message ||
             err?.message ||
             "Failed to load job."
         );
+
+        setJob(null);
       } finally {
         setLoading(false);
       }
     };
-    if (id) load();
+
+    loadJob();
   }, [id]);
 
   if (loading) {
@@ -86,11 +124,13 @@ const JobPostingView = () => {
         <div className="jp-alert error">
           {error || "Job not found."}
         </div>
+
         <button
           className="jp-btn-secondary"
           onClick={() => navigate("/admin/dashboard/jobs")}
         >
-          <ArrowLeft size={16} /> Back to Jobs
+          <ArrowLeft size={16} />
+          Back to Jobs
         </button>
       </div>
     );
@@ -106,9 +146,10 @@ const JobPostingView = () => {
           <div className="jp-header-icon">
             <Briefcase size={22} />
           </div>
+
           <div>
-            <h1>{job.title}</h1>
-            <p>{job.designation || "Position details"}</p>
+            <h1>{job?.title || "Untitled Job"}</h1>
+            <p>{job?.designation || "Position details"}</p>
           </div>
         </div>
 
@@ -117,13 +158,18 @@ const JobPostingView = () => {
             className="jp-btn-secondary"
             onClick={() => navigate("/admin/dashboard/jobs")}
           >
-            <ArrowLeft size={16} /> Back
+            <ArrowLeft size={16} />
+            Back
           </button>
+
           <button
             className="jp-btn-primary"
-            onClick={() => navigate(`/admin/dashboard/jobs/edit/${id}`)}
+            onClick={() =>
+              navigate(`/admin/dashboard/jobs/edit/${id}`)
+            }
           >
-            <Pencil size={16} /> Edit
+            <Pencil size={16} />
+            Edit
           </button>
         </div>
       </div>
@@ -132,22 +178,25 @@ const JobPostingView = () => {
       <div className="jp-view-hero">
         <div>
           <span className={statusClass}>
-            {job.status?.toUpperCase() || "DRAFT"}
+            {job?.status?.toUpperCase() || "DRAFT"}
           </span>
         </div>
+
         <div className="jp-view-meta">
           <div>
             <span>Employment Type</span>
-            <strong>{job.employmentType || "—"}</strong>
+            <strong>{job?.employmentType || "—"}</strong>
           </div>
+
           <div>
             <span>Vacancies</span>
-            <strong>{job.vacancies || 0}</strong>
+            <strong>{job?.vacancies || 0}</strong>
           </div>
+
           <div>
             <span>Experience</span>
             <strong>
-              {job.experienceRequired
+              {job?.experienceRequired
                 ? `${job.experienceRequired}+ years`
                 : "Fresh"}
             </strong>
@@ -155,32 +204,43 @@ const JobPostingView = () => {
         </div>
       </div>
 
-      {/* CARDS */}
+      {/* CONTENT */}
       <div className="jp-view-grid">
         {/* LEFT */}
         <div className="jp-view-main">
+          {/* DESCRIPTION */}
           <div className="jp-view-card">
             <h3>Description</h3>
+
             <p className="jp-view-desc">
-              {job.description || "No description provided."}
+              {job?.description || "No description provided."}
             </p>
           </div>
 
+          {/* REQUIREMENTS */}
           <div className="jp-view-card">
             <h3>Requirements</h3>
+
             <div className="jp-view-row">
               <GraduationCap size={17} />
+
               <div>
                 <span>Qualification</span>
-                <strong>{job.qualification || "—"}</strong>
+
+                <strong>
+                  {job?.qualification || "—"}
+                </strong>
               </div>
             </div>
+
             <div className="jp-view-row">
               <Clock size={17} />
+
               <div>
                 <span>Experience Required</span>
+
                 <strong>
-                  {job.experienceRequired
+                  {job?.experienceRequired
                     ? `${job.experienceRequired} years`
                     : "Fresh / No experience"}
                 </strong>
@@ -194,54 +254,97 @@ const JobPostingView = () => {
           <div className="jp-view-card">
             <h3>Job Info</h3>
 
+            {/* Department */}
             <div className="jp-view-row">
               <Building2 size={17} />
+
               <div>
                 <span>Department</span>
-                <strong>{job.department || "—"}</strong>
-              </div>
-            </div>
 
-            <div className="jp-view-row">
-              <MapPin size={17} />
-              <div>
-                <span>Location</span>
                 <strong>
-                  {job.city || "—"}
-                  {job.campus ? ` — ${job.campus}` : ""}
+                  {job?.department || "—"}
                 </strong>
               </div>
             </div>
 
+            {/* Role */}
+            <div className="jp-view-row">
+              <UserCog size={17} />
+
+              <div>
+                <span>Role</span>
+
+                <strong>
+                  {job?.roleSlug || "—"}
+                </strong>
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="jp-view-row">
+              <MapPin size={17} />
+
+              <div>
+                <span>Location</span>
+
+                <strong>
+                  {job?.city || "—"}
+                  {job?.campus
+                    ? ` — ${job.campus}`
+                    : ""}
+                </strong>
+              </div>
+            </div>
+
+            {/* Vacancies */}
             <div className="jp-view-row">
               <Users size={17} />
+
               <div>
                 <span>Vacancies</span>
-                <strong>{job.vacancies || 0}</strong>
+
+                <strong>
+                  {job?.vacancies || 0}
+                </strong>
               </div>
             </div>
 
+            {/* Salary */}
             <div className="jp-view-row">
               <DollarSign size={17} />
+
               <div>
                 <span>Salary</span>
-                <strong>{fmtSalary(job.salaryRange)}</strong>
+
+                <strong>
+                  {fmtSalary(job?.salaryRange)}
+                </strong>
               </div>
             </div>
 
+            {/* Deadline */}
             <div className="jp-view-row">
               <Calendar size={17} />
+
               <div>
                 <span>Deadline</span>
-                <strong>{fmtDate(job.deadline)}</strong>
+
+                <strong>
+                  {fmtDate(job?.deadline)}
+                </strong>
               </div>
             </div>
 
+            {/* Joining Date */}
             <div className="jp-view-row">
               <Calendar size={17} />
+
               <div>
                 <span>Joining Date</span>
-                <strong>{fmtDate(job.joiningDate)}</strong>
+
+                <strong>
+                  {fmtDate(job?.joiningDate)}
+                </strong>
               </div>
             </div>
           </div>
