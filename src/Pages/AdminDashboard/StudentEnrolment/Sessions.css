@@ -1148,7 +1148,7 @@
 
 @media (max-width: 1000px) {
   .sessions-page {
-    padding: 18px;
+    padding: 0;
   }
 
   .session-stats {
@@ -1167,7 +1167,7 @@
 
 @media (max-width: 700px) {
   .sessions-page {
-    padding: 14px;
+    padding: 0;
   }
 
   .sessions-header {

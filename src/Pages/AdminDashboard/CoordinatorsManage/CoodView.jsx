@@ -87,10 +87,9 @@ const formatDate = (dateString) => {
   });
 };
   return (
-    <>
-    <div className="table-responsive">
-  <MDBContainer className="py-4">
-    <MDBCard className="shadow-4">
+    <div className="cood-view-container">
+      <MDBContainer fluid className="p-0">
+        <MDBCard className="shadow-4">
       <MDBCardBody className="">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3 className="text-primary fw-bold">Coordinator Information</h3>
@@ -326,9 +325,8 @@ const formatDate = (dateString) => {
         </MDBTable>
       </MDBCardBody>
     </MDBCard>
-  </MDBContainer>
-</div>
-    </>
+      </MDBContainer>
+    </div>
   );
 };
 

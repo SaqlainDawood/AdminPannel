@@ -1,12 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* ===================================================================
    UMS Global Design System
    University Management System - Global Styles
    =================================================================== */
-
-/* ---- Google Fonts ---- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 
 /* ---- Reset & Base ---- */
@@ -1147,10 +1145,25 @@ table tbody tr:hover {
    =================================================================== */
 
 @media (max-width: 768px) {
-  [class*="-container"],
-  [class*="-page"],
-  [class*="-wrapper"] {
+  html, body {
     overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  [class*="-container"]:not([class*="table"]):not([class*="scroll"]),
+  [class*="-page"]:not([class*="table"]):not([class*="scroll"]) {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  /* Allow tables and scrollers to scroll horizontally without breaking page */
+  .table-responsive,
+  [class*="table-wrapper"],
+  [class*="overflow-x-auto"],
+  .vp-scroll {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-width: 100% !important;
   }
 
   .header-actions,
@@ -1166,10 +1179,233 @@ table tbody tr:hover {
 }
 
 
+
 @media (max-width: 480px) {
   .stat-card-small {
     flex-direction: row !important;
     gap: 12px !important;
     padding: 14px !important;
+  }
+}
+
+
+/* ===================================================================
+   SHARED PAGE LAYOUT — used by Faculty, Coordinator, Student pages
+   =================================================================== */
+
+/* Page header bar (title + actions) */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ums-gray-200, #e2e8f0);
+}
+
+.page-title {
+  color: var(--ums-gray-800, #1e293b);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-title i {
+  color: var(--ums-primary-mid, #2d6a9f);
+}
+
+.page-subtitle {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.88rem;
+  margin-bottom: 0;
+}
+
+/* Shared stat cards (used by Faculty, Coordinator, Student) */
+.stat-card-small {
+  background: white;
+  border-radius: 14px;
+  padding: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 100%;
+  min-height: 110px;
+  border: 1px solid var(--ums-gray-100, #f1f5f9);
+}
+
+.stat-card-small:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Shared .stat-icon (fallback — more specific versions in Student.css override) */
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon.bg-primary {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 100%);
+}
+.stat-icon.bg-success {
+  background: linear-gradient(135deg, #059669, #10b981);
+}
+.stat-icon.bg-warning {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+}
+.stat-icon.bg-info {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+.stat-icon.bg-danger {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.stat-info h3 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--ums-gray-800, #1e293b);
+  margin-bottom: 0.2rem;
+}
+
+.stat-info p {
+  color: var(--ums-gray-500, #64748b);
+  font-size: 0.82rem;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+/* Shared content card */
+.content-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  border: 1px solid var(--ums-gray-100, #f1f5f9);
+}
+
+/* Shared search + filter row */
+.search-filter-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Shared status badges */
+.badge-success {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #b45309;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-secondary {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive: fix double padding on Faculty/Coordinator pages */
+@media (max-width: 768px) {
+  .faculty-list-container,
+  .faculty-add-container,
+  .faculty-update-container,
+  .faculty-view-container,
+  .cood-list-container,
+  .cood-add-container,
+  .cood-update-container {
+    padding: 0 !important;
+  }
+
+  .content-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+
+  .search-filter-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: 100% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn,
+  .header-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stat-card-small {
+    min-height: auto;
+    padding: 1rem;
+  }
+
+  .content-card {
+    padding: 1rem;
+    border-radius: 10px;
   }
 }

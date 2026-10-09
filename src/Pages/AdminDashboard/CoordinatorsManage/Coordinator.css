@@ -1,4 +1,4 @@
-﻿/* Coordinator List Container */
+/* Coordinator List Container */
 .cood-list-container {
   background: transparent;
   min-height: auto;
@@ -318,7 +318,7 @@
 /* Responsive Design */
 @media (max-width: 992px) {
   .cood-list-container {
-    padding: 1.5rem;
+    padding: 0;
   }
 
   .coordinators-grid {
@@ -329,7 +329,7 @@
 
 @media (max-width: 768px) {
   .cood-list-container {
-    padding: 1rem;
+    padding: 0;
   }
 
   .coordinators-grid {

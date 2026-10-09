@@ -117,7 +117,7 @@
 /* Mobile Styles */
 @media (max-width: 768px) {
   .admin-header {
-    padding: 0 16px;
+    padding: 0 16px 0 52px;
   }
 
   .header-left h4 {

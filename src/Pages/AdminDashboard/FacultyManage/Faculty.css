@@ -345,10 +345,6 @@
 
 /* Responsive Design */
 @media (max-width: 992px) {
-  .faculty-list-container {
-    padding: 1.5rem;
-  }
-
   .faculty-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
@@ -357,15 +353,7 @@
 
 @media (max-width: 768px) {
   .faculty-list-container {
-    padding: 1rem;
-  }
-
-  .search-filter-section {
-    flex-direction: column;
-  }
-
-  .search-box {
-    min-width: 100%;
+    padding: 0;
   }
 
   .filters-row {

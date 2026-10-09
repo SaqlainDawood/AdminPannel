@@ -853,10 +853,9 @@ export default function TimetableManager() {
 
   const styles = {
     page: {
-      minHeight: "100vh",
-      background:
-        "linear-gradient(180deg, #f8fafc 0%, #f3f6fb 100%)",
-      padding: "28px",
+      minHeight: "auto",
+      background: "transparent",
+      padding: 0,
       color: "#172033",
     },
 

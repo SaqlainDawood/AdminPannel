@@ -180,7 +180,7 @@ const ClassList = () => {
   return (
     <>
       <div className="class-list-container">
-        <MDBContainer fluid className="py-4">
+        <MDBContainer fluid className="p-0">
           {/* Header Card */}
           <MDBCard className="shadow-4 header-card mb-4">
             <MDBCardBody>

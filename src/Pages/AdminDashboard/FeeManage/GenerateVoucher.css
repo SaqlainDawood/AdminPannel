@@ -816,7 +816,7 @@
 
 @media (max-width: 900px) {
   .fee-management-page {
-    padding: 18px;
+    padding: 0;
   }
 
   .fee-page-header {
@@ -848,7 +848,7 @@
 
 @media (max-width: 640px) {
   .fee-management-page {
-    padding: 13px;
+    padding: 0;
   }
 
   .fee-page-header {
@@ -954,7 +954,7 @@
 
 @media (max-width: 400px) {
   .fee-management-page {
-    padding: 10px;
+    padding: 0;
   }
 
   .fee-title-row h1 {

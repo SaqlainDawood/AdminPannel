@@ -288,7 +288,7 @@ const ManageEnrollment = () => {
   }
 
   return (
-    <MDBContainer fluid className="py-4">
+    <MDBContainer fluid className="p-0">
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>

@@ -542,7 +542,7 @@
    ============================================ */
 @media (max-width: 1024px) {
   .attendance-page {
-    padding: 1.5rem;
+    padding: 0;
   }
   
   .attendance-page .stats-grid {
@@ -557,7 +557,7 @@
 
 @media (max-width: 768px) {
   .attendance-page {
-    padding: 1rem;
+    padding: 0;
   }
   
   .attendance-page .page-header h1 {

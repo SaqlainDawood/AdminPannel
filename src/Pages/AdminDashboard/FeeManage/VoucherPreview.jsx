@@ -6,7 +6,13 @@ import "./VoucherPreview.css";
 
 /* ---------- static labels only (NO data) ---------- */
 const HEADER_TITLE = "University Management System";
-const COPIES = ["Bank Copy", "Accounts Copy", "Department Copy", "Student Copy"];
+const BANK_TITLE = "The Bank of the Punjab";
+const COPIES = [
+  "Bank Copy",
+  "Bank Copy – UE Treasurer",
+  "UE Division/Campus Copy",
+  "Student Copy",
+];
 const NOTES = [
   "i) Depositors will receive the system generated deposit slip from the bank as proof of deposit. Manual deposit or a stamped/signed printout is not acceptable.",
   "ii) This voucher may be deposited into any authorized bank branch.",
@@ -80,6 +86,7 @@ const buildViewData = (v, items) => {
   const student =
     (isObj(v.studentId) && v.studentId) ||
     (isObj(v.student) && v.student) ||
+    (isObj(v.selectedStudent) && v.selectedStudent) ||
     (isObj(enrollment.studentId) && enrollment.studentId) ||
     (isObj(enrollment.student) && enrollment.student) ||
     v.studentSnapshot ||
@@ -92,11 +99,11 @@ const buildViewData = (v, items) => {
     (isObj(v.batch) && v.batch) ||
     {};
 
-  const department = batch.departmentId || batch.department || v.department || enrollment.departmentId;
-  const degreeClass = batch.degreeClassId || batch.degreeClass || v.degreeClass || enrollment.degreeClassId;
-  const shift = batch.shiftId || batch.shift || v.shift || enrollment.shiftId;
-  const campus = batch.campusId || batch.campus || v.campus || enrollment.campusId;
-  const session = batch.startSessionId || batch.sessionId || batch.session || v.session;
+  const department = v.department || batch.departmentId || batch.department || enrollment.departmentId;
+  const degreeClass = v.degreeClass || batch.degreeClassId || batch.degreeClass || enrollment.degreeClassId;
+  const shift = v.shift || batch.shiftId || batch.shift || enrollment.shiftId;
+  const campus = v.campus || batch.campusId || batch.campus || enrollment.campusId;
+  const session = v.session || batch.startSessionId || batch.sessionId || batch.session;
 
   const studentName =
     `${p.firstName || ""} ${p.lastName || ""}`.trim() ||
@@ -104,26 +111,26 @@ const buildViewData = (v, items) => {
 
   const list = items.length ? items : Array.isArray(v.items) ? v.items : [];
   const itemsTotal = list.reduce((s, i) => s + Number(i?.amount || 0), 0);
-  const baseAmount = Number(v.baseAmount ?? v.amount ?? itemsTotal);
+  const baseAmount = Number(v.baseAmount ?? v.amount ?? v.tuitionFee?.totalAmount ?? itemsTotal);
 
-  // amount payable after due date (from backend); fine = difference
+  const fineVal = Number(v.fineAmount ?? v.fine?.amount ?? 0);
   const afterDueAmount = Number(
-    v.amountAfterDueDate ?? v.afterDueAmount ?? baseAmount + Number(v.fineAmount ?? v.fine?.amount ?? 0)
+    v.amountAfterDueDate ?? v.afterDueAmount ?? (baseAmount + fineVal)
   );
-  const fineAmount = Math.max(afterDueAmount - baseAmount, 0);
+  const fineAmount = Math.max(afterDueAmount - baseAmount, fineVal);
 
   const voucherNo = first(v.voucherNo, v.voucherNumber);
 
   return {
     voucherNo,
     challanNo: first(v.challanNo, v.challanNumber, voucherNo),
-    issueDate: fmtDate(v.issueDate || v.createdAt),
-    payDueDate: fmtDate(v.payDueDate),
-    fineDueDate: fmtDate(v.fineDueDate),
+    issueDate: fmtDate(v.issueDate || v.createdAt || new Date()),
+    payDueDate: fmtDate(v.payDueDate || v.dueDate),
+    fineDueDate: fmtDate(v.fineDueDate || v.payDueDate || v.dueDate),
 
     studentName,
     cnic: first(p.cnic, p.CNIC, p.cnicNo, student.cnic),
-    fatherName: first(p.fatherName, student.fatherName),
+    fatherName: first(p.fatherName, student.fatherName, p.guardianName),
     rollNo: first(v.rollNo, enrollment.rollNo, student.rollNo),
     registrationNo: first(v.registrationNo, enrollment.registrationNo, student.registrationNo),
 
@@ -133,13 +140,13 @@ const buildViewData = (v, items) => {
     shift: first(nameOf(shift)),
     session: first(nameOf(session), batch.sessionName),
     quota: first(nameOf(enrollment.quota), enrollment.quotaName, v.quota, student.quota),
-    semester: first(v.semester, enrollment.currentSemester, batch.currentSemester),
-    feeType: first(nameOf(v.feeType), v.feeTypeName),
+    semester: first(v.semester, enrollment.currentSemester, batch.currentSemester, 1),
+    feeType: first(nameOf(v.feeType), v.feeTypeName, "Semester Tuition Fee"),
 
-    items: list.map((i) => ({
-      name: first(i?.name, i?.description, nameOf(i?.feeTypeId), nameOf(i?.feeType)),
+    items: list.length > 0 ? list.map((i) => ({
+      name: first(i?.name, i?.description, nameOf(i?.feeTypeId), nameOf(i?.feeType), "Fee Item"),
       amount: Number(i?.amount || 0),
-    })),
+    })) : [{ name: first(nameOf(v.feeType), v.feeTypeName, "Tuition Fee"), amount: baseAmount }],
     baseAmount,
     fineAmount,
     afterDueAmount,
@@ -157,6 +164,7 @@ const Line = ({ label, value, bold }) => (
 const VoucherCopy = ({ copyName, d }) => (
   <article className="vp-copy">
     <div className="vp-copy-name">{copyName}</div>
+    <div className="vp-bank-name">{BANK_TITLE}</div>
     <div className="vp-title">{HEADER_TITLE}</div>
 
     <div className="vp-meta">
@@ -209,6 +217,11 @@ const VoucherCopy = ({ copyName, d }) => (
 
     <div className="vp-words">Rs. {amountInWords(d.afterDueAmount)}</div>
 
+    <div className="vp-signatures">
+      <div><span>Cashier</span></div>
+      <div><span>Officer / Manager</span></div>
+    </div>
+
     <div className="vp-notes">{NOTES.map((n, i) => <div key={i}>{n}</div>)}</div>
   </article>
 );
@@ -228,6 +241,18 @@ const VoucherPreview = ({ voucher: voucherProp, onClose }) => {
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
+    // If voucherProp is passed with data, use it immediately
+    if (voucherProp && (voucherProp.items || voucherProp.challanNo || voucherProp.voucherNo || voucherProp.student || voucherProp.baseAmount || voucherProp.amount)) {
+      try {
+        setData(buildViewData(voucherProp, voucherProp.items || []));
+        setLoading(false);
+        setError("");
+        return;
+      } catch (err) {
+        console.warn("Could not build view data from prop, will try fetching", err);
+      }
+    }
+
     if (!voucherId) {
       setError("Voucher ID is missing.");
       setLoading(false);
@@ -249,7 +274,7 @@ const VoucherPreview = ({ voucher: voucherProp, onClose }) => {
       }
     })();
     return () => { cancelled = true; };
-  }, [voucherId]);
+  }, [voucherId, voucherProp]);
 
   const handlePrint = () => window.print();
 
@@ -263,29 +288,67 @@ const VoucherPreview = ({ voucher: voucherProp, onClose }) => {
       ]);
       const el = sheetRef.current;
       const canvas = await html2canvas(el, {
-        scale: 2,
+        scale: 2.5,
         backgroundColor: "#ffffff",
         useCORS: true,
-        windowWidth: el.scrollWidth,
+        logging: false,
+        windowWidth: 1240,
         scrollX: 0,
-        scrollY: -window.scrollY,
+        scrollY: 0,
+        onclone: (clonedDoc) => {
+          const clonedEl = clonedDoc.querySelector(".vp-sheet");
+          if (clonedEl) {
+            clonedEl.style.width = "1200px";
+            clonedEl.style.minWidth = "1200px";
+            clonedEl.style.maxWidth = "1200px";
+            clonedEl.style.display = "grid";
+            clonedEl.style.gridTemplateColumns = "repeat(4, 1fr)";
+            clonedEl.style.gap = "8px";
+            clonedEl.style.margin = "0";
+            clonedEl.style.padding = "8px";
+            clonedEl.style.transform = "none";
+            clonedEl.style.boxSizing = "border-box";
+            clonedEl.style.background = "#ffffff";
+            clonedEl.style.visibility = "visible";
+
+            const copies = clonedEl.querySelectorAll(".vp-copy");
+            copies.forEach((c) => {
+              c.style.visibility = "visible";
+              c.style.display = "flex";
+              c.style.flexDirection = "column";
+              c.style.border = "1px solid #222";
+              c.style.boxSizing = "border-box";
+            });
+          }
+        },
       });
 
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 6;
-      let w = pageW - margin * 2;
-      let h = (canvas.height * w) / canvas.width;
-      if (h > pageH - margin * 2) {
-        h = pageH - margin * 2;
-        w = (canvas.width * h) / canvas.height;
+      const pageW = pdf.internal.pageSize.getWidth(); // 297mm
+      const pageH = pdf.internal.pageSize.getHeight(); // 210mm
+      const marginX = 4;
+      const marginY = 4;
+      const availW = pageW - marginX * 2; // 289mm
+      const availH = pageH - marginY * 2; // 202mm
+
+      const imgAspect = canvas.width / canvas.height;
+      let renderW = availW;
+      let renderH = renderW / imgAspect;
+
+      if (renderH > availH) {
+        renderH = availH;
+        renderW = renderH * imgAspect;
       }
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", (pageW - w) / 2, margin, w, h);
-      pdf.save(`voucher-${data.challanNo}.pdf`);
+
+      const posX = (pageW - renderW) / 2;
+      const posY = (pageH - renderH) / 2;
+
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", posX, posY, renderW, renderH, undefined, "FAST");
+      pdf.save(`voucher-${data.challanNo || data.voucherNo || "fee"}.pdf`);
     } catch (e) {
       console.error("PDF error:", e);
-      alert("PDF create nahi ho saka. Print → Save as PDF try karo.");
+      alert("PDF creation failed. Please try Print → Save as PDF.");
     } finally {
       setDownloading(false);
     }

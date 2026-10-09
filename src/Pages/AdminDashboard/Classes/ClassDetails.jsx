@@ -105,7 +105,7 @@ const ClassDetails = () => {
   }
 
   return (
-    <MDBContainer fluid className="py-4 class-details-container">
+    <MDBContainer fluid className="p-0 class-details-container">
       {/* Header with navigation */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="d-flex align-items-center">

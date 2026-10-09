@@ -699,7 +699,7 @@
 
 @media (max-width: 900px) {
   .department-page {
-    padding: 20px;
+    padding: 0;
   }
 
   .department-header {
@@ -728,7 +728,7 @@
 
 @media (max-width: 650px) {
   .department-page {
-    padding: 15px;
+    padding: 0;
   }
 
   .department-stats {

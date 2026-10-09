@@ -293,7 +293,7 @@ const AdminSidebar = () => {
       <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <div className="container-fluid">
           <Header />
-          <div style={{ padding: '1.5rem' }}>
+          <div className="admin-page-content">
             <Outlet />
           </div>
         </div>

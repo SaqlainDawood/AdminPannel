@@ -1,46 +1,534 @@
-.vp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px}
-.vp-modal{background:#f4f4f4;border-radius:10px;width:100%;max-width:1240px}
-.vp-page{background:#f4f4f4;min-height:100vh;padding:16px}
-.vp-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#fff;border-bottom:1px solid #ddd;border-radius:10px 10px 0 0}
-.vp-toolbar h3{margin:0;font-size:16px}
-.vp-actions{display:flex;gap:8px}
-.vp-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:14px}
-.vp-btn:disabled{opacity:.5;cursor:not-allowed}
-.vp-btn-pdf{background:#1a56db;border-color:#1a56db;color:#fff}
-.vp-btn-print{background:#111;border-color:#111;color:#fff}
-.vp-spin{animation:vp-rot 1s linear infinite}
-@keyframes vp-rot{to{transform:rotate(360deg)}}
-.vp-state{padding:48px;text-align:center;color:#444}
-.vp-state-error{color:#b42318}
-.vp-scroll{overflow-x:auto;padding:16px}
+/* =========================================================
+   VOUCHER PREVIEW CSS
+   High-quality screen preview + PDF generation + Print styles
+========================================================= */
 
-/* sheet = A4 landscape width */
-.vp-sheet{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:1120px;margin:0 auto;background:#fff;padding:8px;box-sizing:border-box;color:#000;font-family:Arial,Helvetica,sans-serif}
-.vp-copy{border:1px solid #444;padding:10px;font-size:11px;line-height:1.35;display:flex;flex-direction:column;box-sizing:border-box;break-inside:avoid}
-.vp-copy-name{text-align:center;font-weight:700;font-size:13px;border-bottom:1.5px solid #000;padding-bottom:4px;margin-bottom:6px}
-.vp-title{text-align:center;font-weight:700;font-size:13px;margin-bottom:8px}
-.vp-meta{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
-.vp-line-info{display:flex;gap:4px}
-.vp-line-info span{color:#333;white-space:nowrap}
-.vp-line-info strong{font-weight:700;word-break:break-word}
-.vp-row-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.vp-table{width:100%;border-collapse:collapse;margin:6px 0}
-.vp-table th,.vp-table td{border:1px solid #000;padding:3px 4px;text-align:left}
-.vp-table th:last-child,.vp-table td:last-child{text-align:right}
-.vp-table th{background:#eee}
-.vp-total td{font-weight:700}
-.vp-words{font-style:italic;border-top:1px dashed #666;border-bottom:1px dashed #666;padding:3px 0;margin:6px 0;font-size:10.5px}
-.vp-line{display:flex;justify-content:space-between;padding:2px 0}
-.vp-line-bold{font-weight:700}
-.vp-notes{margin-top:auto;padding-top:8px;font-size:8.5px;line-height:1.3;color:#222}
-.vp-notes div{margin-bottom:3px}
+.vp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  z-index: 1100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+}
 
-/* PRINT: sirf voucher sheet, jaisa screen par dikhta hai */
-@page{size:A4 landscape;margin:6mm}
-@media print{
-  html,body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body *{visibility:hidden}
-  .vp-print-root,.vp-print-root *{visibility:visible}
-  .vp-print-root{position:absolute;left:0;top:0;width:100%!important;margin:0;padding:0}
-  .no-print{display:none!important}
+.vp-modal {
+  background: #f8fafc;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 1320px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  margin: auto;
+}
+
+.vp-page {
+  background: #f1f5f9;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.vp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 12px 12px 0 0;
+  flex-wrap: wrap;
+}
+
+.vp-toolbar-page {
+  border-radius: 10px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.vp-toolbar h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.vp-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.vp-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.vp-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.vp-btn-pdf {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.vp-btn-pdf:hover {
+  background: #1e40af;
+  border-color: #1e40af;
+  color: #ffffff;
+}
+
+.vp-btn-print {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+.vp-btn-print:hover {
+  background: #1e293b;
+  border-color: #1e293b;
+  color: #ffffff;
+}
+
+.vp-btn-back {
+  background: #ffffff;
+  color: #475569;
+}
+
+.vp-btn-close {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+  padding: 7px;
+}
+
+.vp-btn-close:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.vp-spin {
+  animation: vp-rot 1s linear infinite;
+}
+
+@keyframes vp-rot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vp-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.vp-state-error {
+  color: #b91c1c;
+}
+
+.vp-state-error h3 {
+  margin: 0 0 8px;
+  color: #991b1b;
+}
+
+/* Scroll area for horizontal sheet */
+.vp-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* 4-column horizontal voucher sheet */
+.vp-sheet {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 1260px;
+  min-width: 1020px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  color: #0f172a;
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.vp-copy {
+  border: 1.5px solid #334155;
+  padding: 10px 8px;
+  font-size: 11px;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+.vp-copy-name {
+  text-align: center;
+  font-weight: 700;
+  font-size: 12.5px;
+  border-bottom: 1.5px solid #0f172a;
+  padding-bottom: 4px;
+  margin-bottom: 5px;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.vp-bank-name {
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.vp-title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 11px;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.vp-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5px;
+  margin-bottom: 8px;
+  font-size: 10.5px;
+}
+
+.vp-line-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.vp-line-info span {
+  color: #475569;
+  white-space: nowrap;
+}
+
+.vp-line-info strong {
+  font-weight: 600;
+  word-break: break-word;
+  color: #0f172a;
+  text-align: right;
+}
+
+.vp-line-info strong.vp-b {
+  font-weight: 700;
+}
+
+.vp-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.vp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 6px 0;
+  font-size: 10.5px;
+}
+
+.vp-table th,
+.vp-table td {
+  border: 1px solid #0f172a;
+  padding: 3px 4px;
+  text-align: left;
+}
+
+.vp-table th:last-child,
+.vp-table td:last-child {
+  text-align: right;
+}
+
+.vp-table th {
+  background: #f1f5f9;
+  font-weight: 700;
+}
+
+.vp-total td {
+  font-weight: 700;
+  background: #fafafa;
+}
+
+.vp-words {
+  font-style: italic;
+  border-top: 1px dashed #64748b;
+  border-bottom: 1px dashed #64748b;
+  padding: 3px 0;
+  margin: 6px 0;
+  font-size: 10px;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.vp-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 10.5px;
+}
+
+.vp-line-bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.vp-signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 14px;
+}
+
+.vp-signatures div {
+  border-top: 1px solid #0f172a;
+  width: 44%;
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #334155;
+  padding-top: 2px;
+}
+
+.vp-notes {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 8px;
+  line-height: 1.3;
+  color: #475569;
+  border-top: 1px dotted #cbd5e1;
+}
+
+.vp-notes div {
+  margin-bottom: 2px;
+}
+
+/* =========================================================
+   PRINT SPECIFICATION
+   Order: Bank Copy | Bank Copy – UE Treasurer | UE Division/Campus Copy | Student Copy
+   Orientation: Landscape (all 4 copies horizontally on one page)
+========================================================= */
+
+@page {
+  size: A4 landscape;
+  margin: 4mm 5mm;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide entire application navigation, sidebar, headers, and UI controls */
+  .admin-sidebar,
+  .sidebar-toggle-btn,
+  .sidebar-overlay,
+  .admin-header,
+  header,
+  nav,
+  .no-print,
+  .vp-toolbar,
+  .vp-actions,
+  .voucher-preview-heading,
+  .voucher-preview-bottom {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Reset application container constraints */
+  #root,
+  .main-content,
+  .container-fluid,
+  .vp-page,
+  .vp-modal,
+  .vp-overlay,
+  .vp-scroll {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+
+  /* Hide everything by default, then show ONLY .vp-print-root */
+  body * {
+    visibility: hidden;
+  }
+
+  .vp-print-root,
+  .vp-print-root * {
+    visibility: visible !important;
+  }
+
+  .vp-sheet.vp-print-root {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 3mm !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .vp-copy {
+    border: 1px solid #111111 !important;
+    padding: 2.2mm 2mm !important;
+    font-size: 6.8pt !important;
+    line-height: 1.25 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .vp-copy-name {
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+    border-bottom: 1.2px solid #000000 !important;
+    padding-bottom: 1mm !important;
+    margin-bottom: 1.2mm !important;
+    text-align: center !important;
+  }
+
+  .vp-bank-name {
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-bottom: 0.5mm !important;
+  }
+
+  .vp-title {
+    font-size: 7pt !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    margin-bottom: 1.5mm !important;
+  }
+
+  .vp-meta {
+    gap: 0.8mm !important;
+    margin-bottom: 1.5mm !important;
+    font-size: 6.4pt !important;
+  }
+
+  .vp-line-info {
+    font-size: 6.4pt !important;
+  }
+
+  .vp-table {
+    margin: 1.2mm 0 !important;
+    font-size: 6.4pt !important;
+  }
+
+  .vp-table th,
+  .vp-table td {
+    padding: 0.7mm 1.2mm !important;
+    border: 1px solid #000000 !important;
+    font-size: 6.4pt !important;
+  }
+
+  .vp-table th {
+    background: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .vp-words {
+    font-size: 6.2pt !important;
+    margin: 1mm 0 !important;
+    padding: 0.6mm 0 !important;
+    border-top: 0.8px dashed #444444 !important;
+    border-bottom: 0.8px dashed #444444 !important;
+  }
+
+  .vp-line {
+    font-size: 6.4pt !important;
+    padding: 0.3mm 0 !important;
+  }
+
+  .vp-signatures {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 2mm !important;
+    padding-top: 1.2mm !important;
+  }
+
+  .vp-signatures div {
+    border-top: 0.8px solid #000000 !important;
+    width: 44% !important;
+    text-align: center !important;
+    font-size: 5.8pt !important;
+    font-weight: 600 !important;
+  }
+
+  .vp-notes {
+    font-size: 5pt !important;
+    line-height: 1.2 !important;
+    margin-top: 1.5mm !important;
+    padding-top: 1mm !important;
+    border-top: 0.5px dotted #999999 !important;
+  }
 }

@@ -426,7 +426,7 @@ if (loading) {
   }
   return (
     <>
-      <MDBContainer className="py-4">
+      <MDBContainer fluid className="p-0">
         <MDBCard className="shadow-4">
           <MDBCardBody>
             <div className="d-flex justify-content-between align-items-center mb-4">

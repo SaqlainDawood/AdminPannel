@@ -1178,7 +1178,7 @@
 
 @media (max-width: 480px) {
   .campus-page {
-    padding: 12px;
+    padding: 0;
   }
 
   .campus-header h1 {

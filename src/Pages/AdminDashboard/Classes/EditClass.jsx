@@ -238,7 +238,7 @@ const EditClass = () => {
     );
   }
   return (
-    <MDBContainer fluid className="py-4 edit-class-container">
+    <MDBContainer fluid className="p-0 edit-class-container">
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="d-flex align-items-center">

@@ -1434,7 +1434,7 @@
 
 @media (max-width: 800px) {
   .fee-management-page {
-    padding: 22px;
+    padding: 0;
   }
 
   .fee-page-header {
@@ -1473,7 +1473,7 @@
 
 @media (max-width: 600px) {
   .fee-management-page {
-    padding: 14px;
+    padding: 0;
   }
 
   .fee-page-header {
@@ -1578,7 +1578,7 @@
 
 @media (max-width: 420px) {
   .fee-management-page {
-    padding: 10px;
+    padding: 0;
   }
 
   .fee-content {

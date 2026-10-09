@@ -1008,7 +1008,7 @@
 
 @media (max-width: 900px) {
   .subject-page {
-    padding: 18px;
+    padding: 0;
   }
 
   .subject-stats {
@@ -1060,7 +1060,7 @@
 
 @media (max-width: 480px) {
   .subject-page {
-    padding: 13px;
+    padding: 0;
   }
 
   .subject-header h1 {

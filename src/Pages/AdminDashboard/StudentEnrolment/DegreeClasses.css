@@ -535,7 +535,7 @@
 
 @media (max-width: 900px) {
   .degree-classes-page {
-    padding: 20px;
+    padding: 0;
   }
 
   .degree-classes-header {
@@ -567,7 +567,7 @@
 
 @media (max-width: 600px) {
   .degree-classes-page {
-    padding: 15px;
+    padding: 0;
   }
 
   .degree-title-section h1 {

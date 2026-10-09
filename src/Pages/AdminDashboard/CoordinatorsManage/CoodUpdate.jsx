@@ -262,7 +262,7 @@ const CoodUpdate = () => {
 
   return (
     <div className="coordinator-update-container">
-      <MDBContainer className="py-4">
+      <MDBContainer fluid className="p-0">
         <MDBCard className="shadow-4">
           <MDBCardBody className="">
             {/* Header */}

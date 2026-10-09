@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   User, Users, Building2, Search, ChevronDown, Plus, Trash2,
-  RefreshCw, CheckCircle, AlertCircle, FileText, Printer, X, Loader2,
+  RefreshCw, CheckCircle, AlertCircle, FileText, Printer, X, Loader2, Download,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -2277,8 +2277,87 @@ const BulkResultTable = ({ result }) => {
 ========================================================= */
 
 const VoucherPreview = ({ voucher, onClose }) => {
+  const sheetRef = useRef(null);
+  const [downloading, setDownloading] = useState(false);
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!sheetRef.current) return;
+    try {
+      setDownloading(true);
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+      const el = sheetRef.current;
+      const canvas = await html2canvas(el, {
+        scale: 2.5,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+        windowWidth: 1240,
+        scrollX: 0,
+        scrollY: 0,
+        onclone: (clonedDoc) => {
+          const clonedEl = clonedDoc.querySelector(".voucher-preview-sheet");
+          if (clonedEl) {
+            clonedEl.style.width = "1200px";
+            clonedEl.style.minWidth = "1200px";
+            clonedEl.style.maxWidth = "1200px";
+            clonedEl.style.display = "grid";
+            clonedEl.style.gridTemplateColumns = "repeat(4, 1fr)";
+            clonedEl.style.gap = "8px";
+            clonedEl.style.margin = "0";
+            clonedEl.style.padding = "8px";
+            clonedEl.style.transform = "none";
+            clonedEl.style.boxSizing = "border-box";
+            clonedEl.style.background = "#ffffff";
+            clonedEl.style.visibility = "visible";
+
+            const copies = clonedEl.querySelectorAll(".voucher-copy");
+            copies.forEach((c) => {
+              c.style.visibility = "visible";
+              c.style.display = "flex";
+              c.style.flexDirection = "column";
+              c.style.border = "1px solid #222";
+              c.style.boxSizing = "border-box";
+            });
+          }
+        },
+      });
+
+      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const marginX = 4;
+      const marginY = 4;
+      const availW = pageW - marginX * 2;
+      const availH = pageH - marginY * 2;
+
+      const imgAspect = canvas.width / canvas.height;
+      let renderW = availW;
+      let renderH = renderW / imgAspect;
+
+      if (renderH > availH) {
+        renderH = availH;
+        renderW = renderH * imgAspect;
+      }
+
+      const posX = (pageW - renderW) / 2;
+      const posY = (pageH - renderH) / 2;
+
+      const imgData = canvas.toDataURL("image/png");
+      pdf.addImage(imgData, "PNG", posX, posY, renderW, renderH, undefined, "FAST");
+      pdf.save(`voucher-${challanNo || voucher?.voucherNo || "fee"}.pdf`);
+    } catch (e) {
+      console.error("PDF error:", e);
+      alert("Could not generate PDF. Please use the Print button and choose 'Save as PDF'.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const items = Array.isArray(voucher?.items)
@@ -2430,7 +2509,7 @@ const cnic =
 
   const copies = [
     "Bank Copy",
-    "Bank Copy (UE Treasurer)",
+    "Bank Copy – UE Treasurer",
     "UE Division/Campus Copy",
     "Student Copy",
   ];
@@ -2568,6 +2647,20 @@ const cnic =
         <div className="voucher-preview-actions">
           <button
             type="button"
+            className="vp-btn vp-btn-pdf"
+            onClick={handleDownloadPdf}
+            disabled={downloading}
+          >
+            {downloading ? (
+              <Loader2 size={16} className="vp-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            {downloading ? "Preparing..." : "Download PDF"}
+          </button>
+
+          <button
+            type="button"
             className="voucher-preview-print-btn"
             onClick={handlePrint}
           >
@@ -2586,7 +2679,7 @@ const cnic =
         </div>
       </div>
 
-      <div className="voucher-preview-sheet">
+      <div className="voucher-preview-sheet vp-print-root" ref={sheetRef}>
         {copies.map((copyName, copyIndex) => (
           <article
             className="voucher-copy"
